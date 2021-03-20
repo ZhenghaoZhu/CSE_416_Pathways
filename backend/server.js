@@ -17,6 +17,7 @@ const connection = mongoose.connection;connection.once('open', () => {
 
 const coursesRouter = require('./routes/courses');
 const studentsRouter = require('./routes/students');
+
 app.use('/courses', coursesRouter);
 app.use('/students', studentsRouter);
 

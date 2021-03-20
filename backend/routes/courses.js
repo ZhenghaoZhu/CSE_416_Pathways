@@ -1,6 +1,6 @@
 //SAMPLE endpoints
 const router = require('express').Router();
-let User = require('../models/user.model');
+let User = require('../models/courses.model'); 
 
 router.route('/').get((req, res) => {
   User.find()
