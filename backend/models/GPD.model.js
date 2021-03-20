@@ -3,15 +3,16 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const exerciseSchema = new Schema({
-  username: { type: String, required: true },
-  description: { type: String, required: true },
-  duration: { type: Number, required: true },
-  date: { type: Date, required: true },
+const GPDSchema = new Schema({
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  sbu_id: { type: Number, required: true },
+  department: { type: String, required: true },
+  page_setting: { type: String, required: true }, //TODO
 }, {
   timestamps: true,
 });
 
-const Exercise = mongoose.model('Exercise', exerciseSchema);
+const Exercise = mongoose.model('GPD', GPDSchema);
 
 module.exports = Exercise;
