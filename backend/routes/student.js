@@ -8,8 +8,36 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/remove/:id").delete(function(req, res) { //TODO, delete the student but crashes after
+  Student.findByIdAndDelete(req.params.id, function (err, docs) { 
+    if (err){ 
+        res.send("errorrrrr")
+    } 
+    else{ 
+        res.status(1).json(docs);
+    } 
+  }); 
+});
+
+router.route("/get/:id").get((req, res) => {
+  Student.findById(req.params.id)
+    .then((curStudent) => res.json(curStudent))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/update/:id").post((req, res) => {
+    Student.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, docs) => {
+    // Handle any possible database errors
+        if (err){
+          return res.status(500).send(err);
+        } 
+    })
+    .then((student) => res.json(student))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/add").post((req, res) => {
-  const firstName = req.body.first_name;
+  const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const sbuID = req.body.sbuID;
   const email = req.body.email;
@@ -58,5 +86,7 @@ router.route("/add").post((req, res) => {
     .then(() => res.json("Student added!"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+
 
 module.exports = router;

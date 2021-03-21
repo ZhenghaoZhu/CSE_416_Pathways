@@ -24,7 +24,7 @@ const studentSchema = new Schema(
     projectOption: { type: String, required: true },
     facultyAdvisor: { type: String, required: true },
     proficiencyReq: { type: Array, required: true },
-    degreeRequirements: { type: degreeReqsSchema, required: true }, //TODO CHECK
+    degreeRequirements: { type: String, required: true }, //TODO CHECK
     password: { type: String, required: true },
     graduated: { type: Boolean, required: true },
     settings: { type: String, required: true }, //TODO
