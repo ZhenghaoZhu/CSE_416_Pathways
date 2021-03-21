@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 
 const GPDSchema = new Schema(
   {
-    first_name: { type: String, required: true },
-    last_name: { type: String, required: true },
-    sbu_id: { type: Number, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    sbuID: { type: Number, required: true },
     department: { type: String, required: true },
-    page_setting: { type: String, required: true }, //TODO
+    pageSetting: { type: String, required: true }, //TODO
   },
   {
     timestamps: true,
