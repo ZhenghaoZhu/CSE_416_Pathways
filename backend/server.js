@@ -23,9 +23,13 @@ connection.once("open", () => {
 
 const coursesRouter = require("./routes/courses");
 const studentsRouter = require("./routes/student");
+const gpdRouter = require("./routes/GPD");
+const degreeReqs = require("./routes/degreeReqs");
 
 app.use("/courses", coursesRouter);
 app.use("/student", studentsRouter);
+app.use("/GPD", gpdRouter);
+app.use("/degreeReqs", degreeReqs);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
