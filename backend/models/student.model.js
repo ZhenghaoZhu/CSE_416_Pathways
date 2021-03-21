@@ -11,7 +11,7 @@ const studentSchema = new Schema(
   {
     firstName: { type: String, required: true, minLength: 1 },
     lastName: { type: String, required: true, minLength: 1 },
-    sbuID: { type: Number, required: true, length: 9 }, //TODO might work?
+    sbuID: { type: Number, required: true, length: 9 },
     email: { type: String, required: true },
     gpa: { type: Number, required: true },
     department: { type: String, required: true },
@@ -20,15 +20,15 @@ const studentSchema = new Schema(
     entrySem: { type: String, required: true },
     entryYear: { type: String, required: true },
     gradSem: { type: String, required: true },
-    coursePlan: { type: String, required: true }, //TODO
+    coursePlan: { type: String, required: true },
     projectOption: { type: String, required: true },
     facultyAdvisor: { type: String, required: true },
     proficiencyReq: { type: Array, required: true },
-    degreeRequirements: { type: degreeReqsSchema, required: true }, //TODO CHECK
+    degreeRequirements: { type: degreeReqsSchema, required: true },
     password: { type: String, required: true },
     graduated: { type: Boolean, required: true },
-    settings: { type: String, required: true }, //TODO
-    comments: { type: Array, required: true }, //TODO
+    settings: { type: String, required: true },
+    comments: { type: Array, required: true },
   },
   {
     timestamps: true,

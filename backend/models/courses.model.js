@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 
 const coursesSchema = new Schema(
   {
-    courseName: { type: String, required: true },
-    courseIden: { type: String, required: true },
-    department: { type: String, required: true },
+    courseName: { type: String, required: true, minLength: 1 },
+    courseIden: { type: String, required: true, minLength: 1 },
+    department: { type: String, required: true, minLength: 1 },
     credits: { type: Number, required: true },
-    preReqs: { type: String, required: true },
-    courseDescription: { type: String, required: true },
+    preReqs: { type: String, required: true, minLength: 1 },
+    courseDescription: { type: String, required: true, minLength: 1 },
     yearTrends: { type: Map, required: true },
     timeSlots: { type: Map, required: true },
     professorNames: { type: Map, required: true },
