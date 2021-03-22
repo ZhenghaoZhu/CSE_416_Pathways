@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import useStyles from "../style/styles";
 
-const LoginForm = () => {
+const LoginForm2 = () => {
   const classes = useStyles();
 
   return (
@@ -66,4 +66,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default LoginForm2;
