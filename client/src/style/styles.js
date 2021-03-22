@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme) => ({
         : theme.palette.grey[900],
     backgroundSize: "cover",
     backgroundPosition: "center",
+    width: "50%",
+    height: "90%",
   },
   paper: {
     margin: theme.spacing(8, 4),
@@ -29,11 +31,27 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginTop: theme.spacing(1),
   },
+  loginTextField: {
+    marginLeft: "25%",
+    borderRadius: "5px",
+    width: "50%",
+    marginTop: theme.spacing(1),
+    backgroundColor: "white",
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    marginLeft: "20%",
+    width: "60%",
+    fontSize: "20px",
   },
   background: {
     backgroundColor: "red",
+  },
+  signInButton: {
+    fontSize: "17px",
+  },
+  signUpButton: {
+    fontSize: "17px",
   },
 }));
 
