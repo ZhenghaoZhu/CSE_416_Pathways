@@ -1,6 +1,7 @@
 import React from "react";
 // import { XGrid } from "@material-ui/x-grid";
 import { DataGrid } from "@material-ui/data-grid";
+import SearchBar from "material-ui-search-bar";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -39,8 +40,9 @@ const rows = [
 
 function StudentTable() {
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <div style={{ height: 600, width: "100%",marginBottom:100 }}>
       <h2>Student Summary Table</h2>
+      <SearchBar />
       <DataGrid rows={rows} columns={columns} pageSize={10} checkboxSelection />
     </div>
   );  

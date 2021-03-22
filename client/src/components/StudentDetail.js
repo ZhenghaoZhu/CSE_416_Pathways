@@ -31,7 +31,7 @@ const rows = [
 
 function StudentDetail() {
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <div style={{ height: 600, width: "100%",marginBottom:50}}>
       <h2>Student Details</h2>
       <DataGrid rows={rows} columns={columns} pageSize={10} />
     </div>
