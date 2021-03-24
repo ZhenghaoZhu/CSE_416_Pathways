@@ -1,9 +1,9 @@
-import React from "react";
-// import { XGrid } from "@material-ui/x-grid";
+import React, { Component } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
+import axios from "axios";
 
-const columns = [
+var columns = [
   { field: "id", headerName: "ID", width: 70 },
   { field: "firstName", headerName: "First name", width: 130 },
   { field: "lastName", headerName: "Last name", width: 130 },
@@ -26,7 +26,7 @@ const columns = [
   },
 ];
 
-const rows = [
+var rows = [
   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
   { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
   { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
@@ -37,15 +37,21 @@ const rows = [
   { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
 ];
-
-function StudentTable() {
-  return (
-    <div style={{ height: 600, width: "100%",marginBottom:100 }}>
-      <h2>Student Summary Table</h2>
-      <SearchBar />
-      <DataGrid rows={rows} columns={columns} pageSize={10} checkboxSelection />
-    </div>
-  );  
+class StudentTable extends Component {
+  render() {
+    return (
+      <div style={{ height: 600, width: "100%", marginBottom: 100 }}>
+        <h2>Student Summary Table</h2>
+        <SearchBar placeholder="Search by Student Name, ID, Courses, ..." />
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={10}
+          checkboxSelection
+        />
+      </div>
+    );
+  }
 }
 
 export default StudentTable;
