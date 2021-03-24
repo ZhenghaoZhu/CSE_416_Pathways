@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
+import Box from "@material-ui/core/Box";
 
 const axios = require("axios").default;
 
@@ -9,7 +10,7 @@ var columns = [
   { field: "lastName", headerName: "Last name", width: 130 },
   { field: "department", headerName: "Department", width: 130 },
   { field: "track", headerName: "track", width: 130 },
-  { field: "gpa", headerName: "GPA", width: 50 },
+  { field: "gpa", headerName: "GPA", type: "number", width: 90 },
   { field: "projectOption", headerName: "Project Option", width: 130 },
   { field: "facultyAdvisor", headerName: "Faculty Advisor", width: 130 },
   { field: "graduated", headerName: "Graduated", width: 130 },
@@ -47,15 +48,27 @@ class StudentTable extends Component {
   render() {
     console.log(this.state.curStudents);
     return (
-      <div style={{ height: 600, width: "100%", marginBottom: 100 }}>
-        <h2>Student Summary Table</h2>
-        <SearchBar placeholder="Search by Student Name, ID, Courses, ..." />
-        <DataGrid
-          rows={this.state.curStudents}
-          columns={columns}
-          pageSize={10}
-          checkboxSelection
+      <div
+        style={{
+          height: 600,
+          width: "97%",
+          marginBottom: 100,
+          marginTop: 50,
+          marginLeft: 35,
+        }}
+      >
+        <SearchBar
+          placeholder="Search by Student Name, ID, Courses, ..."
+          style={{ marginBottom: 10 }}
         />
+        <Box style={{ height: "130%", backgroundColor: "#f1f0f0" }}>
+          <DataGrid
+            rows={this.state.curStudents}
+            columns={columns}
+            pageSize={15}
+            checkboxSelection
+          />
+        </Box>
       </div>
     );
   }
