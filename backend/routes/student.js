@@ -1,10 +1,16 @@
-//SAMPLE endpoints
+//Student routes look set, may need small changes
 const router = require("express").Router();
 let Student = require("../models/student.model");
 
 router.route("/").get((req, res) => {
   Student.find()
     .then((users) => res.json(users))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/get/:id").get((req, res) => {
+  Student.findById(req.params.id)
+    .then((curStudent) => res.json(curStudent))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -19,10 +25,10 @@ router.route("/remove/:id").delete(function(req, res) { //TODO, delete the stude
   }); 
 });
 
-router.route("/get/:id").get((req, res) => {
-  Student.findById(req.params.id)
-    .then((curStudent) => res.json(curStudent))
-    .catch((err) => res.status(400).json("Error: " + err));
+router.route("/remove").delete(function(req, res) { 
+  Student.deleteMany()
+  .then((body) => res.json(body))
+  .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/update/:id").post((req, res) => {
@@ -39,7 +45,7 @@ router.route("/update/:id").post((req, res) => {
 router.route("/add").post((req, res) => {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
-  const sbuID = req.body.sbuID;
+  const id = req.body.id;
   const email = req.body.email;
   const gpa = req.body.gpa;
   const department = req.body.department;
@@ -61,7 +67,7 @@ router.route("/add").post((req, res) => {
   const newStudent = new Student({
     firstName,
     lastName,
-    sbuID,
+    id,
     email,
     gpa,
     department,
