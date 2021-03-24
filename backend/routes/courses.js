@@ -26,6 +26,7 @@ router.route("/update/:id").put((req, res) => {
 });
 
 router.route("/add").post((req, res) => {
+  const id = req.body.id;
   const courseName = req.body.courseName;
   const courseIden = req.body.courseIden;
   const department = req.body.department;
@@ -37,6 +38,7 @@ router.route("/add").post((req, res) => {
   const professorNames = req.body.professorNames;
 
   const newCourse = new Courses({
+    id,
     courseName,
     courseIden,
     department,
