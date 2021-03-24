@@ -8,58 +8,12 @@ import {
   Paper,
 } from "@material-ui/core";
 
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-  },
-  image: {
-    backgroundImage:
-      "url(https://i.ibb.co/N2jMyvn/Screen-Shot-2021-03-21-at-9-49-25-PM.png)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  background: {
-    backgroundColor: "red",
-  },
-  loginTextField: {
-    marginLeft: "25%",
-    borderRadius: "5px",
-    width: "50%",
-    marginTop: theme.spacing(1),
-    backgroundColor: "white",
-  },
-}));
+import styles from "../style/styles";
 
 const LoginForm = () => {
-  const classes = useStyles();
-
   return (
     <>
-      <Grid container component="main" className={classes.root}>
+      <Grid container component="main" className={styles.root}>
         <CssBaseline />
         <Grid item xs={false} sm={4} md={5}>
           <img
@@ -80,15 +34,15 @@ const LoginForm = () => {
             backgroundColor: "#dc8f8a",
           }}
         >
-          <div className={classes.paper}>
+          <div className={styles.paper}>
             <ButtonGroup
               color="primary"
               aria-label="outlined primary button group"
             >
-              <Button className={classes.signInButton}>Sign In</Button>
-              <Button className={classes.signUpButton}>Sign Up</Button>
+              <Button className={styles.signInButton}>Sign In</Button>
+              <Button className={styles.signUpButton}>Sign Up</Button>
             </ButtonGroup>
-            <form className={classes.form} noValidate>
+            <form className={styles.form} noValidate>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -98,7 +52,7 @@ const LoginForm = () => {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                className={classes.loginTextField}
+                className={styles.loginTextField}
               />
               <TextField
                 variant="outlined"
@@ -110,14 +64,14 @@ const LoginForm = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                className={classes.loginTextField}
+                className={styles.loginTextField}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="primary"
-                className={classes.submit}
+                className={styles.submit}
               >
                 Sign In
               </Button>
