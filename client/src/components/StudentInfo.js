@@ -32,10 +32,9 @@ class StudentInfo extends Component {
     //   borderMargin: 15,
     //   whiteSpace: false,
     // };
-    
   }
 
-  render(){
+  render() {
     return (
       <>
         <div>

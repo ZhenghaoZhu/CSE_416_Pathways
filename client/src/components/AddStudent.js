@@ -1,24 +1,12 @@
 import React, { Component } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
 
-import styles from "../style/styles";
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-    title: {
-      width: "100%",
-      maxWidth: 500,
-    },
-  },
-}));
-
 class AddStudent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
   render() {
     return (
       <>
@@ -29,67 +17,91 @@ class AddStudent extends Component {
         </div>
         <div>
           <Grid container>
-            <form className={styles.form} noValidate autoComplete="off">
+            <form noValidate autoComplete="off">
               <Grid item>
                 <TextField id="sbu_id" label="SBU ID" variant="outlined" />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="first_name"
                   label="First Name"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="last_name"
                   label="Last Name"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField id="email" label="Email" variant="outlined" />
+              </Grid>
+
+              <Grid item>
                 <TextField
                   id="department"
                   label="Department"
                   variant="outlined"
                 />
+              </Grid>
+
+              <Grid item>
                 <TextField id="track" label="Track" variant="outlined" />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="entry_semester"
                   label="Entry Semester"
                   variant="outlined"
                 />
+              </Grid>
+
+              <Grid item>
                 <TextField
                   id="entry_year"
                   label="Entry Year"
                   variant="outlined"
                 />
+              </Grid>
+
+              <Grid item>
                 <TextField
                   id="requirement_version_semester"
                   label="Requirement Version Semester"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="requirement_version_year"
                   label="Requirement Version Year"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="graduation_semester"
                   label="Graduation Semester"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField
                   id="graduation_year"
                   label="Graduation Year"
                   variant="outlined"
                 />
+              </Grid>
+              <Grid item>
                 <TextField id="password" label="Password" variant="outlined" />
               </Grid>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  console.log("clicked");
-                }}
-              >
-                Add Student
-              </Button>
+              <Grid item>
+                <Button variant="contained" color="primary">
+                  Add Student
+                </Button>
+              </Grid>
             </form>
           </Grid>
         </div>
