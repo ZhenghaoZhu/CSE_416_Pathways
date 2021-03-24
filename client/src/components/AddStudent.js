@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
+import GPDHeader from "./GPDHeader";
 
 class AddStudent extends Component {
   constructor(props) {
