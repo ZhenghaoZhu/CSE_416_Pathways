@@ -70,10 +70,11 @@ class StudentTable extends Component {
         <SearchBar
           placeholder="Search by Student Name, ID, Courses, ..."
           style={{ marginBottom: 10 }}
+          onChange={(student) => this.filterStudent(student)}
         />
         <Box style={{ height: "130%", backgroundColor: "#f1f0f0" }}>
           <DataGrid
-            rows={this.state.curStudents}
+            rows={this.studentFilter}
             columns={columns}
             pageSize={15}
             checkboxSelection
