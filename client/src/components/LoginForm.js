@@ -5,19 +5,15 @@ import {
   CssBaseline,
   Grid,
   TextField,
-  Paper,
 } from "@material-ui/core";
 
-import { makeStyles } from "@material-ui/core/styles";
-
-const axios = require('axios').default;
+const axios = require("axios").default;
 
 class LoginForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
-    
+    this.state = {};
+
     // const useStyles = makeStyles((theme) => ({
     //   root: {
     //     height: "100vh",
@@ -54,37 +50,37 @@ class LoginForm extends Component {
     //     backgroundColor: "red",
     //   },
     // }));
-    this.classes = {
-    }
+    this.classes = {};
   }
-  
-  componentDidMount(){
-    // let classes = useStyles(); 
+
+  componentDidMount() {
+    // let classes = useStyles();
   }
-  signInUpdateEmail(e){
+  signInUpdateEmail(e) {
     console.log(e.target.value);
   }
 
-  signInUpdatePassword(e){
+  signInUpdatePassword(e) {
     console.log(e.target.value);
   }
 
-  getUser(e){
+  getUser(e) {
     e.preventDefault();
-    axios.get('http://localhost:5000/student/get/6056beb0dada4e0858d40f96')
-    .then(response => {
-      this.state = { firstName : response.data.sbuID };
-      console.log(this.state.firstName);
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    .then(function () {
-      // always executed
-    });
+    axios
+      .get("http://localhost:5000/student/get/6056beb0dada4e0858d40f96")
+      .then((response) => {
+        this.state = { firstName: response.data.sbuID };
+        console.log(this.state.firstName);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
   }
 
-  render(){
+  render() {
     return (
       <>
         <Grid container component="main" className={this.classes.root}>
@@ -168,7 +164,7 @@ class LoginForm extends Component {
         </Grid>
       </>
     );
-  };
+  }
 }
 
 export default LoginForm;
