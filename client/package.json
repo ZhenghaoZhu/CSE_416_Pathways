@@ -4,17 +4,21 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
-    "@material-ui/data-grid": "^4.0.0-alpha.22",
+    "@material-ui/data-grid": "^4.0.0-alpha.23",
     "@material-ui/icons": "^4.11.2",
-    "@material-ui/x-grid": "^4.0.0-alpha.22",
+    "@material-ui/x-grid": "^4.0.0-alpha.23",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.3",
     "axios": "^0.21.1",
+<<<<<<< HEAD
+=======
+    "dotenv": "^8.2.0",
+>>>>>>> 5d6fadec39ce639a764262d27305e6870dac05fd
     "material-ui-dropzone": "^3.5.0",
     "material-ui-search-bar": "^1.0.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.0"
   },
