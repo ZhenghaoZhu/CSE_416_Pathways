@@ -11,8 +11,8 @@ const studentSchema = new Schema(
   {
     firstName: { type: String, required: true, minLength: 1 },
     lastName: { type: String, required: true, minLength: 1 },
-    sbuID: { type: Number, required: true, length: 9 },
-    email: { type: String, required: true },
+    id: { type: Number, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     gpa: { type: Number, required: true },
     department: { type: String, required: true },
     track: { type: String, required: true },

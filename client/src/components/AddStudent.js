@@ -12,9 +12,6 @@ class AddStudent extends Component {
     return (
       <>
         <div>
-          <GPDHeader />
-        </div>
-        <div>
           <Typography variant="h3" gutterBottom>
             Add Student
           </Typography>

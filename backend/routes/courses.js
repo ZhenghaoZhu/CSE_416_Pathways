@@ -8,7 +8,25 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/:id").get((req, res) => {
+  Courses.findById(req.params.id)
+    .then((curStudent) => res.json(curStudent))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/update/:id").put((req, res) => {
+  Courses.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, docs) => {
+    // Handle any possible database errors
+        if(err){
+          return res.status(404).send(err);
+        } 
+    })
+    .then((student) => res.json(student))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/add").post((req, res) => {
+  const id = req.body.id;
   const courseName = req.body.courseName;
   const courseIden = req.body.courseIden;
   const department = req.body.department;
@@ -20,6 +38,7 @@ router.route("/add").post((req, res) => {
   const professorNames = req.body.professorNames;
 
   const newCourse = new Courses({
+    id,
     courseName,
     courseIden,
     department,
