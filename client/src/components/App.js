@@ -9,7 +9,7 @@ import AddStudent from "./AddStudent";
 function App() {
   return (
     <>
-      <LoginForm />
+      <AddStudent />
     </>
   );
 }
