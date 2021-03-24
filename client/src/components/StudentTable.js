@@ -21,6 +21,7 @@ class StudentTable extends Component {
     this.state = {
       curStudents: [],
     };
+    this.studentFilter = [];
   }
 
   componentDidMount() {
@@ -32,6 +33,7 @@ class StudentTable extends Component {
     axios
       .get("http://localhost:5000/student/")
       .then((response) => {
+        this.studentFilter = response.data
         this.setState({
           curStudents: response.data,
         });
@@ -40,18 +42,24 @@ class StudentTable extends Component {
         console.log(error);
       })
       .then(function () {
-        console.log("Got data, no error");
+        console.log("After axios request:");
       });
   }
 
+  filterStudent(e){
+    // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
+    this.studentFilter = this.state.curStudents.filter(student => student.firstName.includes(e, 0));
+    this.setState({curStudents: this.state.curStudents});
+  }
+
   render() {
-    console.log(this.state.curStudents);
+    // console.log(this.state.curStudents);
     return (
       <div style={{ height: 600, width: "100%", marginBottom: 100 }}>
         <h2>Student Summary Table</h2>
-        <SearchBar placeholder="Search by Student Name, ID, Courses, ..." />
+        <SearchBar placeholder="Search by Student Name, ID, Courses, ..." onChange={(student) => this.filterStudent(student)} />
         <DataGrid
-          rows={this.state.curStudents}
+          rows={this.studentFilter}
           columns={columns}
           pageSize={10}
           checkboxSelection
