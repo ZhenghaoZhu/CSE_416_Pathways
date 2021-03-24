@@ -1,21 +1,57 @@
 //SAMPLE endpoints
-const router = require('express').Router();
-let User = require('../models/courses.model'); 
+const router = require("express").Router();
+let Courses = require("../models/courses.model");
 
-router.route('/').get((req, res) => {
-  User.find()
-    .then(users => res.json(users))
-    .catch(err => res.status(400).json('Error: ' + err));
+router.route("/").get((req, res) => {
+  Courses.find()
+    .then((users) => res.json(users))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route('/add').post((req, res) => {
-  const username = req.body.username;
+router.route("/get/:id").get((req, res) => {
+  Courses.findById(req.params.id)
+    .then((curStudent) => res.json(curStudent))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
-  const newUser = new User({username});
+router.route("/update/:id").put((req, res) => {
+  Courses.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, docs) => {
+    // Handle any possible database errors
+        if(err){
+          return res.status(404).send(err);
+        } 
+    })
+    .then((student) => res.json(student))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
-  newUser.save()
-    .then(() => res.json('User added!'))
-    .catch(err => res.status(400).json('Error: ' + err));
+router.route("/add").post((req, res) => {
+  const courseName = req.body.courseName;
+  const courseIden = req.body.courseIden;
+  const department = req.body.department;
+  const credits = req.body.credits;
+  const preReqs = req.body.preReqs;
+  const courseDescription = req.body.courseDescription;
+  const yearTrends = req.body.yearTrends;
+  const timeSlots = req.body.timeSlots;
+  const professorNames = req.body.professorNames;
+
+  const newCourse = new Courses({
+    courseName,
+    courseIden,
+    department,
+    credits,
+    preReqs,
+    courseDescription,
+    yearTrends,
+    timeSlots,
+    professorNames,
+  });
+
+  newCourse
+    .save()
+    .then(() => res.json("Course added!"))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 module.exports = router;
