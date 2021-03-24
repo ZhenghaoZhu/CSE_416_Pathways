@@ -45,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
   background: {
     backgroundColor: "red",
   },
+  loginTextField: {
+    marginLeft: "25%",
+    borderRadius: "5px",
+    width: "50%",
+    marginTop: theme.spacing(1),
+    backgroundColor: "white",
+  },
 }));
 
 const LoginForm = () => {
@@ -70,7 +77,7 @@ const LoginForm = () => {
           style={{
             verticalAlign: "middle",
             paddingTop: "12%",
-            backgroundColor: "#f09c9c",
+            backgroundColor: "#dc8f8a",
           }}
         >
           <div className={classes.paper}>
