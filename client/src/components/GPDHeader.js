@@ -4,6 +4,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import styles from "../style/styles";
 import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     abRoot: {
@@ -26,6 +27,18 @@ class GPDHeader extends Component {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h4">Pathways</Typography>
+                    <li>
+                        <Link to="/">GPD Home Page</Link>
+                    </li>
+                    <li>
+                        <Link to="/login">Login Form</Link>
+                    </li>
+                    <li>
+                        <Link to="/studentDetail">Student Detail</Link>
+                    </li>
+                    <li>
+                        <Link to="/addStudent">Add Student Form</Link>
+                    </li>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
                         GPD Name
                     </Typography>

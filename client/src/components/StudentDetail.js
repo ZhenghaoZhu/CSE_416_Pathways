@@ -6,36 +6,15 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
-
-const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "firstName", headerName: "First name", width: 130 },
-    { field: "lastName", headerName: "Last name", width: 130 },
-    {
-        field: "age",
-        headerName: "Age",
-        type: "number",
-        width: 90,
-    },
-    {
-        field: "fullName",
-        headerName: "Full name",
-        description: "This column has a value getter and is not sortable.",
-        sortable: false,
-        width: 160,
-        valueGetter: (params) =>
-            `${params.getValue("firstName") || ""} ${
-                params.getValue("lastName") || ""
-            }`,
-    },
-];
-
-const rows = [{ id: 1, lastName: "Snow", firstName: "Jon", age: 35 }];
+import GPDHeader from "./GPDHeader";
 
 class StudentDetail extends Component {
     constructor(props) {
         super(props);
-        var curFocusStudent = this.props.focusStudent.row;
+        var curFocusStudent = {};
+        if (this.props.focusStudent != undefined) {
+            curFocusStudent = this.props.focusStudent.row;
+        }
         this.state = {
             curStudent: curFocusStudent,
         };
@@ -57,30 +36,33 @@ class StudentDetail extends Component {
     render() {
         console.log(this.props.focusStudent);
         var studentInfo = undefined;
-        if (this.props.focusStudent.row != undefined) {
+        if (
+            this.props.focusStudent != undefined &&
+            this.props.focusStudent.row != undefined
+        ) {
             studentInfo = this.props.focusStudent.row;
         } else {
             studentInfo = {
-                firstName: "Select",
-                lastName: "Student",
+                firstName: "Benjamin",
+                lastName: "Weir",
                 id: 0,
-                email: "",
-                gpa: 0,
-                department: "",
-                track: "",
-                reqVersion: "",
-                entrySem: "",
-                entryYear: "",
-                gradSem: "",
-                coursePlan: "",
-                projectOption: "",
-                facultyAdvisor: "",
+                email: "student@stonybrook.edu",
+                gpa: 3.5,
+                department: "AMS",
+                track: "Quantitative Finance",
+                reqVersion: "2019",
+                entrySem: "Fall",
+                entryYear: "2019",
+                gradSem: "2023",
+                coursePlan: "None",
+                projectOption: "None",
+                facultyAdvisor: "Scott Stoller",
                 proficiencyReq: [],
-                degreeRequirements: "", //TODO CHECK
+                degreeRequirements: "None", //TODO CHECK
                 password: "",
                 graduated: false,
-                settings: "",
-                comments: "",
+                settings: "None",
+                comments: "None",
             };
         }
 
