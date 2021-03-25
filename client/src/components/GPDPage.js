@@ -7,6 +7,7 @@ import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
 import Dropzone from 'react-dropzone'
 
 const fs = require("fs");
+const axios = require("axios").default;
 
 const Papa = require("papaparse");
 
@@ -44,6 +45,9 @@ class GPDPage extends Component {
       // console.log("files:", file);
     }
 
+    onSub(e){
+      axios.delete("http://localhost:5000/student/remove");
+    }
     
 
     render() {
@@ -86,6 +90,7 @@ class GPDPage extends Component {
                                 <Button>Edit Student</Button>
                                 <Button>Suggest Course Plan</Button>
                                 <Button>Make Comment</Button>
+                                <Button onSubmit={this.onSub} >Delete All </Button>
                             </ButtonGroup>
                         </Box>
                     </Grid>
