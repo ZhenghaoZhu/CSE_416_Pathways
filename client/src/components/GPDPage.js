@@ -4,6 +4,11 @@ import StudentTable from "./StudentTable";
 import StudentDetail from "./StudentDetail";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
+import Dropzone from 'react-dropzone'
+
+const fs = require("fs");
+
+const Papa = require("papaparse");
 
 class GPDPage extends Component {
     constructor(props) {
@@ -16,6 +21,18 @@ class GPDPage extends Component {
             },
         };
     }
+    fileParse(file){
+      console.log("results:", file);
+      // let csv = fs.readFileSync(file);
+      // console.log(csv.toString());
+      // console.log("results:", file);
+      // var fr = new FileReader();
+      // fr.readAsText(file);
+      // console.log("results:",fr.result);
+      // Papa.parse(file);
+      // console.log("files:", file);
+    }
+
     render() {
         console.log(this.state.focusStudent);
         return (
