@@ -9,7 +9,9 @@ const GPDSchema = new Schema(
     lastName: { type: String, required: true },
     sbuID: { type: Number, required: true },
     department: { type: String, required: true },
-    pageSetting: { type: String, required: true }, //TODO
+    pageSetting: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
   },
   {
     timestamps: true,

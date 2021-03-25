@@ -6,7 +6,6 @@ import LoginForm from "./LoginForm";
 function App() {
     return (
         <div>
-            {/* <GPDPage /> */}
             <Main />
         </div>
     );

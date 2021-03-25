@@ -6,13 +6,14 @@ import {
     Grid,
     TextField,
 } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 
 const axios = require("axios").default;
 
 class LoginForm extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { curEmail: "", curPassword: "" };
         this.classes = {};
     }
 
@@ -20,29 +21,57 @@ class LoginForm extends Component {
         // let classes = useStyles();
     }
     signInUpdateEmail(e) {
-        console.log(e.target.value);
+        this.setState({ curEmail: e.target.value });
     }
 
     signInUpdatePassword(e) {
-        console.log(e.target.value);
+        this.setState({ curPassword: e.target.value });
     }
 
     getUser(e) {
         e.preventDefault();
         axios
-            .get("http://localhost:5000/student/get/6056beb0dada4e0858d40f96")
+            .get("http://localhost:5000/gpd")
             .then((response) => {
-                this.state = { firstName: response.data.sbuID };
-                console.log(this.state.firstName);
+                var allGPD = response.data;
+                var curUser = undefined;
+                for (var i = 0; i < allGPD.length; i++) {
+                    curUser = allGPD[i];
+                    console.log(curUser);
+                    console.log(this.state);
+                    if (
+                        curUser["email"] === this.state.curEmail &&
+                        curUser["password"] === this.state.curPassword
+                    ) {
+                        this.props.history.push("/");
+                    }
+                }
             })
             .catch(function (error) {
                 console.log(error);
+            });
+
+        axios
+            .get("http://localhost:5000/student")
+            .then((response) => {
+                var allStudents = response.data;
+                var curUser = undefined;
+                for (var i = 0; i < allStudents.length; i++) {
+                    curUser = allStudents[i];
+                    console.log(curUser);
+                    console.log(this.state);
+                    if (
+                        curUser["email"] === this.state.curEmail &&
+                        curUser["password"] === this.state.curPassword
+                    ) {
+                        this.props.history.push("/studentDetail");
+                    }
+                }
             })
-            .then(function () {
-                // always executed
+            .catch(function (error) {
+                console.log(error);
             });
     }
-
     render() {
         return (
             <>
@@ -89,7 +118,7 @@ class LoginForm extends Component {
                                     name="email"
                                     autoComplete="email"
                                     autoFocus
-                                    onChange={this.signInUpdateEmail}
+                                    onChange={(e) => this.signInUpdateEmail(e)}
                                     className={this.classes.loginTextField}
                                 />
                                 <TextField
@@ -102,7 +131,9 @@ class LoginForm extends Component {
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
-                                    onChange={this.signInUpdatePassword}
+                                    onChange={(e) =>
+                                        this.signInUpdatePassword(e)
+                                    }
                                     className={this.classes.loginTextField}
                                 />
                                 <Button
@@ -111,7 +142,7 @@ class LoginForm extends Component {
                                     variant="contained"
                                     color="primary"
                                     className={this.classes.submit}
-                                    onClick={this.getUser.bind(this)}
+                                    onClick={(e) => this.getUser(e)}
                                 >
                                     Sign In
                                 </Button>
