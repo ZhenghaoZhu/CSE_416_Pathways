@@ -1,18 +1,15 @@
 import "../style/App.css";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
-import StudentDetail from "./StudentDetail";
-import StudentTable from "./StudentTable";
-import AddStudent from "./AddStudent";
 import GPDPage from "./GPDPage";
 import Main from "./Main";
+import LoginForm from "./LoginForm";
 
 function App() {
-  return (
-    <>
-      <GPDPage />
-    </>
-  );
+    return (
+        <div>
+            {/* <GPDPage /> */}
+            <Main />
+        </div>
+    );
 }
 
 export default App;
