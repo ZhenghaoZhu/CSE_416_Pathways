@@ -9,10 +9,10 @@ const degreeReqsSchema = degreeReqs.degreeSchema;
 
 const studentSchema = new Schema(
   {
-    firstName: { type: String, required: true, minLength: 1 },
-    lastName: { type: String, required: true, minLength: 1 },
-    id: { type: Number, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    firstName: { type: String, required: true},
+    lastName: { type: String, required: true},
+    id: { type: Number, required: true},
+    email: { type: String, required: true},
     gpa: { type: Number, required: true },
     department: { type: String, required: true },
     track: { type: String, required: true },
