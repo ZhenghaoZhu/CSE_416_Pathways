@@ -80,7 +80,7 @@ class StudentTable extends Component {
                     style={{ marginBottom: 10 }}
                     onRequestSearch={(student) => this.filterStudent(student)}
                     onCancelSearch={(e) => this.cancelStudentSearch(e)}
-                    cancelOnEscape="true"
+                    cancelOnEscape={true}
                 />
                 <Box style={{ height: "130%", backgroundColor: "#f1f0f0" }}>
                     <DataGrid

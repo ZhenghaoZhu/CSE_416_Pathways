@@ -10,6 +10,17 @@ const fs = require("fs");
 
 const Papa = require("papaparse");
 
+const handleFileAsync = (file) => {
+  return new Promise((resolve, reject) => {
+    fetch(file[0].data)
+      .then((response) => response.json())
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => reject(error));
+  })
+}
+
 class GPDPage extends Component {
     constructor(props) {
         super(props);
@@ -33,6 +44,8 @@ class GPDPage extends Component {
       // console.log("files:", file);
     }
 
+    
+
     render() {
         console.log(this.state.focusStudent);
         return (
@@ -54,11 +67,11 @@ class GPDPage extends Component {
                                 focusStudent={this.state.focusStudent}
                             />
                             <DropzoneAreaBase
-                                onChange={(files) =>
-                                    console.log("Files:", files)
-                                }
-                                filesLimit="5"
-                                showPreviewsInDropzone="false"
+                              onAdd={(fileObjs) => handleFileAsync(fileObjs)}
+                              onDelete={(fileObj) => console.log('Removed File:', fileObj)}
+                              onAlert={(message, variant) => console.log(`${variant}: ${message}`)}
+                              filesLimit={5}
+                              showPreviewsInDropzone={false}
                             />
 
                             <ButtonGroup
