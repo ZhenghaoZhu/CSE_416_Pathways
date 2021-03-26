@@ -4,11 +4,11 @@ import StudentTable from "./StudentTable";
 import StudentDetail from "./StudentDetail";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
-import Dropzone from 'react-dropzone'
+import { Link } from "react-router-dom";
+import Dropzone from "react-dropzone";
 
 const fs = require("fs");
-
-const Papa = require("papaparse");
+const axios = require("axios").default;
 
 class GPDPage extends Component {
     constructor(props) {
@@ -21,16 +21,22 @@ class GPDPage extends Component {
             },
         };
     }
-    fileParse(file){
-      console.log("results:", file);
-      // let csv = fs.readFileSync(file);
-      // console.log(csv.toString());
-      // console.log("results:", file);
-      // var fr = new FileReader();
-      // fr.readAsText(file);
-      // console.log("results:",fr.result);
-      // Papa.parse(file);
-      // console.log("files:", file);
+    fileParse(file) {
+        console.log("results:", file);
+        // let csv = fs.readFileSync(file);
+        // console.log(csv.toString());
+        // console.log("results:", file);
+        // var fr = new FileReader();
+        // fr.readAsText(file);
+        // console.log("results:",fr.result);
+        // Papa.parse(file);
+        // console.log("files:", file);
+    }
+
+    onSub(e) {
+        e.preventDefault();
+        axios.delete("http://localhost:5000/student/remove");
+        console.log("All Student Data Deleted");
     }
 
     render() {
@@ -69,10 +75,16 @@ class GPDPage extends Component {
                                 }}
                             >
                                 <Button>Import Student</Button>
-                                <Button>Add Student</Button>
+                                <Button>
+                                    <Link to="/addStudent">
+                                        Add Student Form
+                                    </Link>
+                                </Button>
                                 <Button>Edit Student</Button>
                                 <Button>Suggest Course Plan</Button>
-                                <Button>Make Comment</Button>
+                                <Button onClick={this.onSub}>
+                                    Delete All{" "}
+                                </Button>
                             </ButtonGroup>
                         </Box>
                     </Grid>
