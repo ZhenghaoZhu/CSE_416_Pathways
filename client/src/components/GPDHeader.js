@@ -33,14 +33,8 @@ class GPDHeader extends Component {
                     <li>
                         <Link to="/login">Login Form</Link>
                     </li>
-                    <li>
-                        <Link to="/studentDetail">Student Detail</Link>
-                    </li>
-                    <li>
-                        <Link to="/addStudent">Add Student Form</Link>
-                    </li>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
-                        GPD Name
+                        Emerson True
                     </Typography>
                     <IconButton color="inherit">
                         <AccountBoxIcon />
