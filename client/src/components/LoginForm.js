@@ -6,7 +6,6 @@ import {
     Grid,
     TextField,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
 
 const axios = require("axios").default;
 
@@ -31,7 +30,7 @@ class LoginForm extends Component {
     getUser(e) {
         e.preventDefault();
         axios
-            .get("http://localhost:5000/gpd")
+            .get("https://sbu-pathways.herokuapp.com/gpd")
             .then((response) => {
                 var allGPD = response.data;
                 var curUser = undefined;
@@ -52,7 +51,7 @@ class LoginForm extends Component {
             });
 
         axios
-            .get("http://localhost:5000/student")
+            .get("https://sbu-pathways.herokuapp.com/student")
             .then((response) => {
                 var allStudents = response.data;
                 var curUser = undefined;
@@ -79,6 +78,7 @@ class LoginForm extends Component {
                     <CssBaseline />
                     <Grid item xs={false} sm={4} md={5}>
                         <img
+                            alt="http://www.davescomputertips.com/wp-content/uploads/2013/09/alt-key.jpg"
                             src="https://i.ibb.co/N2jMyvn/Screen-Shot-2021-03-21-at-9-49-25-PM.png"
                             width="100%"
                         />

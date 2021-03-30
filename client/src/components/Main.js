@@ -6,8 +6,6 @@ import AddStudent from "./AddStudent";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import GPDPage from "./GPDPage";
-import GPDHeader from "./GPDHeader";
-import App from "./App";
 
 const Main = () => (
     <main>

@@ -77,7 +77,7 @@ class AddStudent extends Component {
 
     onSubmit(e) {
         axios
-            .post("http://localhost:5000/student/add", {
+            .post("https://sbu-pathways.herokuapp.com/student/add", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,

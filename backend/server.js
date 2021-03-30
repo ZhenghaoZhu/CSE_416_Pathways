@@ -15,7 +15,7 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 });
 const connection = mongoose.connection;
 connection.once("open", () => {
@@ -34,4 +34,8 @@ app.use("/degreeReqs", degreeReqs);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello from Express!");
 });
