@@ -34,7 +34,7 @@ class StudentTable extends Component {
 
     getStudents() {
         axios
-            .get("http://localhost:5000/student/")
+            .get("https://sbu-pathways.herokuapp.com/student/")
             .then((response) => {
                 this.setState({
                     curStudents: response.data,

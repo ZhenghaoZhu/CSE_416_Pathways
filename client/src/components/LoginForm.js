@@ -30,7 +30,7 @@ class LoginForm extends Component {
     getUser(e) {
         e.preventDefault();
         axios
-            .get("http://localhost:5000/gpd")
+            .get("https://sbu-pathways.herokuapp.com/gpd")
             .then((response) => {
                 var allGPD = response.data;
                 var curUser = undefined;
@@ -51,7 +51,7 @@ class LoginForm extends Component {
             });
 
         axios
-            .get("http://localhost:5000/student")
+            .get("https://sbu-pathways.herokuapp.com/student")
             .then((response) => {
                 var allStudents = response.data;
                 var curUser = undefined;
