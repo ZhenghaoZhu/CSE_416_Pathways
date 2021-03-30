@@ -13,19 +13,19 @@ class AddStudent extends Component {
       lastName: "Anthony",
       id: 3122,
       email: "gmail@gmail.com",
-      gpa: 3,
+      gpa: 0,
       department: "dd",
       track: "dd",
       reqVersion: "dd",
       entrySem: "dd",
       entryYear: "dd",
       gradSem: "dd",
-      coursePlan: "plan",
-      projectOption: "option",
-      facultyAdvisor: "advisor",
+      coursePlan: " ",
+      projectOption: " ",
+      facultyAdvisor: " ",
       proficiencyReq: [],
-      degreeRequirements: "reqs",
-      password: "dd",
+      degreeRequirements: " ",
+      password: "password",
       graduated: false,
       settings: "settings",
       comments: [],
@@ -55,12 +55,14 @@ class AddStudent extends Component {
   setEntryYear(e){
     this.setState({entryYear: e.target.value})
   }
-  // setReqSem(e){
-  //   this.stateHolder["reqSem"] = e.target.value;
-  // }
-  // setReqYear(e){
-  //   this.stateHolder["reqYear"] = e.target.value;
-  // }
+  setReqSem(e){
+    this.setState({reqVersionSem: e.target.value})
+    // this.stateHolder["reqSem"] = e.target.value;
+  }
+  setReqYear(e){
+    this.setState({reqVersionYear: e.target.value})
+    // this.stateHolder["reqYear"] = e.target.value;
+  }
   setGradSem(e){
     this.setState({gradSem: e.target.value})
     console.log(this.state.gradSem);
@@ -84,10 +86,12 @@ class AddStudent extends Component {
       "gpa": this.state.gpa,
       "department": this.state.department,
       "track": this.state.track,
-      "reqVersion": this.state.reqVersion,
+      "reqVersionSem": this.state.reqVersionSem,
+      "reqVersionYear": this.state.reqVersionYear,
       "entrySem": this.state.entrySem,
       "entryYear": this.state.entryYear,
       "gradSem": this.state.gradSem,
+      "gradYear": this.state.gradYear,
       "coursePlan": this.state.coursePlan,
       "projectOption": this.state.projectOption,
       "facultyAdvisor": this.state.facultyAdvisor,
@@ -226,7 +230,7 @@ class AddStudent extends Component {
                   label="Requirement Version Semester"
                   variant="outlined"
                   required={true}
-                  // onChange={(val) => this.setReqSem(val)}
+                  onChange={(val) => this.setReqSem(val)}
                 />
               </Grid>
               <Grid item>
@@ -238,7 +242,7 @@ class AddStudent extends Component {
                   label="Requirement Version Year"
                   variant="outlined"
                   required={true}
-                  // onChange={(val) => this.setReqYear(val)}
+                  onChange={(val) => this.setReqYear(val)}
                 />
               </Grid>
               <Grid item>
