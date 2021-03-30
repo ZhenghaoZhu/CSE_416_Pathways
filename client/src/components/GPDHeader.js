@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { AppBar, IconButton, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
-import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
 class GPDHeader extends Component {
