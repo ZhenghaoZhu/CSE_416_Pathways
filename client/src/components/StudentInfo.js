@@ -52,7 +52,7 @@ class StudentInfo extends Component {
                 First Name: {student1.first_name}
               </Grid>
               <Grid item xs={6}>
-                Last Name: {student1.first_name}
+                Last Name: {student1.last_name} 
               </Grid>
             </Grid>
             <Grid item xs={12} container>
