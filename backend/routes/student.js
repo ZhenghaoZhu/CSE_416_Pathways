@@ -14,6 +14,12 @@ router.route("/get/:id").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/sbuID/:id").put((req, res) => {
+  Student.findOneAndReplace({id: req.params.id }, req.body,{upsert: true, returnNewDocument: true})
+  .then((ret) => res.json(ret))
+  .catch((err) => res.status(400).json("Error: " + err))
+});
+
 router.route("/remove/:id").delete(function(req, res) { //TODO, delete the student but crashes after
   Student.findByIdAndDelete(req.params.id, function (err, docs) { 
     if (err){ 
@@ -50,10 +56,12 @@ router.route("/add").post((req, res) => {
   const gpa = req.body.gpa;
   const department = req.body.department;
   const track = req.body.track;
-  const reqVersion = req.body.reqVersion;
+  const reqVersionSem = req.body.reqVersionSem;
+  const reqVersionYear = req.body.reqVersionYear;
   const entrySem = req.body.entrySem;
   const entryYear = req.body.entryYear;
   const gradSem = req.body.gradSem;
+  const gradYear = req.body.gradYear;
   const coursePlan = req.body.coursePlan;
   const projectOption = req.body.projectOption;
   const facultyAdvisor = req.body.facultyAdvisor;
@@ -72,10 +80,12 @@ router.route("/add").post((req, res) => {
     gpa,
     department,
     track,
-    reqVersion,
+    reqVersionSem,
+    reqVersionYear,
     entrySem,
     entryYear,
     gradSem,
+    gradYear,
     coursePlan,
     projectOption,
     facultyAdvisor,
