@@ -32,7 +32,7 @@ class CourseTable extends Component {
 
   getCourses() {
     axios
-      .get("http://localhost:5000/courses/")
+      .get("https://sbu-pathways.herokuapp.com/courses/")
       .then((response) => {
         this.courseFilter = response.data
         this.setState({

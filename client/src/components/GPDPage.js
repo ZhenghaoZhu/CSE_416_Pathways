@@ -33,7 +33,7 @@ class GPDPage extends Component {
 
     onSub(e) {
         e.preventDefault();
-        axios.delete("http://localhost:5000/student/remove");
+        axios.delete("https://sbu-pathways.herokuapp.com/student/remove");
         console.log("All Student Data Deleted");
     }
 
