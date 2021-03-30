@@ -29,7 +29,7 @@ class StudentDetail extends Component {
                 align="center"
                 style={{ fontSize: 19 }}
             >
-                {title + " - " + text}
+                <b>{title}</b> - {text}
             </Typography>
         );
     }
