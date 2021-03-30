@@ -5,9 +5,7 @@ import StudentDetail from "./StudentDetail";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Dropzone from "react-dropzone";
 
-const fs = require("fs");
 const axios = require("axios").default;
 
 class GPDPage extends Component {
