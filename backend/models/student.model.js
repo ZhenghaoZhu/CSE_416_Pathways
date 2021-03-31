@@ -22,7 +22,7 @@ const studentSchema = new Schema(
     entryYear: { type: String, required: true },
     gradSem: { type: String, required: true },
     gradYear: { type: String, required: true },
-    coursePlan: { type: String, required: true },
+    coursePlan: { type: Map, required: true },
     projectOption: { type: String, required: true },
     facultyAdvisor: { type: String, required: true },
     proficiencyReq: { type: Array, required: true },
