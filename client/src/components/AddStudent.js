@@ -102,125 +102,116 @@ class AddStudent extends Component {
       "settings": this.state.settings,
       "comments": this.state.comments
     }
-    )
-    .then((response) => {
-      console.log("Reply: ", response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-  }
 
-  render() {
-    return (
-      <>
-        <div>
-          <GPDHeader />
-        </div>
-        <div
-          style={{
-            padding: "10px",
-          }}
-        >
-          <Typography variant="h4" gutterBottom>
-            Add Student
-          </Typography>
-        </div>
-        <div>
-          <Grid container>
-            <form noValidate autoComplete="off">
-              <Grid item>
-                <TextField 
-                  id="sbu_id" 
-                  label="SBU ID" 
-                  variant="outlined" 
-                  autoFocus={true}
-                  required={true}
-                  onChange={(val) => this.setID(val)}
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  style={{
-                    padding: "10px",
-                  }}
-                  id="first_name"
-                  label="First Name"
-                  variant="outlined"
-                  required={true}
-                  onChange={(val) => this.setFirst(val)}
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  style={{
-                    padding: "10px",
-                  }}
-                  id="last_name"
-                  label="Last Name"
-                  variant="outlined"
-                  required={true}
-                  onChange={(val) => this.setLast(val)}
-                />
-              </Grid>
-              <Grid item>
-                <TextField 
-                  id="email" 
-                  label="Email" 
-                  variant="outlined" 
-                  required={true}
-                  onChange={(val) => this.setEmail(val)}
-                />
-              </Grid>
+    render() {
+        return (
+            <>
+                <div>
+                    <GPDHeader />
+                </div>
+                <div
+                    style={{
+                        padding: "10px",
+                    }}
+                >
+                    <Typography variant="h4" gutterBottom>
+                        Add Student
+                    </Typography>
+                </div>
+                <div>
+                    <Grid container>
+                        <form noValidate autoComplete="off">
+                            <Grid item>
+                                <TextField
+                                    id="sbu_id"
+                                    label="SBU ID"
+                                    variant="outlined"
+                                    autoFocus={true}
+                                    required={true}
+                                    onChange={(val) => this.setID(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="first_name"
+                                    label="First Name"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setFirst(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="last_name"
+                                    label="Last Name"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setLast(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    id="email"
+                                    label="Email"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setEmail(val)}
+                                />
+                            </Grid>
 
-              <Grid item>
-                <TextField
-                  style={{
-                    padding: "10px",
-                  }}
-                  id="department"
-                  label="Department"
-                  variant="outlined"
-                  required={true}
-                  onChange={(val) => this.setDepartment(val)}
-                />
-              </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="department"
+                                    label="Department"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setDepartment(val)}
+                                />
+                            </Grid>
 
-              <Grid item>
-                <TextField 
-                  id="track" 
-                  label="Track" 
-                  variant="outlined" 
-                  required={true}
-                  onChange={(val) => this.setTrack(val)}
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  style={{
-                    padding: "10px",
-                  }}
-                  id="entry_semester"
-                  label="Entry Semester"
-                  variant="outlined"
-                  required={true}
-                  onChange={(val) => this.setEntrySem(val)}
-                />
-              </Grid>
+                            <Grid item>
+                                <TextField
+                                    id="track"
+                                    label="Track"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setTrack(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="entry_semester"
+                                    label="Entry Semester"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setEntrySem(val)}
+                                />
+                            </Grid>
 
-              <Grid item>
-                <TextField
-                  style={{
-                    padding: "10px",
-                  }}
-                  id="entry_year"
-                  label="Entry Year"
-                  variant="outlined"
-                  required={true}
-                  onChange={(val) => this.setEntryYear(val)}
-                />
-              </Grid>
-
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="entry_year"
+                                    label="Entry Year"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setEntryYear(val)}
+                                />
+                            </Grid>
               <Grid item>
                 <TextField
                   style={{
