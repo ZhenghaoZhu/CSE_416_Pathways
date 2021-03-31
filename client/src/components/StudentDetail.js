@@ -1,18 +1,13 @@
 import React, { Component } from "react";
-import { DataGrid, filterGridStateSelector } from "@material-ui/data-grid";
 import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
-import GPDHeader from "./GPDHeader";
 
 class StudentDetail extends Component {
     constructor(props) {
         super(props);
         var curFocusStudent = {};
-        if (this.props.focusStudent != undefined) {
+        if (this.props.focusStudent !== undefined) {
             curFocusStudent = this.props.focusStudent.row;
         }
         this.state = {
@@ -29,7 +24,7 @@ class StudentDetail extends Component {
                 align="center"
                 style={{ fontSize: 19 }}
             >
-                {title + " - " + text}
+                <b>{title}</b> - {text}
             </Typography>
         );
     }
@@ -37,8 +32,8 @@ class StudentDetail extends Component {
         console.log(this.props.focusStudent);
         var studentInfo = undefined;
         if (
-            this.props.focusStudent != undefined &&
-            this.props.focusStudent.row != undefined
+            this.props.focusStudent !== undefined &&
+            this.props.focusStudent.row !== undefined
         ) {
             studentInfo = this.props.focusStudent.row;
         } else {

@@ -3,36 +3,36 @@ import { Grid } from "@material-ui/core";
 import axios from "axios";
 
 let student1 = {
-  sbu_id: "123456789",
-  email: "john.doe@stonybrook.edu",
-  first_name: "John",
-  last_name: "Doe",
-  department: "CSE",
-  track: "Thesis",
-  entry_semester: "Fall",
-  entry_year: "2020",
-  requirement_version_semester: "Fall",
-  requirement_version_year: "2020",
-  graduation_semester: "Spring",
-  graduation_year: "2022",
+    sbu_id: "123456789",
+    email: "john.doe@stonybrook.edu",
+    first_name: "John",
+    last_name: "Doe",
+    department: "CSE",
+    track: "Thesis",
+    entry_semester: "Fall",
+    entry_year: "2020",
+    requirement_version_semester: "Fall",
+    requirement_version_year: "2020",
+    graduation_semester: "Spring",
+    graduation_year: "2022",
 };
 
 class StudentInfo extends Component {
-  constructor(props) {
-    super(props);
-    // this.state = {
-    //   text: "Logo",
-    //   color: "#0000FF",
-    //   fontSize: 30,
-    //   borderColor: "#FFA500",
-    //   backgroundColor: "#FFC0CB", //chnaged
-    //   borderRadius: 40, //changed
-    //   borderWidth: 30,
-    //   borderPadding: 15,
-    //   borderMargin: 15,
-    //   whiteSpace: false,
-    // };
-  }
+    constructor(props) {
+        super(props);
+        // this.state = {
+        //   text: "Logo",
+        //   color: "#0000FF",
+        //   fontSize: 30,
+        //   borderColor: "#FFA500",
+        //   backgroundColor: "#FFC0CB", //chnaged
+        //   borderRadius: 40, //changed
+        //   borderWidth: 30,
+        //   borderPadding: 15,
+        //   borderMargin: 15,
+        //   whiteSpace: false,
+        // };
+    }
 
   render() {
     return (

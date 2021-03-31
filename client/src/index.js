@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./style/index.css";
-import App from "../src/components/App";
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 import StudentTable from "../src/components/StudentTable";
 import StudentDetail from "../src/components/StudentDetail";

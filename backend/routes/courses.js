@@ -15,12 +15,17 @@ router.route("/get/:id").get((req, res) => {
 });
 
 router.route("/update/:id").put((req, res) => {
-  Courses.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, docs) => {
-    // Handle any possible database errors
-        if(err){
-          return res.status(404).send(err);
-        } 
-    })
+  Courses.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true },
+    (err, docs) => {
+      // Handle any possible database errors
+      if (err) {
+        return res.status(404).send(err);
+      }
+    }
+  )
     .then((student) => res.json(student))
     .catch((err) => res.status(400).json("Error: " + err));
 });
