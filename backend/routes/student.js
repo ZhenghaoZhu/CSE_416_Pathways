@@ -9,9 +9,9 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/get/:id").get((req, res) => {
-  Student.findById(req.params.id)
-    .then((curStudent) => res.json(curStudent))
-    .catch((err) => res.status(400).json("Error: " + err));
+  Student.findOne({id: req.params.id})
+  .then((cur) => res.json(cur))
+  .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/get/sbuID/:id").put((req, res) => {
@@ -21,14 +21,9 @@ router.route("/get/sbuID/:id").put((req, res) => {
 });
 
 router.route("/remove/:id").delete(function(req, res) { //TODO, delete the student but crashes after
-  Student.findByIdAndDelete(req.params.id, function (err, docs) { 
-    if (err){ 
-        res.send("errorrrrr")
-    } 
-    else{ 
-        res.status(1).json(docs);
-    } 
-  }); 
+  Student.findOneAndDelete({id: req.params.id})
+  .then((result) => res.json(result))
+  .catch((err) => res.status(400).json("Error: " + err))
 });
 
 router.route("/remove").delete(function(req, res) { 
@@ -38,14 +33,11 @@ router.route("/remove").delete(function(req, res) {
 });
 
 router.route("/update/:id").post((req, res) => {
-    Student.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, docs) => {
-    // Handle any possible database errors
-        if (err){
-          return res.status(500).send(err);
-        } 
-    })
-    .then((student) => res.json(student))
-    .catch((err) => res.status(400).json("Error: " + err));
+  Student.findOneAndUpdate({id: req.params.id},req.body, {new: true}, (err, docs)  => {
+    if(err){return res.status(400).send(err)}
+  })
+  .then((student) => res.json(student))
+  .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/add").post((req, res) => {

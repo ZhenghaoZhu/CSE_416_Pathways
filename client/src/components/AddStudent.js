@@ -20,7 +20,7 @@ class AddStudent extends Component {
       entrySem: "dd",
       entryYear: "dd",
       gradSem: "dd",
-      coursePlan: " ",
+      coursePlan: [],
       projectOption: " ",
       facultyAdvisor: " ",
       proficiencyReq: [],

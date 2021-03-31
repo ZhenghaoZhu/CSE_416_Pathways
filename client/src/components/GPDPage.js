@@ -27,11 +27,11 @@ class GPDPage extends Component {
 
     add(fileObj){
         var i = 0
-        for(i; i < fileObj["data"].length - 1; i++){
+        for(i; i < fileObj["data"].length; i++){
             console.log(i, fileObj["data"][i]);
             console.log("ID", fileObj["data"][i]["sbu_id"]);
             var track = " "
-            if(fileObj["data"][i]["track"] != ""){
+            if(fileObj["data"][i]["track"] !== ""){
                 track = fileObj["data"][i]["track"];
             }
             axios.put("http://localhost:5000/student/get/sbuID/"+fileObj["data"][i]["sbu_id"], {
@@ -48,7 +48,7 @@ class GPDPage extends Component {
                 "entryYear": fileObj["data"][i]["entry_year"],
                 "gradSem": fileObj["data"][i]["graduation_semester"],
                 "gradYear" : fileObj["data"][i]["graduation_year"],
-                "coursePlan": " ",
+                "coursePlan": {"pastCourses": [], "currentCourses": [] },
                 "projectOption": " ",
                 "facultyAdvisor": " ",
                 "proficienyReq": [],
@@ -64,7 +64,16 @@ class GPDPage extends Component {
     }
     // student course plan file
     addCourseGrades(fileObj){
+        var i = 0
+        for(i; i < fileObj["data"].length; i++){
+            axios.get("http://localhost:5000/student/get/"+fileObj["data"][i]["sbu_id"])
+            .then((student) =>  this.updateStudent(fileObj, student, i))
+            .catch((err) => console.log("Error: ", err));
+        }
+    }
 
+    updateStudent(fileObj, student, i){
+        // axios.post(
     }
 
     checkFile(results){
@@ -78,20 +87,12 @@ class GPDPage extends Component {
     }
 
     fileParse(file) {
-        // console.log("results:", file);
-        // let csv = fs.readFileSync(file["data"]);
-        // console.log(csv.toString());
-        // console.log("results:", file);
-        // var fr = new FileReader();
-        // fr.readAsText(file);
-        // console.log("results:",fr.result);
         Papa.parse(file["0"]["file"], {
             header: true,
             complete: (results, file1) =>
                 this.checkFile(results)
             }
         );
-        // console.log("files:", file);
     }
 
 
