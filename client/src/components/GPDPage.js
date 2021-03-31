@@ -87,12 +87,14 @@ class GPDPage extends Component {
     }
 
     fileParse(file) {
-        Papa.parse(file["0"]["file"], {
-            header: true,
-            complete: (results, file1) =>
-                this.checkFile(results)
-            }
-        );
+        for(var i = 0; i<file.length; i++){
+            Papa.parse(file[i]["file"], {
+                header: true,
+                complete: (results, file1) =>
+                    this.checkFile(results)
+                }
+            );
+        }
     }
 
 

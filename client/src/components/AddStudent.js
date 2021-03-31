@@ -101,7 +101,7 @@ class AddStudent extends Component {
       "graduated": this.state.graduated,
       "settings": this.state.settings,
       "comments": this.state.comments
-    }
+    })}
 
     render() {
         return (
