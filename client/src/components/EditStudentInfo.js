@@ -4,30 +4,27 @@ import { Typography, Grid, Button } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
 const axios = require("axios").default;
 
-class AddStudent extends Component {
-
+class EditStudent extends Component {
     constructor(props) {
         super(props);
         this.state = {
             firstName: "Anthony",
             lastName: "Anthony",
-            id: 3122435454,
+            id: 3122,
             email: "gmail@gmail.com",
-            gpa: 0.0,
+            gpa: 3,
             department: "dd",
             track: "dd",
-            reqVersionSem: "Spring",
-            reqVersionYear: "2021",
+            reqVersion: "dd",
             entrySem: "dd",
             entryYear: "dd",
-            gradSem: "Fall",
-            gradYear: "2025",
-            coursePlan: [],
-            projectOption: "None",
-            facultyAdvisor: "None",
+            gradSem: "dd",
+            coursePlan: "plan",
+            projectOption: "option",
+            facultyAdvisor: "advisor",
             proficiencyReq: [],
-            degreeRequirements: "None",
-            password: "password",
+            degreeRequirements: "reqs",
+            password: "dd",
             graduated: false,
             settings: "settings",
             comments: [],
@@ -57,25 +54,29 @@ class AddStudent extends Component {
     setEntryYear(e) {
         this.setState({ entryYear: e.target.value });
     }
-    setReqSem(e) {
-        this.setState({ reqVersionSem: e.target.value });
-    }
-    setReqYear(e) {
-        this.setState({ reqVersionYear: e.target.value });
-    }
+    // setReqSem(e){
+    //   this.stateHolder["reqSem"] = e.target.value;
+    // }
+    // setReqYear(e){
+    //   this.stateHolder["reqYear"] = e.target.value;
+    // }
     setGradSem(e) {
         this.setState({ gradSem: e.target.value });
+        console.log(this.state.gradSem);
     }
     setGradYear(e) {
+        console.log(this.state.gradYear);
         this.setState({ gradYear: e.target.value });
+        console.log(this.state.gradYear);
     }
     setPassword(e) {
         this.setState({ password: e.target.value });
+        console.log(this.state.password);
     }
 
     onSubmit(e) {
         axios
-            .post("https://sbu-pathways.herokuapp.com/student/add", {
+            .post("http://localhost:5000/student/add", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
@@ -83,12 +84,10 @@ class AddStudent extends Component {
                 gpa: this.state.gpa,
                 department: this.state.department,
                 track: this.state.track,
-                reqVersionSem: this.state.reqVersionSem,
-                reqVersionYear: this.state.reqVersionYear,
+                reqVersion: this.state.reqVersion,
                 entrySem: this.state.entrySem,
                 entryYear: this.state.entryYear,
                 gradSem: this.state.gradSem,
-                gradYear: this.state.gradYear,
                 coursePlan: this.state.coursePlan,
                 projectOption: this.state.projectOption,
                 facultyAdvisor: this.state.facultyAdvisor,
@@ -99,9 +98,13 @@ class AddStudent extends Component {
                 settings: this.state.settings,
                 comments: this.state.comments,
             })
-            .then((cur) => console.log("Added student: ", cur))
-            .catch((err) => console.log("Error happened :(", err));
-    })}
+            .then((response) => {
+                console.log("Reply: ", response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     render() {
         return (
@@ -115,14 +118,17 @@ class AddStudent extends Component {
                     }}
                 >
                     <Typography variant="h4" gutterBottom>
-                        Add Student
+                        Edit Student Information
                     </Typography>
                 </div>
                 <div>
-                    <Grid container>
-                        <form noValidate autoComplete="off">
-                            <Grid item>
+                    <form noValidate autoComplete="off">
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
                                     id="sbu_id"
                                     label="SBU ID"
                                     variant="outlined"
@@ -131,11 +137,8 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setID(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs xs={3}>
                                 <TextField
-                                    style={{
-                                        padding: "10px",
-                                    }}
                                     id="first_name"
                                     label="First Name"
                                     variant="outlined"
@@ -143,7 +146,10 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setFirst(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={3} >
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -155,7 +161,7 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setLast(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={3}>
                                 <TextField
                                     id="email"
                                     label="Email"
@@ -164,8 +170,10 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setEmail(val)}
                                 />
                             </Grid>
+                        </Grid>
 
-                            <Grid item>
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -178,7 +186,7 @@ class AddStudent extends Component {
                                 />
                             </Grid>
 
-                            <Grid item>
+                            <Grid item xs={3}>
                                 <TextField
                                     id="track"
                                     label="Track"
@@ -187,7 +195,10 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setTrack(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -200,11 +211,8 @@ class AddStudent extends Component {
                                 />
                             </Grid>
 
-                            <Grid item>
+                            <Grid item xs={3}>
                                 <TextField
-                                    style={{
-                                        padding: "10px",
-                                    }}
                                     id="entry_year"
                                     label="Entry Year"
                                     variant="outlined"
@@ -212,7 +220,10 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setEntryYear(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -221,25 +232,25 @@ class AddStudent extends Component {
                                     label="Requirement Version Semester"
                                     variant="outlined"
                                     required={true}
-                                    onChange={(val) => this.setReqSem(val)}
+                                    // onChange={(val) => this.setReqSem(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={3}>
                                 <TextField
-                                    style={{
-                                        padding: "10px",
-                                    }}
                                     id="requirement_version_year"
                                     label="Requirement Version Year"
                                     variant="outlined"
                                     required={true}
-                                    onChange={(val) => this.setReqYear(val)}
+                                    // onChange={(val) => this.setReqYear(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
-                                        padding: "5px",
+                                        padding: "10px",
                                     }}
                                     id="graduation_semester"
                                     label="Graduation Semester"
@@ -248,11 +259,8 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setGradSem(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={3}>
                                 <TextField
-                                    style={{
-                                        padding: "10px",
-                                    }}
                                     id="graduation_year"
                                     label="Graduation Year"
                                     variant="outlined"
@@ -260,8 +268,14 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setGradYear(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={3}>
                                 <TextField
+                                    style={{
+                                        padding: "10px"
+                                    }}
                                     id="password"
                                     label="Password"
                                     variant="outlined"
@@ -269,21 +283,23 @@ class AddStudent extends Component {
                                     onChange={(val) => this.setPassword(val)}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs>  
                                 <Button
                                     variant="contained"
                                     color="primary"
+                                    size = "large"
+                                    style = {{marginTop:"20px"}}    
                                     onClick={(e) => this.onSubmit(e)}
                                 >
-                                    Add Student
+                                    Save Changes
                                 </Button>
                             </Grid>
-                        </form>
-                    </Grid>
+                        </Grid>
+                    </form>
                 </div>
             </>
         );
     }
 }
 
-export default AddStudent;
+export default EditStudent;

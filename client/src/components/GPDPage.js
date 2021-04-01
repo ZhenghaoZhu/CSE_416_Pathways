@@ -87,12 +87,14 @@ class GPDPage extends Component {
     }
 
     fileParse(file) {
-        Papa.parse(file["0"]["file"], {
-            header: true,
-            complete: (results, file1) =>
-                this.checkFile(results)
-            }
-        );
+        for(var i = 0; i<file.length; i++){
+            Papa.parse(file[i]["file"], {
+                header: true,
+                complete: (results, file1) =>
+                    this.checkFile(results)
+                }
+            );
+        }
     }
 
 
@@ -141,11 +143,15 @@ class GPDPage extends Component {
                             >
                                 <Button>Import Student</Button>
                                 <Button>
-                                    <Link to="/addStudent">
+                                    <Link to="/addStudent" style={{ textDecoration: 'none',"color":"inherit"}}>
                                         Add Student Form
                                     </Link>
                                 </Button>
-                                <Button>Edit Student</Button>
+                                <Button>
+                                    <Link to="/editStudent" style={{ textDecoration: 'none',"color":"inherit"}}>
+                                        Edit Student
+                                    </Link>
+                                </Button>
                                 <Button>Suggest Course Plan</Button>
                                 <Button onClick={this.onSub}>
                                     Delete All{" "}
