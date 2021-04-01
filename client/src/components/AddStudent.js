@@ -5,7 +5,6 @@ import GPDHeader from "./GPDHeader";
 const axios = require("axios").default;
 
 class AddStudent extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -101,7 +100,7 @@ class AddStudent extends Component {
             })
             .then((cur) => console.log("Added student: ", cur))
             .catch((err) => console.log("Error happened :(", err));
-    })}
+    }
 
     render() {
         return (
