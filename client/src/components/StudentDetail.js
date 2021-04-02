@@ -22,7 +22,7 @@ class StudentDetail extends Component {
                 color="textSecondary"
                 component="p"
                 align="center"
-                style={{ fontSize: 19 }}
+                style={{ fontSize: 22 }}
             >
                 <b>{title}</b> - {text}
             </Typography>
@@ -45,10 +45,12 @@ class StudentDetail extends Component {
                 gpa: 3.5,
                 department: "AMS",
                 track: "Quantitative Finance",
-                reqVersion: "2019",
+                reqVersionSem: "None",
+                reqVersionYear: "None",
                 entrySem: "Fall",
                 entryYear: "2019",
-                gradSem: "2023",
+                gradSem: "Spring",
+                gradYear: "2024",
                 coursePlan: "None",
                 projectOption: "None",
                 facultyAdvisor: "Scott Stoller",
@@ -66,7 +68,7 @@ class StudentDetail extends Component {
                 style={{
                     height: 500,
                     marginTop: 50,
-                    marginBottom: 10,
+                    marginBottom: 13,
                 }}
             >
                 <CardContent>
@@ -75,7 +77,7 @@ class StudentDetail extends Component {
                         variant="h5"
                         component="h2"
                         align="center"
-                        style={{ fontSize: 30, textDecoration: "underline" }}
+                        style={{ fontSize: 35, textDecoration: "underline" }}
                     >
                         {studentInfo.firstName + " " + studentInfo.lastName}
                     </Typography>
@@ -86,7 +88,9 @@ class StudentDetail extends Component {
                     {this.BuildTypography("Track", studentInfo.track)}
                     {this.BuildTypography(
                         "Requirement Version",
-                        studentInfo.reqVersion
+                        studentInfo.reqVersionSem +
+                            " " +
+                            studentInfo.reqVersionYear
                     )}
                     {this.BuildTypography(
                         "Entry Semester",
@@ -94,12 +98,8 @@ class StudentDetail extends Component {
                     )}
                     {this.BuildTypography("Entry Year", studentInfo.entryYear)}
                     {this.BuildTypography(
-                        "Graduating Semester",
-                        studentInfo.gradSem
-                    )}
-                    {this.BuildTypography(
-                        "Course Plan",
-                        studentInfo.coursePlan
+                        "Expected Graduation",
+                        studentInfo.gradSem + " " + studentInfo.gradYear
                     )}
                     {this.BuildTypography(
                         "Project Option",
@@ -110,15 +110,14 @@ class StudentDetail extends Component {
                         studentInfo.facultyAdvisor
                     )}
                     {this.BuildTypography(
-                        "Proficiency Requirements",
-                        studentInfo.proficiencyReq
-                    )}
-                    {this.BuildTypography(
                         "Degree Requirements",
                         studentInfo.degreeRequirements
                     )}
-                    {this.BuildTypography("Graduated", studentInfo.graduated)}
-                    {this.BuildTypography("Comments", studentInfo.comments)}
+                    {this.BuildTypography(
+                        "Graduated",
+                        studentInfo.graduated ? "Yes" : "No"
+                    )}
+                    {/* {this.BuildTypography("Comments", studentInfo.comments)} */}
                 </CardContent>
             </Card>
         );
