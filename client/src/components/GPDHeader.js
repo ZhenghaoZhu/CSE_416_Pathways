@@ -78,12 +78,6 @@ class GPDHeader extends Component {
                         src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png"
                         width="38px"
                     />
-                    {/* <li>
-                        <Link to="/">GPD Home Page</Link>
-                    </li>
-                    <li>
-                        <Link to="/login">Login Form</Link>
-                    </li> */}
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
                         Emerson True
                     </Typography>
