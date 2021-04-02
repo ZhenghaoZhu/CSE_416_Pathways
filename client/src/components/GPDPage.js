@@ -96,9 +96,9 @@ class GPDPage extends Component {
     }
 
     checkFile(results){
-        // console.log("coursenum: ", results["data"][0]["course_num"])
+        console.log("coursenum: ", results["data"][0]["course_num"])
         if(results["data"][0]["course_num"] == null){
-            this.add(results);
+            this.addStudents(results);
         }
         else{
             this.addCourseGrades(results); //TODO import course grades, student course plan file
