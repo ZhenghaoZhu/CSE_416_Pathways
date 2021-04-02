@@ -23,6 +23,7 @@ class GPDPage extends Component {
                 curStudent,
             },
         };
+        this.counter = 0;
     }
 
     add(fileObj){
@@ -48,7 +49,7 @@ class GPDPage extends Component {
                 "entryYear": fileObj["data"][i]["entry_year"],
                 "gradSem": fileObj["data"][i]["graduation_semester"],
                 "gradYear" : fileObj["data"][i]["graduation_year"],
-                "coursePlan": {"pastCourses": [], "currentCourses": [] },
+                "coursePlan": {"pastCourses": {}, "currentCourses": {"Spring2021": [["AMS","537","Stuff"]]}, "futureCourses": {}, "invalidCourses": {}  },
                 "projectOption": " ",
                 "facultyAdvisor": " ",
                 "proficienyReq": [],
@@ -66,18 +67,59 @@ class GPDPage extends Component {
     addCourseGrades(fileObj){
         var i = 0
         for(i; i < fileObj["data"].length; i++){
+            // console.log("Student ID:", fileObj["data"][i]["sbu_id"]);
             axios.get("http://localhost:5000/student/get/"+fileObj["data"][i]["sbu_id"])
-            .then((student) =>  this.updateStudent(fileObj, student, i))
+            .then((student) =>  this.updateStudent(fileObj["data"][this.counter], student["data"]))
             .catch((err) => console.log("Error: ", err));
         }
+        this.counter = 0; //reset counter
     }
+    // this.updateStudent(fileObj["data"], student, i)
 
-    updateStudent(fileObj, student, i){
-        // axios.post(
+    updateStudent(fileObj, student){
+        this.counter += 1;
+        if(fileObj["year"] < 2021){
+            if(student["coursePlan"]["pastCourses"][fileObj["semester"]+fileObj["year"]] === undefined){
+                student["coursePlan"]["pastCourses"][fileObj["semester"]+fileObj["year"]] = [];
+            }
+            student["coursePlan"]["pastCourses"][fileObj["semester"]+fileObj["year"]].push([fileObj["department"],fileObj["course_num"],fileObj["grade"]])
+        }
+        else if(fileObj["year"] > 2021){
+            if(student["coursePlan"]["futureCourses"][fileObj["semester"]+fileObj["year"]] === undefined){
+                student["coursePlan"]["futureCourses"][fileObj["semester"]+fileObj["year"]] = [];
+            }
+            student["coursePlan"]["futureCourses"][fileObj["semester"]+fileObj["year"]].push([fileObj["department"],fileObj["course_num"],fileObj["grade"]])
+        }
+        else{
+            if(fileObj["semester"] === "Fall"){ //Fall 2021
+                if(student["coursePlan"]["futureCourses"]["Fall2021"] === undefined){
+                    student["coursePlan"]["futureCourses"]["Fall2021"] = [];
+                }
+                student["coursePlan"]["futureCourses"]["Fall2021"].push([fileObj["department"],fileObj["course_num"],fileObj["grade"]])
+            }
+            else if(fileObj["semester"] === "Spring"){ //Spring 2021
+                if(student["coursePlan"]["currentCourses"]["Spring2021"] === undefined){
+                    student["coursePlan"]["currentCourses"]["Spring2021"] = [];
+                }
+                student["coursePlan"]["currentCourses"]["Spring2021"].push([fileObj["department"],fileObj["course_num"],fileObj["grade"]])
+            }
+            else{
+                if(student["coursePlan"]["futureCourse"]["Summer2021"] === undefined){
+                    student["coursePlan"]["futureCourse"]["Summer2021"] = [];
+                }
+                student["coursePlan"]["futureCourse"]["Summer2021"].push([fileObj["department"],fileObj["course_num"],fileObj["grade"]])
+                console.log("Invalid semester? Or maybe summer")
+            }
+        }
+        axios.post("http://localhost:5000/student/update/"+student["id"], {
+            coursePlan: student["coursePlan"]
+        })
+        .then((log) => console.log(log))
+        .catch((err) => console.log("Update unsuccessful: ", err));
     }
 
     checkFile(results){
-        console.log("coursenum: ", results["data"][0]["course_num"])
+        // console.log("coursenum: ", results["data"][0]["course_num"])
         if(results["data"][0]["course_num"] == null){
             this.add(results);
         }
