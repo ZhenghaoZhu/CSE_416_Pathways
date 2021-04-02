@@ -23,6 +23,7 @@ class GPDPage extends Component {
                 curStudent,
             },
         };
+        this.counter = 0;
     }
 
     addStudents(fileObj) {
@@ -81,17 +82,25 @@ class GPDPage extends Component {
                 .then((student) => this.updateStudent(fileObj, student, i))
                 .catch((err) => console.log("Error: ", err));
         }
+        this.counter = 0; //reset counter
+    }
+    // this.updateStudent(fileObj["data"], student, i)
+
+    updateStudent(fileObj, student){
+        this.counter += 1;
+        // axios.post("http://localhost:5000/student/update/"+student["id"], {
+        //     coursePlan: student["coursePlan"]
+        // })
+        // .then((log) => console.log(log))
+        // .catch((err) => console.log("Update unsuccessful: ", err));
     }
 
-    updateStudent(fileObj, student, i) {
-        // axios.post(
-    }
-
-    checkFile(results) {
-        console.log("coursenum: ", results["data"][0]["course_num"]);
-        if (results["data"][0]["course_num"] == null) {
+    checkFile(results){
+        console.log("coursenum: ", results["data"][0]["course_num"])
+        if(results["data"][0]["course_num"] == null){
             this.addStudents(results);
-        } else {
+        }
+        else{
             this.addCourseGrades(results); //TODO import course grades, student course plan file
         }
     }
