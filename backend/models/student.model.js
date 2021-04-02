@@ -23,10 +23,13 @@ const studentSchema = new Schema(
     gradSem: { type: String, required: true },
     gradYear: { type: String, required: true },
     coursePlan: { type: Map, required: true },
+    // {"Spring 2020": [Course1, Course2, ...], "Fall 2020": [Course1, Course2, ...], "Spring 2021": [Course1, Course2, ...], "Fall 2021": [Course1, Course2, ...]}
     projectOption: { type: String, required: true },
     facultyAdvisor: { type: String, required: true },
     proficiencyReq: { type: Array, required: true },
     degreeRequirements: { type: String, required: true }, //TODO CHECK
+    curSem: { type: String, required: true },
+    curYear: { type: String, required: true },
     password: { type: String, required: true },
     graduated: { type: Boolean, required: true },
     settings: { type: String, required: true },

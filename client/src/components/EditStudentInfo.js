@@ -76,7 +76,7 @@ class EditStudent extends Component {
 
     onSubmit(e) {
         axios
-            .post("http://localhost:5000/student/add", {
+            .post("https://sbu-pathways.herokuapp.com/student/add", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
@@ -149,7 +149,7 @@ class EditStudent extends Component {
                         </Grid>
 
                         <Grid container>
-                            <Grid item xs={3} >
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -274,7 +274,7 @@ class EditStudent extends Component {
                             <Grid item xs={3}>
                                 <TextField
                                     style={{
-                                        padding: "10px"
+                                        padding: "10px",
                                     }}
                                     id="password"
                                     label="Password"
@@ -283,12 +283,12 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setPassword(val)}
                                 />
                             </Grid>
-                            <Grid item xs>  
+                            <Grid item xs>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    size = "large"
-                                    style = {{marginTop:"20px"}}    
+                                    size="large"
+                                    style={{ marginTop: "20px" }}
                                     onClick={(e) => this.onSubmit(e)}
                                 >
                                     Save Changes
