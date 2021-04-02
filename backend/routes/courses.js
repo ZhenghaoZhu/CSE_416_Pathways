@@ -39,7 +39,7 @@ router.route("/add").post((req, res) => {
   const preReqs = req.body.preReqs;
   const courseDescription = req.body.courseDescription;
   const yearTrends = req.body.yearTrends;
-  const timeSlots = req.body.timeSlots;
+  const courseInfo = req.body.courseInfo;
   const professorNames = req.body.professorNames;
 
   const newCourse = new Courses({
@@ -51,7 +51,7 @@ router.route("/add").post((req, res) => {
     preReqs,
     courseDescription,
     yearTrends,
-    timeSlots,
+    courseInfo,
     professorNames,
   });
 
