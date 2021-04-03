@@ -15,36 +15,32 @@ class FileUploadArea extends Component {
                 curStudent["track"] = " ";
             }
             axios
-                .put(
-                    Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"],
-                    {
-                        firstName: curStudent["first_name"],
-                        lastName: curStudent["last_name"],
-                        id: curStudent["sbu_id"],
-                        email: curStudent["email"],
-                        gpa: 0,
-                        department: curStudent["department"],
-                        track: curStudent["track"],
-                        reqVersionSem:
-                            curStudent["requirement_version_semester"],
-                        reqVersionYear: curStudent["requirement_version_year"],
-                        entrySem: curStudent["entry_semester"],
-                        entryYear: curStudent["entry_year"],
-                        gradSem: curStudent["graduation_semester"],
-                        gradYear: curStudent["graduation_year"],
-                        coursePlan: {},
-                        projectOption: " ",
-                        facultyAdvisor: " ",
-                        proficienyReq: [],
-                        degreeRequirements: " ",
-                        curSem: "Spring",
-                        curYear: "2021",
-                        password: curStudent["password"],
-                        graduated: false,
-                        settings: " ",
-                        comments: [],
-                    }
-                )
+                .post(Config.URL + "/student/add", {
+                    firstName: curStudent["first_name"],
+                    lastName: curStudent["last_name"],
+                    id: curStudent["sbu_id"],
+                    email: curStudent["email"],
+                    gpa: 0,
+                    department: curStudent["department"],
+                    track: curStudent["track"],
+                    reqVersionSem: curStudent["requirement_version_semester"],
+                    reqVersionYear: curStudent["requirement_version_year"],
+                    entrySem: curStudent["entry_semester"],
+                    entryYear: curStudent["entry_year"],
+                    gradSem: curStudent["graduation_semester"],
+                    gradYear: curStudent["graduation_year"],
+                    coursePlan: {},
+                    projectOption: " ",
+                    facultyAdvisor: " ",
+                    proficienyReq: [],
+                    degreeRequirements: " ",
+                    curSem: "Spring",
+                    curYear: "2021",
+                    password: curStudent["password"],
+                    graduated: false,
+                    settings: " ",
+                    comments: [],
+                })
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
@@ -72,57 +68,68 @@ class FileUploadArea extends Component {
             .catch((err) => console.log("Error happened :(", err));
     };
 
-    updateCourses = async function (fileObj) {
+    createCourse = async function (fileObj) {
+        console.log(fileObj);
+        var curKey = fileObj["semester"] + " " + fileObj["year"];
+        var newSection = [fileObj["section"], fileObj["timeslot"]];
+        var curCourseInfo = {};
+        curCourseInfo[curKey] = [];
+        curCourseInfo[curKey].push(newSection);
+        await axios
+            .post(Config.URL + "/courses/add", {
+                department: fileObj["department"],
+                courseNum: fileObj["course_num"],
+                courseName: "Another CS Class",
+                credits: 3,
+                preReqs: [],
+                courseDescription: "Description",
+                yearTrends: {},
+                courseInfo: curCourseInfo,
+                professorNames: {},
+            })
+            .then((course) => console.log("Course Added ", course))
+            .catch((err) => console.log(err));
+    };
+
+    updateCourse = async function (curCourse, fileObj) {
+        curCourse = curCourse["data"][0];
+        var curKey = fileObj["semester"] + " " + fileObj["year"];
+        var newSection = [fileObj["section"], fileObj["timeslot"]];
+        var newCourseInfo = curCourse["courseInfo"];
+        if (newCourseInfo[curKey] === undefined) {
+            newCourseInfo[curKey] = [];
+        }
+        newCourseInfo[curKey].push(newSection);
+        curCourse["courseInfo"] = newCourseInfo;
+        await axios
+            .put(
+                Config.URL + "/courses/update/classID/" + curCourse["id"],
+                curCourse
+            )
+            .then((cur) => console.log("Update course: ", cur))
+            .catch((err) => console.log("Error happened :(", err));
+    };
+
+    checkCourses = async function (fileObj) {
         // Find the course, if it exists then update it with new section and time slot
         // If the course doesn't exist then create it with an array of courseInfo
-        //
-        //
-        //
-        //
-        //
-        var newCourse = {};
         fileObj["data"].map((curCourse) => {
-            var curClass = null;
+            var curClassID = null;
             if (Object.keys(curCourse).length === 6) {
-                curClass = curCourse["department"] + curCourse["course_num"];
+                curClassID = curCourse["department"] + curCourse["course_num"];
+                axios
+                    .get(Config.URL + "/courses/get/classID/" + curClassID)
+                    .then((res) =>
+                        res["data"].length === 0
+                            ? this.createCourse(curCourse)
+                            : this.updateCourse(res, curCourse)
+                    )
+                    .catch((err) => console.log("Course not added, ", err));
             }
+            return 1;
         });
-        // axios
-        //     .put(
-        //         URL +
-        //             "courses/update/classID/" +
-        //             curStudent["sbu_id"],
-        //         {
-        //             firstName: curStudent["first_name"],
-        //             lastName: curStudent["last_name"],
-        //             id: curStudent["sbu_id"],
-        //             email: curStudent["email"],
-        //             gpa: 0,
-        //             department: curStudent["department"],
-        //             track: curStudent["track"],
-        //             reqVersionSem: curStudent["requirement_version_semester"],
-        //             reqVersionYear: curStudent["requirement_version_year"],
-        //             entrySem: curStudent["entry_semester"],
-        //             entryYear: curStudent["entry_year"],
-        //             gradSem: curStudent["graduation_semester"],
-        //             gradYear: curStudent["graduation_year"],
-        //             coursePlan: {},
-        //             projectOption: " ",
-        //             facultyAdvisor: " ",
-        //             proficienyReq: [],
-        //             degreeRequirements: " ",
-        //             curSem: "Spring",
-        //             curYear: "2021",
-        //             password: curStudent["password"],
-        //             graduated: false,
-        //             settings: " ",
-        //             comments: [],
-        //         }
-        //     )
-        //     .then((cur) => console.log("Added student: ", cur))
-        //     .catch((err) => console.log("Error happened :(", err));
     };
-    // student course plan file
+
     addCourseGrades = async function (fileObj) {
         var curData = fileObj["data"];
         console.log(process);
@@ -141,7 +148,7 @@ class FileUploadArea extends Component {
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
             case 6: // Courses CSV
-                this.updateCourses(results);
+                this.checkCourses(results);
                 break;
             case 7: // Course Grades CSV
                 this.addCourseGrades(results);

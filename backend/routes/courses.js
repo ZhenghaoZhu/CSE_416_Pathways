@@ -10,7 +10,7 @@ router.route("/").get((req, res) => {
 
 router.route("/get/:id").get((req, res) => {
     Courses.findById(req.params.id)
-        .then((curStudent) => res.json(curStudent))
+        .then((curCourse) => res.json(curCourse))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -25,12 +25,8 @@ router.route("/update/:id").put((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/update/classID/:id").put((req, res) => {
-    Courses.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, docs) => {
-        if (err) {
-            return res.status(400).send(err);
-        }
-    })
+router.route("/get/classID/:id").get((req, res) => {
+    Courses.find({ id: req.params.id })
         .then((course) => res.json(course))
         .catch((err) => res.status(400).json("Error: " + err));
 });
