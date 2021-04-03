@@ -17,6 +17,7 @@ class GPDPage extends Component {
                 curStudent,
             },
         };
+        this.counter = 0;
     }
 
     onSub(e) {
