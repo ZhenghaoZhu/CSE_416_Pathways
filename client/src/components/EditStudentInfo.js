@@ -137,7 +137,7 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setID(val)}
                                 />
                             </Grid>
-                            <Grid item xs xs={3}>
+                            <Grid item xs={3}>
                                 <TextField
                                     id="first_name"
                                     label="First Name"

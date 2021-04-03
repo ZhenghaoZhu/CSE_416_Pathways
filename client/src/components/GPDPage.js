@@ -10,13 +10,13 @@ import { Link } from "react-router-dom";
 // import AddStudent from "./AddStudent";
 
 const Papa = require("papaparse");
-const fs = require("fs");
 const axios = require("axios").default;
+
+const PATHWAYS_API_URL = "https://sbu-pathways.herokuapp.com";
 
 class GPDPage extends Component {
     constructor(props) {
         super(props);
-        console.log(this.props.focusStudent);
         var curStudent = this.props.focusStudent;
         this.state = {
             focusStudent: {
@@ -36,7 +36,8 @@ class GPDPage extends Component {
             }
             axios
                 .put(
-                    "https://sbu-pathways.herokuapp.com/student/get/sbuID/" +
+                    PATHWAYS_API_URL +
+                        "/student/get/sbuID/" +
                         curStudent["sbu_id"],
                     {
                         firstName: curStudent["first_name"],
@@ -53,7 +54,7 @@ class GPDPage extends Component {
                         entryYear: curStudent["entry_year"],
                         gradSem: curStudent["graduation_semester"],
                         gradYear: curStudent["graduation_year"],
-                        coursePlan: { pastCourses: [], currentCourses: [] },
+                        coursePlan: {},
                         projectOption: " ",
                         facultyAdvisor: " ",
                         proficienyReq: [],
@@ -70,38 +71,110 @@ class GPDPage extends Component {
                 .catch((err) => console.log("Error happened :(", err));
         }
     }
+
+    updateStudentGrades = async function (curClassObj, student) {
+        var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
+        var curItem = [
+            curClassObj["section"],
+            curClassObj["department"] + " " + curClassObj["course_num"],
+            curClassObj["grade"],
+        ];
+        if (student["coursePlan"][curSemester] === undefined) {
+            console.log(student["coursePlan"]);
+            student["coursePlan"][curSemester] = [];
+            student["coursePlan"][curSemester].push(curItem);
+            console.log(student["coursePlan"]);
+        } else {
+            student["coursePlan"][curSemester].push(curItem);
+            console.log(student["coursePlan"]);
+        }
+        await axios
+            .post(
+                PATHWAYS_API_URL + "/student/update/" + student["id"],
+                student
+            )
+            .then((cur) => console.log("Added student: ", cur))
+            .catch((err) => console.log("Error happened :(", err));
+    };
+
+    updateCourses = async function (fileObj) {
+        // Find the course, if it exists then update it with new section and time slot
+        // If the course doesn't exist then create it with an array of courseInfo
+        //
+        //
+        //
+        //
+        //
+        var newCourse = {};
+        fileObj["data"].map((curCourse) => {
+            var curClass = null;
+            if (Object.keys(curCourse).length === 6) {
+                curClass = curCourse["department"] + curCourse["course_num"];
+            }
+        });
+        // axios
+        //     .put(
+        //         PATHWAYS_API_URL +
+        //             "courses/update/classID/" +
+        //             curStudent["sbu_id"],
+        //         {
+        //             firstName: curStudent["first_name"],
+        //             lastName: curStudent["last_name"],
+        //             id: curStudent["sbu_id"],
+        //             email: curStudent["email"],
+        //             gpa: 0,
+        //             department: curStudent["department"],
+        //             track: curStudent["track"],
+        //             reqVersionSem: curStudent["requirement_version_semester"],
+        //             reqVersionYear: curStudent["requirement_version_year"],
+        //             entrySem: curStudent["entry_semester"],
+        //             entryYear: curStudent["entry_year"],
+        //             gradSem: curStudent["graduation_semester"],
+        //             gradYear: curStudent["graduation_year"],
+        //             coursePlan: {},
+        //             projectOption: " ",
+        //             facultyAdvisor: " ",
+        //             proficienyReq: [],
+        //             degreeRequirements: " ",
+        //             curSem: "Spring",
+        //             curYear: "2021",
+        //             password: curStudent["password"],
+        //             graduated: false,
+        //             settings: " ",
+        //             comments: [],
+        //         }
+        //     )
+        //     .then((cur) => console.log("Added student: ", cur))
+        //     .catch((err) => console.log("Error happened :(", err));
+    };
     // student course plan file
-    addCourseGrades(fileObj) {
-        var i = 0;
-        for (i; i < fileObj["data"].length; i++) {
-            axios
-                .get(
-                    "https://sbu-pathways.herokuapp.com/student/get/" +
-                        fileObj["data"][i]["sbu_id"]
+    addCourseGrades = async function (fileObj) {
+        var curData = fileObj["data"];
+        for (let i = 0; i < curData.length; i++) {
+            await axios
+                .get(PATHWAYS_API_URL + "/student/get/" + curData[i]["sbu_id"])
+                .then((student) =>
+                    this.updateStudentGrades(curData[i], student["data"])
                 )
-                .then((student) => this.updateStudent(fileObj, student, i))
                 .catch((err) => console.log("Error: ", err));
         }
-        this.counter = 0; //reset counter
-    }
-    // this.updateStudent(fileObj["data"], student, i)
+    };
 
-    updateStudent(fileObj, student){
-        this.counter += 1;
-        // axios.post("http://localhost:5000/student/update/"+student["id"], {
-        //     coursePlan: student["coursePlan"]
-        // })
-        // .then((log) => console.log(log))
-        // .catch((err) => console.log("Update unsuccessful: ", err));
-    }
-
-    checkFile(results){
-        console.log("coursenum: ", results["data"][0]["course_num"])
-        if(results["data"][0]["course_num"] == null){
-            this.addStudents(results);
-        }
-        else{
-            this.addCourseGrades(results); //TODO import course grades, student course plan file
+    checkFile(results) {
+        // NOTE  Courses CSV has 6 elements in each object (row), Student CSV has 13, Course Grades has 7
+        var firstHeaderLen = Object.keys(results["data"][0]).length;
+        switch (firstHeaderLen) {
+            case 6: // Courses CSV
+                this.updateCourses(results);
+                break;
+            case 7: // Course Grades CSV
+                this.addCourseGrades(results);
+                break;
+            case 13: // Students CSV
+                this.addStudents(results);
+                break;
+            default:
+                console.log("File format is wrong");
         }
     }
 
@@ -117,12 +190,11 @@ class GPDPage extends Component {
 
     onSub(e) {
         e.preventDefault();
-        axios.delete("https://sbu-pathways.herokuapp.com/student/remove");
+        axios.delete(PATHWAYS_API_URL + "/student/remove");
         console.log("All Student Data Deleted");
     }
 
     render() {
-        console.log(this.state.focusStudent);
         return (
             <Box style={{ width: "99.82%" }}>
                 <GPDHeader />
