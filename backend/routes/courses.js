@@ -30,28 +30,41 @@ router.route("/update/:id").put((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/update/classID/:id").put((req, res) => {
+  Courses.findOneAndUpdate(
+    { id: req.params.id },
+    req.body,
+    { new: true },
+    (err, docs) => {
+      if (err) {
+        return res.status(400).send(err);
+      }
+    }
+  )
+    .then((course) => res.json(course))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/add").post((req, res) => {
-  const id = req.body.id;
-  const courseName = req.body.courseName;
-  const courseIden = req.body.courseIden;
   const department = req.body.department;
+  const courseNum = req.body.courseNum;
+  const courseName = req.body.courseName;
   const credits = req.body.credits;
   const preReqs = req.body.preReqs;
   const courseDescription = req.body.courseDescription;
   const yearTrends = req.body.yearTrends;
-  const timeSlots = req.body.timeSlots;
+  const courseInfo = req.body.courseInfo;
   const professorNames = req.body.professorNames;
 
   const newCourse = new Courses({
-    id,
-    courseName,
-    courseIden,
     department,
+    courseNum,
+    courseName,
     credits,
     preReqs,
     courseDescription,
     yearTrends,
-    timeSlots,
+    courseInfo,
     professorNames,
   });
 
