@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import Config from "../config.json";
 
 const axios = require("axios").default;
+
 class GPDPage extends Component {
     constructor(props) {
         super(props);
