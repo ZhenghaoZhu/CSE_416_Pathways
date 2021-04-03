@@ -25,7 +25,7 @@ class GPDPage extends Component {
         };
     }
 
-    addStudents = async function (fileObj) {
+    addStudents(fileObj) {
         var curStudent = null;
         for (var i = 0; i < fileObj["data"].length; i++) {
             curStudent = fileObj["data"][i];
@@ -33,7 +33,7 @@ class GPDPage extends Component {
             if (curStudent["track"] === "") {
                 curStudent["track"] = " ";
             }
-            await axios
+            axios
                 .put(
                     PATHWAYS_API_URL +
                         "/student/get/sbuID/" +
@@ -69,7 +69,7 @@ class GPDPage extends Component {
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
-    };
+    }
 
     updateStudentGrades = async function (curClassObj, student) {
         var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
@@ -96,12 +96,58 @@ class GPDPage extends Component {
             .catch((err) => console.log("Error happened :(", err));
     };
 
-    addCourses(fileObj) {
-        console.log(fileObj);
-    }
+    updateCourses = async function (fileObj) {
+        // Find the course, if it exists then update it with new section and time slot
+        // If the course doesn't exist then create it with an array of courseInfo
+        //
+        //
+        //
+        //
+        //
+        var newCourse = {};
+        fileObj["data"].map((curCourse) => {
+            var curClass = null;
+            if (Object.keys(curCourse).length === 6) {
+                curClass = curCourse["department"] + curCourse["course_num"];
+            }
+        });
+        // axios
+        //     .put(
+        //         PATHWAYS_API_URL +
+        //             "courses/update/classID/" +
+        //             curStudent["sbu_id"],
+        //         {
+        //             firstName: curStudent["first_name"],
+        //             lastName: curStudent["last_name"],
+        //             id: curStudent["sbu_id"],
+        //             email: curStudent["email"],
+        //             gpa: 0,
+        //             department: curStudent["department"],
+        //             track: curStudent["track"],
+        //             reqVersionSem: curStudent["requirement_version_semester"],
+        //             reqVersionYear: curStudent["requirement_version_year"],
+        //             entrySem: curStudent["entry_semester"],
+        //             entryYear: curStudent["entry_year"],
+        //             gradSem: curStudent["graduation_semester"],
+        //             gradYear: curStudent["graduation_year"],
+        //             coursePlan: {},
+        //             projectOption: " ",
+        //             facultyAdvisor: " ",
+        //             proficienyReq: [],
+        //             degreeRequirements: " ",
+        //             curSem: "Spring",
+        //             curYear: "2021",
+        //             password: curStudent["password"],
+        //             graduated: false,
+        //             settings: " ",
+        //             comments: [],
+        //         }
+        //     )
+        //     .then((cur) => console.log("Added student: ", cur))
+        //     .catch((err) => console.log("Error happened :(", err));
+    };
     // student course plan file
     addCourseGrades = async function (fileObj) {
-        var curStudent = null;
         var curData = fileObj["data"];
         for (let i = 0; i < curData.length; i++) {
             await axios
@@ -118,7 +164,7 @@ class GPDPage extends Component {
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
             case 6: // Courses CSV
-                this.addCourses(results);
+                this.updateCourses(results);
                 break;
             case 7: // Course Grades CSV
                 this.addCourseGrades(results);

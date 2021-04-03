@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const coursesSchema = new Schema(
   {
+    id: { type: String, requireted: true, minLength: 1 }, // CSE220
     department: { type: String, required: true, minLength: 1 }, // CSE
     courseNum: { type: String, required: true, minLength: 1 }, // 220
     courseName: { type: String, required: true, minLength: 1 }, // Sys Fundamentals
