@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
+import Config from "../config.json";
 const axios = require("axios").default;
 
 class AddStudent extends Component {
@@ -74,7 +75,7 @@ class AddStudent extends Component {
 
     onSubmit(e) {
         axios
-            .post("https://sbu-pathways.herokuapp.com/student/add", {
+            .post(Config.URL + "/student/add", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
