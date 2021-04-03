@@ -1,9 +1,5 @@
 import React, { Component } from "react";
 import { AppBar, IconButton, Toolbar, Typography } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Menu from "@material-ui/core/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import { Link } from "react-router-dom";
 
@@ -27,57 +23,44 @@ class GPDHeader extends Component {
         return (
             <AppBar position="static" style={{ background: "#e35a5a" }}>
                 <Toolbar>
-                    <IconButton
-                        edge="start"
-                        style={{ marginRight: "10px" }}
-                        aria-label="menu"
-                    >
-                        <MenuIcon onClick={this.handleOpen} />
-                        <Menu
-                            anchorEl={this.state.anchorEl}
-                            keepMounted
-                            open={Boolean(this.state.anchorEl)}
-                            onClose={this.handleClose}
-                        >
-                            <MenuItem>
-                                <Link
-                                    to="/"
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                    }}
-                                >
-                                    Home Page
-                                </Link>
-                            </MenuItem>
-                            <MenuItem>
-                                <Link
-                                    to="/login"
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                    }}
-                                >
-                                    Login
-                                </Link>
-                            </MenuItem>
-                            <MenuItem>
-                                <Link
-                                    to="/register"
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                    }}
-                                >
-                                    Register Page
-                                </Link>
-                            </MenuItem>
-                        </Menu>
-                    </IconButton>
                     <img
                         src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png"
                         width="38px"
+                        alt=""
                     />
+                    <Typography variant="h6" style={{ marginLeft: "45px" }}>
+                        <Link
+                            to="/"
+                            style={{
+                                textDecoration: "none",
+                                color: "inherit",
+                            }}
+                        >
+                            Home
+                        </Link>
+                    </Typography>
+                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
+                        <Link
+                            to="/login"
+                            style={{
+                                textDecoration: "none",
+                                color: "inherit",
+                            }}
+                        >
+                            Login
+                        </Link>
+                    </Typography>
+                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
+                        <Link
+                            to="/register"
+                            style={{
+                                textDecoration: "none",
+                                color: "inherit",
+                            }}
+                        >
+                            Register Page
+                        </Link>
+                    </Typography>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
                         Emerson True
                     </Typography>

@@ -30,7 +30,6 @@ class StudentTable extends Component {
 
     componentDidMount() {
         this.getStudents();
-        console.log(this.state.curStudents);
     }
 
     getStudents() {
@@ -45,9 +44,6 @@ class StudentTable extends Component {
             })
             .catch(function (error) {
                 console.log(error);
-            })
-            .then(function () {
-                console.log("After axios request:");
             });
     }
 
@@ -66,7 +62,6 @@ class StudentTable extends Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div
                 style={{
