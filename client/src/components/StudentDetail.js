@@ -22,14 +22,13 @@ class StudentDetail extends Component {
                 color="textSecondary"
                 component="p"
                 align="center"
-                style={{ fontSize: 22 }}
+                style={{ fontSize: 23 }}
             >
                 <b>{title}</b> - {text}
             </Typography>
         );
     }
     render() {
-        console.log(this.props.focusStudent);
         var studentInfo = undefined;
         if (
             this.props.focusStudent !== undefined &&
@@ -93,10 +92,9 @@ class StudentDetail extends Component {
                             studentInfo.reqVersionYear
                     )}
                     {this.BuildTypography(
-                        "Entry Semester",
-                        studentInfo.entrySem
+                        "Entry Date",
+                        studentInfo.entrySem + " " + studentInfo.entryYear
                     )}
-                    {this.BuildTypography("Entry Year", studentInfo.entryYear)}
                     {this.BuildTypography(
                         "Expected Graduation",
                         studentInfo.gradSem + " " + studentInfo.gradYear
