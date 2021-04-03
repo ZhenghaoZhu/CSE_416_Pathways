@@ -63,6 +63,8 @@ class StudentDetail extends Component {
             };
         }
 
+        var expectedGrad = studentInfo.gradSem + " " + studentInfo.gradYear;
+
         return (
             <Card
                 style={{
@@ -97,10 +99,7 @@ class StudentDetail extends Component {
                         studentInfo.entrySem
                     )}
                     {this.BuildTypography("Entry Year", studentInfo.entryYear)}
-                    {this.BuildTypography(
-                        "Expected Graduation",
-                        studentInfo.gradSem + " " + studentInfo.gradYear
-                    )}
+                    {this.BuildTypography("Expected Graduation", expectedGrad)}
                     {this.BuildTypography(
                         "Project Option",
                         studentInfo.projectOption

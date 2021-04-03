@@ -31,3 +31,4 @@ client/src/importStudent.csv
 client/yarn.lock
 client/src/importCourses.csv
 client/src/importGrades.csv
+backend/package-lock.json
