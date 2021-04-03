@@ -158,28 +158,6 @@ class GPDPage extends Component {
                 )
                 .catch((err) => console.log("Error: ", err));
         }
-<<<<<<< HEAD
-        this.counter = 0; //reset counter
-    }
-    // this.updateStudent(fileObj["data"], student, i)
-
-    updateStudent(fileObj, student){
-        this.counter += 1;
-        // axios.post("http://localhost:5000/student/update/"+student["id"], {
-        //     coursePlan: student["coursePlan"]
-        // })
-        // .then((log) => console.log(log))
-        // .catch((err) => console.log("Update unsuccessful: ", err));
-    }
-
-    checkFile(results){
-        console.log("coursenum: ", results["data"][0]["course_num"])
-        if(results["data"][0]["course_num"] == null){
-            this.addStudents(results);
-        }
-        else{
-            this.addCourseGrades(results); //TODO import course grades, student course plan file
-=======
     };
 
     checkFile(results) {
@@ -197,7 +175,6 @@ class GPDPage extends Component {
                 break;
             default:
                 console.log("File format is wrong");
->>>>>>> 0de15b01f8ea44891764c88afb70d0675d57d9f9
         }
     }
 
