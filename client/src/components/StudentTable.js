@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import Box from "@material-ui/core/Box";
+import Config from "../config.json";
 
 const axios = require("axios").default;
 
@@ -30,12 +31,11 @@ class StudentTable extends Component {
 
     componentDidMount() {
         this.getStudents();
-        console.log(this.state.curStudents);
     }
 
     getStudents() {
         axios
-            .get("https://sbu-pathways.herokuapp.com/student/")
+            .get(Config.URL + "/student/")
             .then((response) => {
                 this.setState({
                     curStudents: response.data,
@@ -45,9 +45,6 @@ class StudentTable extends Component {
             })
             .catch(function (error) {
                 console.log(error);
-            })
-            .then(function () {
-                console.log("After axios request:");
             });
     }
 
@@ -66,7 +63,6 @@ class StudentTable extends Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div
                 style={{

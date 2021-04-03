@@ -9,35 +9,46 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/get/:id").get((req, res) => {
-  Student.findOne({id: req.params.id})
-  .then((cur) => res.json(cur))
-  .catch((err) => res.status(400).json("Error: " + err));
+  Student.findOne({ id: req.params.id })
+    .then((cur) => res.json(cur))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/get/sbuID/:id").put((req, res) => {
-  Student.findOneAndReplace({id: req.params.id }, req.body,{upsert: true, returnNewDocument: true})
-  .then((ret) => res.json(ret))
-  .catch((err) => res.status(400).json("Error: " + err))
+  Student.findOneAndReplace({ id: req.params.id }, req.body, {
+    upsert: true,
+    returnNewDocument: true,
+  })
+    .then((ret) => res.json(ret))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/remove/:id").delete(function(req, res) { //TODO, delete the student but crashes after
-  Student.findOneAndDelete({id: req.params.id})
-  .then((result) => res.json(result))
-  .catch((err) => res.status(400).json("Error: " + err))
+router.route("/remove/:id").delete(function (req, res) {
+  //TODO, delete the student but crashes after
+  Student.findOneAndDelete({ id: req.params.id })
+    .then((result) => res.json(result))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/remove").delete(function(req, res) { 
+router.route("/remove").delete(function (req, res) {
   Student.deleteMany()
-  .then((body) => res.json(body))
-  .catch((err) => res.status(400).json("Error: " + err));
+    .then((body) => res.json(body))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/update/:id").post((req, res) => {
-  Student.findOneAndUpdate({id: req.params.id},req.body, {new: true}, (err, docs)  => {
-    if(err){return res.status(400).send(err)}
-  })
-  .then((student) => res.json(student))
-  .catch((err) => res.status(400).json("Error: " + err));
+  Student.findOneAndUpdate(
+    { id: req.params.id },
+    req.body,
+    { new: true },
+    (err, docs) => {
+      if (err) {
+        return res.status(400).send(err);
+      }
+    }
+  )
+    .then((student) => res.json(student))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/add").post((req, res) => {
@@ -59,6 +70,8 @@ router.route("/add").post((req, res) => {
   const facultyAdvisor = req.body.facultyAdvisor;
   const proficiencyReq = req.body.proficiencyReq;
   const degreeRequirements = req.body.degreeRequirements;
+  const curSem = req.body.curSem;
+  const curYear = req.body.curYear;
   const password = req.body.password;
   const graduated = req.body.graduated;
   const settings = req.body.settings;
@@ -83,6 +96,8 @@ router.route("/add").post((req, res) => {
     facultyAdvisor,
     proficiencyReq,
     degreeRequirements,
+    curSem,
+    curYear,
     password,
     graduated,
     settings,
@@ -94,7 +109,5 @@ router.route("/add").post((req, res) => {
     .then(() => res.json("Student added!"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
-
-
 
 module.exports = router;

@@ -28,7 +28,6 @@ backend/.env
 # private 
 client/.env
 client/src/importStudent.csv
-client/yarn.lock
-client/src/importCourses.csv
 client/src/importGrades.csv
+client/yarn.lock
 backend/package-lock.json

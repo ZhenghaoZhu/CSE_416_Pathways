@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
+import Config from "../config.json";
+
 const axios = require("axios").default;
 
 class EditStudent extends Component {
@@ -76,7 +78,7 @@ class EditStudent extends Component {
 
     onSubmit(e) {
         axios
-            .post("https://sbu-pathways.herokuapp.com/student/add", {
+            .post(Config.URL + "/student/add", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
@@ -137,7 +139,7 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setID(val)}
                                 />
                             </Grid>
-                            <Grid item xs xs={3}>
+                            <Grid item xs={3}>
                                 <TextField
                                     id="first_name"
                                     label="First Name"
