@@ -13,7 +13,7 @@ const coursesSchema = new Schema(
     courseDescription: { type: String, required: true, minLength: 1 }, // "Something"
     yearTrends: { type: Map, required: true }, // See PowerPoint
     courseInfo: { type: Map, required: true },
-    // {"Spring 2021" : ["MW 10:30pm - 11:30pm","TuTh 10:30pm - 11:30pm"], "Spring 2022" : ["TuTh 10:30pm - 11:30pm"]}
+    // {"Fall 2020" : [1, "MW 10:30pm - 11:30pm"], "Spring 2021" : [2, "TuTh 10:30pm - 11:30pm"]}
     professorNames: { type: Map, required: true },
     // {"Spring 2021" : [1, "Professor1"], "Spring"}
   },
