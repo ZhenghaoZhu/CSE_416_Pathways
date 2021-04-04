@@ -62,6 +62,8 @@ class StudentDetail extends Component {
             };
         }
 
+        var expectedGrad = studentInfo.gradSem + " " + studentInfo.gradYear;
+
         return (
             <Card
                 style={{
