@@ -15,32 +15,36 @@ class FileUploadArea extends Component {
                 curStudent["track"] = " ";
             }
             axios
-                .post(Config.URL + "/student/add", {
-                    firstName: curStudent["first_name"],
-                    lastName: curStudent["last_name"],
-                    id: curStudent["sbu_id"],
-                    email: curStudent["email"],
-                    gpa: 0,
-                    department: curStudent["department"],
-                    track: curStudent["track"],
-                    reqVersionSem: curStudent["requirement_version_semester"],
-                    reqVersionYear: curStudent["requirement_version_year"],
-                    entrySem: curStudent["entry_semester"],
-                    entryYear: curStudent["entry_year"],
-                    gradSem: curStudent["graduation_semester"],
-                    gradYear: curStudent["graduation_year"],
-                    coursePlan: {},
-                    projectOption: " ",
-                    facultyAdvisor: " ",
-                    proficienyReq: [],
-                    degreeRequirements: " ",
-                    curSem: "Spring",
-                    curYear: "2021",
-                    password: curStudent["password"],
-                    graduated: false,
-                    settings: " ",
-                    comments: [],
-                })
+                .put(
+                    Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"],
+                    {
+                        firstName: curStudent["first_name"],
+                        lastName: curStudent["last_name"],
+                        id: curStudent["sbu_id"],
+                        email: curStudent["email"],
+                        gpa: 0,
+                        department: curStudent["department"],
+                        track: curStudent["track"],
+                        reqVersionSem:
+                            curStudent["requirement_version_semester"],
+                        reqVersionYear: curStudent["requirement_version_year"],
+                        entrySem: curStudent["entry_semester"],
+                        entryYear: curStudent["entry_year"],
+                        gradSem: curStudent["graduation_semester"],
+                        gradYear: curStudent["graduation_year"],
+                        coursePlan: {},
+                        projectOption: " ",
+                        facultyAdvisor: " ",
+                        proficienyReq: [],
+                        degreeRequirements: " ",
+                        curSem: "Spring",
+                        curYear: "2021",
+                        password: curStudent["password"],
+                        graduated: false,
+                        settings: " ",
+                        comments: [],
+                    }
+                )
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
