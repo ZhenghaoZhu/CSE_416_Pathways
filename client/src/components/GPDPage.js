@@ -86,14 +86,62 @@ class GPDPage extends Component {
         }
     }
 
-    fileParse(file) {
-        for(var i = 0; i<file.length; i++){
-            Papa.parse(file[i]["file"], {
-                header: true,
-                complete: (results, file1) =>
-                    this.checkFile(results)
-                }
-            );
+    fileParse(files) {
+        if(files[0].file.type === "text/plain"){  // parse the course information
+            let file = files[0].file;
+            let reader = new FileReader();
+    
+            reader.onload = function() {
+                let textFile = reader.result;
+                // parse
+                let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
+                const courses = course_array.map(course => {
+                    let course_fields = course.match(/(.+(\r?\n))+/gm); 
+                    let courseName = course_fields[0];
+                    let description = course_fields[1];
+                    let prerequisites = "None";
+                    let numOfCredits = null;
+    
+                    let matches = course.match(/\d{1}(\-\d+)? credit/); 
+                    let creditNum = matches === null ? "" : matches[0];
+                    if(!creditNum.includes("-")){ // single digit credit
+                        numOfCredits = creditNum[0];
+                    }else { // range of credit exp 0-12
+                        if(creditNum.length === 10){ 
+                            numOfCredits = creditNum.substring(0,3);
+                        }else if(creditNum.length === 11){
+                            numOfCredits = creditNum.substring(0,4);
+                        };
+                    };
+    
+                    let prereq_match = course.match(/Prerequisite.+/);
+                    let prereq_text = prereq_match === null? "":prereq_match[0];
+    
+                    if(course.toLowerCase().includes("prerequisite")){
+                        prerequisites = prereq_text.substring(prereq_text.indexOf(":")+2);
+                    };
+                    return{
+                        courseName,
+                        description,
+                        numOfCredits,
+                        prerequisites
+                    }
+                });
+                console.log(courses);
+            };
+            reader.onerror = function() {
+                console.log(reader.error);
+            };
+            reader.readAsText(file);
+        }else{
+            for(var i = 0; i<files.length; i++){
+                Papa.parse(files[i]["file"], {
+                    header: true,
+                    complete: (results, file1) =>
+                        this.checkFile(results)
+                    }
+                );
+            }
         }
     }
 

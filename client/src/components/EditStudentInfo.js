@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
+import { DropzoneAreaBase } from "material-ui-dropzone";
 import GPDHeader from "./GPDHeader";
 const axios = require("axios").default;
 
@@ -73,7 +74,6 @@ class EditStudent extends Component {
         this.setState({ password: e.target.value });
         console.log(this.state.password);
     }
-
     onSubmit(e) {
         axios
             .post("http://localhost:5000/student/add", {

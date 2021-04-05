@@ -101,7 +101,7 @@ class AddStudent extends Component {
             })
             .then((cur) => console.log("Added student: ", cur))
             .catch((err) => console.log("Error happened :(", err));
-    })}
+    }
 
     render() {
         return (
