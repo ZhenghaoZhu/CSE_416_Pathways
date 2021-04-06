@@ -9,6 +9,7 @@ import AddStudent from "../src/components/AddStudent";
 import RegisterForm from "../src/components/RegisterForm";
 import GPDPage from "../src/components/GPDPage";
 import EditStudentInfo from "./components/EditStudentInfo";
+import EnrollmentTrends from "./components/EnrollmentTrends";
 
 ReactDOM.render(
     <BrowserRouter>
@@ -20,7 +21,7 @@ ReactDOM.render(
             <Route path="/addStudent" component={AddStudent} />
             <Route path="/register" component={RegisterForm} />
             <Route path="/editStudent" component={EditStudentInfo} />
-
+            <Route path="/enrollmentTrends" component={EnrollmentTrends} />
         </Switch>
     </BrowserRouter>,
     document.getElementById("root")
