@@ -20,7 +20,7 @@ class GPDPage extends Component {
         };
         this.counter = 0;
     }
-
+  
     onSub(e) {
         e.preventDefault();
         axios.delete(Config.URL + "/student/remove");
