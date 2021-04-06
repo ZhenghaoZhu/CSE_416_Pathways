@@ -1,75 +1,81 @@
 {
-    "Computational Applied Mathematics": {
-        "Required Courses": [
-            [1, "AMS 501"],
-            [1, "AMS 503"],
-            [1, "AMS 526"],
-            [1, "AMS 527"],
-            [1, "AMS 528"],
-            [1, "AMS 595"]
-        ],
-        "Elective Courses": [[4, "AMS"]],
-        "Excluded Courses": []
-    },
-    "Computational Biology": {
-        "Required Courses": [
-            [1, "AMS 507"],
-            [1, "AMS 510"],
-            [1, "MCB 520", "CHE 541"],
-            [2, "AMS 531"],
-            [2, "AMS 532"],
-            [1, "AMS 533"],
-            [1, "AMS 535"],
-            [1, "AMS 537"],
-            [1, "AMS 539"],
-            [1, "AMS 549"],
-            [1, "CSE 549"]
-        ],
-        "Elective Courses": [[3, "AMS"]],
-        "Excluded Courses": []
-    },
-    "Operations Research": {
-        "Required Courses": [
-            [1, "AMS 510"],
-            [1, "AMS 507"],
-            [1, "AMS 540"],
-            [1, "AMS 550"],
-            [1, "AMS 553"],
-            [1, "AMS 570 - 586"],
-            [1, "AMS 595"]
-        ],
-        "Elective Courses": [[4, "AMS 542­ - 556"]],
-        "Excluded Courses": []
-    },
-    "Statistics": {
-        "Required Courses": [
-            [1, "AMS 507"],
-            [1, "AMS 510"],
-            [1, "AMS 570"],
-            [1, "AMS 572"],
-            [1, "AMS 573"],
-            [1, "AMS 578"],
-            [1, "AMS 582"],
-            [1, "AMS 597"]
-        ],
-        "Elective Courses": [[2, "AMS"]],
-        "Excluded Courses": []
-    },
-    "Quantitative Finance": {
-        "Required Courses": [
-            [1, "AMS 507"],
-            [1, "AMS 510"],
-            [1, "AMS 511"],
-            [1, "AMS 512"],
-            [1, "AMS 513"],
-            [1, "AMS 514"],
-            [1, "AMS 516"],
-            [1, "AMS 517"],
-            [1, "AMS 518"],
-            [1, "AMS 572"],
-            [1, "FIN 539"]
-        ],
-        "Elective Courses": [[1, "AMS"]],
-        "Excluded Courses": []
+    "Department": "AMS",
+    "GPA_Requirement": 3.0,
+    "Version_Semester": "Spring",
+    "Version_Year": 2021,
+    "Time_Limit": 3,
+    "Tracks": {
+        "Computational Applied Mathematics": {
+            "Required Courses": [
+                [1, "AMS 501"],
+                [1, "AMS 503"],
+                [1, "AMS 526"],
+                [1, "AMS 527"],
+                [1, "AMS 528"],
+                [1, "AMS 595"]
+            ],
+            "Elective Courses": [[4, "AMS"]],
+            "Excluded Courses": []
+        },
+        "Computational Biology": {
+            "Required Courses": [
+                [1, "AMS 507"],
+                [1, "AMS 510"],
+                [1, "MCB 520", "CHE 541"],
+                [2, "AMS 531"],
+                [2, "AMS 532"],
+                [1, "AMS 533"],
+                [1, "AMS 535"],
+                [1, "AMS 537"],
+                [1, "AMS 539"],
+                [1, "AMS 549"]
+            ],
+            "Elective Courses": [[3, "AMS"]],
+            "Excluded Courses": []
+        },
+        "Operations Research": {
+            "Required Courses": [
+                [1, "AMS 510"],
+                [1, "AMS 507"],
+                [1, "AMS 540"],
+                [1, "AMS 550"],
+                [1, "AMS 553"],
+                [1, "AMS 570 - 586"],
+                [1, "AMS 595"]
+            ],
+            "Elective Courses": [[4, "AMS 542­ - 556"]],
+            "Excluded Courses": []
+        },
+        "Statistics": {
+            "Required Courses": [
+                [1, "AMS 507"],
+                [1, "AMS 510"],
+                [1, "AMS 570"],
+                [1, "AMS 572"],
+                [1, "AMS 573"],
+                [1, "AMS 578"],
+                [1, "AMS 582"],
+                [1, "AMS 597"]
+            ],
+            "Elective Courses": [[2, "AMS"]],
+            "Excluded Courses": []
+        },
+        "Quantitative Finance": {
+            "Required Courses": [
+                [1, "AMS 507"],
+                [1, "AMS 510"],
+                [1, "AMS 511"],
+                [1, "AMS 512"],
+                [1, "AMS 513"],
+                [1, "AMS 514"],
+                [1, "AMS 516"],
+                [1, "AMS 517"],
+                [1, "AMS 518"],
+                [1, "AMS 572"],
+                [1, "FIN 539"]
+            ],
+            "Elective Courses": [[1, "AMS"]],
+            "Excluded Courses": []
+        }
     }
 }
