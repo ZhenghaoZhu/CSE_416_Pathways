@@ -6,6 +6,7 @@ import {
     Grid,
     TextField,
 } from "@material-ui/core";
+import Config from "../config.json";
 
 const axios = require("axios").default;
 
@@ -30,7 +31,7 @@ class LoginForm extends Component {
     getUser(e) {
         e.preventDefault();
         axios
-            .get("https://sbu-pathways.herokuapp.com/gpd")
+            .get(Config.URL + "/gpd")
             .then((response) => {
                 var allGPD = response.data;
                 var curUser = undefined;
@@ -51,7 +52,7 @@ class LoginForm extends Component {
             });
 
         axios
-            .get("https://sbu-pathways.herokuapp.com/student")
+            .get(Config.URL + "/student")
             .then((response) => {
                 var allStudents = response.data;
                 var curUser = undefined;
