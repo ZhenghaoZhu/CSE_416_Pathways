@@ -1,0 +1,168 @@
+{
+	"Imaging Informatics": {
+		"Thesis Option": {
+			"Required Courses" : [
+			    [1, "BMI 501"],
+			    [1, "BMI 502", "BMI 503"],
+			    [1, "BMI 513"],
+			    [1, "BMI 514"],
+			    [1, "BMI 520"],
+			    [1, "BMI 530"],
+			    [1, "BMI 540"],
+			    [-2, "BMI 592"], 
+			    [-1, "BMI 599"] 
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+			    [-1, "BMI 590"],
+			    [[1,2], "BMI 591"], 
+			    [-1, "BMI 595"],
+			    [-1, "BMI 596"],
+			    [-1, "BMI 625"],
+			    [1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 511", "BMI 512", "BMI 598"]
+		},
+		"Project Option": {
+			"Required Courses": [
+				[1, "BMI 501"],
+				[1, "BMI 502", "BMI 503"], 
+				[1, "BMI 513"],
+				[1, "BMI 514"],
+				[1, "BMI 520"],
+				[1, "BMI 530"], 
+				[1, "BMI 540"],
+				[-2, "BMI 592"],
+				[-1, "BMI 598"]
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+			    [-1, "BMI 590"],
+			    [[1,2], "BMI 591"],
+			    [-1, "BMI 595"],
+			    [-1, "BMI 596"],
+			    [-1, "BMI 625"],
+			    [1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 511", "BMI 512", "BMI 599"]
+		}
+	},
+	"Clinical Informatics": {
+		"Thesis Option": {
+			"Required Courses": [
+				[1, "BMI 501"],
+			    [1, "BMI 502", "BMI 503"],
+			    [1, "BMI 512"],
+			    [1, "BMI 540"],
+			    [1, "BMI 550"],
+			    [1, "BMI 551"],
+			    [-2, "BMI 592"],
+			    [-1, "BMI 599"]
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+				[1, "BMI 520"],
+				[1, "BMI 530"],
+				[1, "BMI 552"],
+				[-1, "BMI 590"],
+				[[1,2], "BMI 591"],
+				[-1, "BMI 595"],
+				[-1, "BMI 596"],
+				[-1, "BMI 620"],
+				[1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 511", "BMI 513", "BMI 598"]
+		},
+		"Project Option": {
+			"Required Courses": [
+				[1, "BMI 501"],
+			    [1, "BMI 502", "BMI 503"],
+			    [1, "BMI 512"],
+			    [1, "BMI 540"],
+			    [1, "BMI 550"],
+			    [1, "BMI 551"],
+			    [-2, "BMI 592"],
+			    [-1, "BMI 598"]
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+				[1, "BMI 520"],
+				[1, "BMI 530"],
+				[1, "BMI 552"],
+				[-1, "BMI 590"],
+				[[1,2], "BMI 591"],
+				[-1, "BMI 595"],
+				[-1, "BMI 596"],
+				[-1, "BMI 620"],
+				[1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 511", "BMI 513", "BMI 599"]
+		}
+	},
+	"Translational Bioinformatics": {
+		"Thesis Option": {
+			"Required Courses": [
+				[1, "BMI 501"],
+			    [1, "BMI 502", "BMI 503"],
+			    [1, "BMI 511"],
+			    [1, "BMI 520"],
+				[1, "BMI 530"],
+				[1, "BMI 540"],
+				[-2, "BMI 592"],
+				[-1, "BMI 599"],
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+				[1, "BMI 560"],
+				[-1, "BMI 590"],
+				[[1,2], "BMI 591"],
+				[-1, "BMI 595"],
+				[-1, "BMI 596"],
+				[[1,2], "BMI 622"],
+				[1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 512", "BMI 513", "BMI 598"]
+		},
+		"Project Option": {
+			"Required Courses": [
+				[1, "BMI 501"],
+			    [1, "BMI 502", "BMI 503"],
+			    [1, "BMI 511"],
+			    [1, "BMI 520"],
+				[1, "BMI 530"],
+				[1, "BMI 540"],
+				[-2, "BMI 592"],
+				[-1, "BMI 598"]
+			],
+			"Elective Courses": [
+				[1, "BMI 517"],
+				[1, "BMI 560"],
+				[-1, "BMI 590"],
+				[[1,2], "BMI 591"],
+				[-1, "BMI 595"],
+				[-1, "BMI 596"],
+				[[1,2], "BMI 622"],
+				[1, "BMI 690"],
+			    [1, "BMI 691"],
+			    [-1, "BMI 695"],
+			    [1, "BMI 696"]
+			],
+			"Excluded Courses": ["BMI 512", "BMI 513", "BMI 599"]
+		}
+	}
+}
