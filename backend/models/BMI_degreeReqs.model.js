@@ -9,20 +9,14 @@ const BmiDegreeSchema = new Schema(
       required: true,
       trim: true,
     },
-    gpaReq: { type: Number, required: true }, // 3.0
-    specialization: { type: String, required: true }, // II, CI, or TBI
-    track: { type: String, required: true }, // Thesis or Project
-    reqVersionSem: { type: String, required: true }, // Spring
-    reqVersionYear: { type: String, required: true }, // 2021
+    gpaReq: { type: Number, required: true },
+    reqVersionSem: { type: String, required: true },
+    reqVersionYear: { type: String, required: true },
     requiredCourseReqs: { type: Map, required: true },
-    //[ "BMI 501" : [1,1], "BMI 502/503" : [1,1], "BMI 513" : [1,1], ]
     electiveCourseReqs: { type: Map, required: true },
-    // [ "BMI 517" : [1,1], "BMI 590" : [1+], "BMI 591" : [1,2],
     timeLimit: { type: Number, required: true },
-    // ["Full-time" : 3, "Part-time" : 5]
-    creditEq: { type: Number, required: true }, // ?
-    thesisOption: { type: Boolean, required: true },
-    projectOption: { type: Boolean, required: true },
+    specializations: { type: String, required: true },
+    tracks: { type: String, required: true },
   },
   {
     timestamps: true,
