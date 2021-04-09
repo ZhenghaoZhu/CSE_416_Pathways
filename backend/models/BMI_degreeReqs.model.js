@@ -15,7 +15,6 @@ const BmiDegreeSchema = new Schema(
     requiredCourseReqs: { type: Map, required: true },
     electiveCourseReqs: { type: Map, required: true },
     timeLimit: { type: Number, required: true },
-    specialization: { type: String, required: true },
     tracks: { type: String, required: true },
   },
   {
