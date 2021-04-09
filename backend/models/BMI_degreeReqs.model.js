@@ -15,7 +15,7 @@ const BmiDegreeSchema = new Schema(
     requiredCourseReqs: { type: Map, required: true },
     electiveCourseReqs: { type: Map, required: true },
     timeLimit: { type: Number, required: true },
-    specializations: { type: String, required: true },
+    specialization: { type: String, required: true },
     tracks: { type: String, required: true },
   },
   {
@@ -23,7 +23,7 @@ const BmiDegreeSchema = new Schema(
   }
 );
 
-const BmiDegreeReqs = mongoose.model("BmiDegreeReqs", BmiDegreeSchema);
+const BmiDegreeReqs = mongoose.model("BMI", BmiDegreeSchema);
 
 module.exports = BmiDegreeReqs;
 // module.exports.degreeSchema = degreeSchema;
