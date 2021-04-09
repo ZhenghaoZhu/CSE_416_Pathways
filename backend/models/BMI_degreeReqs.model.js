@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+// -1 : course is repeatable for credit
+// -2 : course must be taken every semester
+// -3 : course can be repeated 1 time for credit
+
 const BmiDegreeSchema = new Schema(
   {
     department: {
@@ -25,4 +29,3 @@ const BmiDegreeSchema = new Schema(
 const BmiDegreeReqs = mongoose.model("BmiDegreeReqs", BmiDegreeSchema);
 
 module.exports = BmiDegreeReqs;
-// module.exports.degreeSchema = degreeSchema;
