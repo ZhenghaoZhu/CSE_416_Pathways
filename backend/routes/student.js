@@ -24,7 +24,6 @@ router.route("/get/sbuID/:id").put((req, res) => {
 });
 
 router.route("/remove/:id").delete(function (req, res) {
-  //TODO, delete the student but crashes after
   Student.findOneAndDelete({ id: req.params.id })
     .then((result) => res.json(result))
     .catch((err) => res.status(400).json("Error: " + err));

@@ -25,6 +25,6 @@ const CEdegreeSchema = new Schema(
   }
 );
 
-const CEdegreeReq = mongoose.model("Degree", CEdegreeSchema);
+const CEdegreeReq = mongoose.model("ece", CEdegreeSchema);
 
 module.exports = CEdegreeReq;

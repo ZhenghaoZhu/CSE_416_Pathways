@@ -26,6 +26,6 @@ const BmiDegreeSchema = new Schema(
   }
 );
 
-const BmiDegreeReqs = mongoose.model("BmiDegreeReqs", BmiDegreeSchema);
+const BmiDegreeReqs = mongoose.model("BMI", BmiDegreeSchema);
 
 module.exports = BmiDegreeReqs;
