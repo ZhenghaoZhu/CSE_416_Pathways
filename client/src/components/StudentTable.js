@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import SearchBar from "material-ui-search-bar";
 import Box from "@material-ui/core/Box";
+import Config from "../config.json";
 
 const axios = require("axios").default;
 
@@ -9,7 +10,7 @@ var columns = [
     { field: "firstName", headerName: "First name", width: 130 },
     { field: "lastName", headerName: "Last name", width: 130 },
     { field: "department", headerName: "Department", width: 130 },
-    { field: "track", headerName: "track", width: 130 },
+    { field: "track", headerName: "Track", width: 130 },
     { field: "gpa", headerName: "GPA", type: "number", width: 80 },
     { field: "projectOption", headerName: "Project Option", width: 130 },
     { field: "facultyAdvisor", headerName: "Faculty Advisor", width: 130 },
@@ -24,28 +25,26 @@ class StudentTable extends Component {
         this.state = {
             curStudents: [],
             studentFilter: [],
+            dataGridLoading: true,
         };
     }
 
     componentDidMount() {
         this.getStudents();
-        console.log(this.state.curStudents);
     }
 
     getStudents() {
         axios
-            .get("https://sbu-pathways.herokuapp.com/student/")
+            .get(Config.URL + "/student/")
             .then((response) => {
                 this.setState({
                     curStudents: response.data,
                     studentFilter: response.data,
+                    dataGridLoading: false,
                 });
             })
             .catch(function (error) {
                 console.log(error);
-            })
-            .then(function () {
-                console.log("After axios request:");
             });
     }
 
@@ -64,7 +63,6 @@ class StudentTable extends Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <div
                 style={{
@@ -80,15 +78,16 @@ class StudentTable extends Component {
                     style={{ marginBottom: 10 }}
                     onRequestSearch={(student) => this.filterStudent(student)}
                     onCancelSearch={(e) => this.cancelStudentSearch(e)}
-                    cancelOnEscape="true"
+                    cancelOnEscape={true}
                 />
                 <Box style={{ height: "130%", backgroundColor: "#f1f0f0" }}>
                     <DataGrid
                         rows={this.state.studentFilter}
                         columns={columns}
                         pageSize={15}
-                        disableSelectionOnClick="true"
-                        // autoPageSize="true"
+                        disableSelectionOnClick={true}
+                        autoPageSize={true}
+                        loading={this.state.studentFilter.length === 0}
                         onRowClick={(e) => this.props.changeFocusStudent(e)}
                     />
                 </Box>

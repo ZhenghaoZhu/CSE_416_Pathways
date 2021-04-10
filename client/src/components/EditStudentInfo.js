@@ -3,6 +3,8 @@ import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import GPDHeader from "./GPDHeader";
+import Config from "../config.json";
+
 const axios = require("axios").default;
 
 class EditStudent extends Component {
@@ -102,7 +104,7 @@ class EditStudent extends Component {
             .then((cur) => console.log("Edited student: ", cur))
             .catch((err) => console.log("Error happened :(", err));
     }
-    
+
     render() {
         return (
             <>
@@ -134,7 +136,7 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setID(val)}
                                 />
                             </Grid>
-                            <Grid item xs xs={3}>
+                            <Grid item xs={3}>
                                 <TextField
                                     id="first_name"
                                     label="First Name"
@@ -146,7 +148,7 @@ class EditStudent extends Component {
                         </Grid>
 
                         <Grid container>
-                            <Grid item xs={3} >
+                            <Grid item xs={3}>
                                 <TextField
                                     style={{
                                         padding: "10px",
@@ -271,7 +273,7 @@ class EditStudent extends Component {
                             <Grid item xs={3}>
                                 <TextField
                                     style={{
-                                        padding: "10px"
+                                        padding: "10px",
                                     }}
                                     id="password"
                                     label="Password"
@@ -280,12 +282,12 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setPassword(val)}
                                 />
                             </Grid>
-                            <Grid item xs>  
+                            <Grid item xs>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    size = "large"
-                                    style = {{marginTop:"20px"}}    
+                                    size="large"
+                                    style={{ marginTop: "20px" }}
                                     onClick={(e) => this.onSubmit(e)}
                                 >
                                     Save Changes
