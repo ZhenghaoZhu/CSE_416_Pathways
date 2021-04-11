@@ -4,6 +4,7 @@ import Config from "../config.json";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
+const fs = require("fs");
 
 class FileUploadArea extends Component {
     addStudents(fileObj) {
@@ -147,7 +148,21 @@ class FileUploadArea extends Component {
         }
     };
 
-    checkFile(results) {
+    addAMSdegreeReq = async function (degreeReq) {
+        await axios
+            .post(Config.URL + "/degreeReqs/add/AMS", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["TIme_Limit"]
+            })
+            .then((ret) => console.log(ret))
+            .catch((err) => console.log("invalid AMS reqs: ", err));
+    }
+
+    checkCSVFile(results) {
         // NOTE  Courses CSV has 6 elements in each object (row), Student CSV has 13, Course Grades has 7
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
@@ -165,13 +180,61 @@ class FileUploadArea extends Component {
         }
     }
 
+    checkJSONfile(results){
+        console.log("CHECKING JSON FILE: ", results);
+        if(results["data"][0]["Department"] === "AMS"){
+            this.addAMSdegreeReq(results["data"][0]);
+        }
+        else if(results["data"][0]["Department"] === "ECE"){
+
+        }
+        else if(results["data"][0]["Department"] === "BMI"){
+
+        }
+        else if(results["data"][0]["Department"] === "CSE"){
+
+        }
+    }
+
     fileParse(file) {
         console.log(file);
+        // if(file)
         for (var i = 0; i < file.length; i++) {
-            Papa.parse(file[i]["file"], {
-                header: true,
-                complete: (results) => this.checkFile(results),
-            });
+            if(file[i]["file"]["name"].indexOf(".json") !== -1){
+                fs.readFile(file[i]["file"]["name"], "r", (err, string) => {
+                    if(err){
+                        console.log("error reading file: ", err);
+                        return;
+                    }
+                    var customer = JSON.parse(string);
+                    console.log("degree req: ", customer);
+                });
+                // console.log(file);
+                // JSON.stringify(file[i]["data"]);
+                // var jsonF = JSON.parse(file[i]["data"]);
+                // console.log("jsonF: ", jsonF);
+                // this.checkJSONfile(file);
+                // Papa.unparse(file[i]["file"], {
+                //     complete : (results) => Papa.parse(results, {
+                //         complete :(help) => this.checkJSONfile(help)
+                //     })
+                // });
+                // fetch(file[i]["file"]["path"], {
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Accept': 'application/json'
+                //     }
+                // })
+                // .then(function(data) { console.log(data); return data.json() })
+                // .then((json) => this.checkJSONfile(json))
+                // .catch((err) => console.log(err));
+            }
+            else {
+                Papa.parse(file[i]["file"], {
+                    header: true,
+                    complete: (results) => this.checkCSVFile(results),
+                });
+            }
         }
     }
 

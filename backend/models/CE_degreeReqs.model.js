@@ -14,9 +14,8 @@ const CEdegreeSchema = new Schema(
         //removed track since no track needed.
         reqVersionSem: { type: String, required: true },
         reqVersionYear: { type: String, required: true },
-        requiredCourseReqs: { type: Map, required: true },
-        electiveCourseReqs: { type: Map, required: true },
         timeLimit: { type: Number, required: true },
+        tracks: {type:Number, require: true },
         thesisOption: { type: Boolean, required: true },
         //removed project since there is no project required.
     },
