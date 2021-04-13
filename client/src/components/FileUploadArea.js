@@ -150,7 +150,7 @@ class FileUploadArea extends Component {
 
     addAMSdegreeReq = async function (degreeReq) {
         await axios
-            .post("http://localhost:5000/degreeReqs/add/AMS", {
+            .post(Config.URL + "/degreeReqs/add/AMS", {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
@@ -164,7 +164,7 @@ class FileUploadArea extends Component {
 
     addECEdegreeReq = async function (degreeReq) {
         await axios
-            .post("http://localhost:5000/degreeReqs/add/ECE", {
+            .post(Config.URL+ "/degreeReqs/add/ECE", {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
@@ -179,7 +179,7 @@ class FileUploadArea extends Component {
 
     addBMIdegreeReq = async function (degreeReq) {
         await axios
-            .post("http://localhost:5000/degreeReqs/add/BMI", {
+            .post(Config.URL+"/degreeReqs/add/BMI", {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
@@ -194,7 +194,7 @@ class FileUploadArea extends Component {
     checkJSONfile = async function (file){
         var jsonObj;
         await axios
-            .get("http://localhost:5000/degreeReqs/file/"+file["file"]["name"])
+            .get(Config.URL+"/degreeReqs/file/"+file["file"]["name"])
                 .then((data) => jsonObj = JSON.parse(data["data"]))
                 .catch((err) => console.log("axios err: ", err));
 
