@@ -15,7 +15,7 @@ const CEdegreeSchema = new Schema(
         reqVersionSem: { type: String, required: true },
         reqVersionYear: { type: String, required: true },
         timeLimit: { type: Number, required: true },
-        tracks: {type:Number, require: true },
+        tracks: {type: Map, require: true },
         thesisOption: { type: Boolean, required: true },
         //removed project since there is no project required.
     },

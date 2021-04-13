@@ -4,7 +4,7 @@ import Config from "../config.json";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
-const fs = require("fs");
+
 
 class FileUploadArea extends Component {
     addStudents(fileObj) {
@@ -150,16 +150,68 @@ class FileUploadArea extends Component {
 
     addAMSdegreeReq = async function (degreeReq) {
         await axios
-            .post(Config.URL + "/degreeReqs/add/AMS", {
+            .post("http://localhost:5000/degreeReqs/add/AMS", {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
                 reqVersionSem : degreeReq["Version_Semester"],
                 reqVersionYear : degreeReq["Version_Year"],
-                timeLimit : degreeReq["TIme_Limit"]
+                timeLimit : degreeReq["Time_Limit"]
             })
-            .then((ret) => console.log(ret))
+            .then((ret) => console.log("ams post:", ret))
             .catch((err) => console.log("invalid AMS reqs: ", err));
+    }
+
+    addECEdegreeReq = async function (degreeReq) {
+        await axios
+            .post("http://localhost:5000/degreeReqs/add/ECE", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"],
+                thesisOption : true
+            })
+            .then((ret) => console.log("ece post:", ret))
+            .catch((err) => console.log("invalid ece reqs: ", err));
+    }
+
+    addBMIdegreeReq = async function (degreeReq) {
+        await axios
+            .post("http://localhost:5000/degreeReqs/add/BMI", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"],
+            })
+            .then((ret) => console.log("ece post:", ret))
+            .catch((err) => console.log("invalid ece reqs: ", err));
+    }
+
+    checkJSONfile = async function (file){
+        var jsonObj;
+        await axios
+            .get("http://localhost:5000/degreeReqs/file/"+file["file"]["name"])
+                .then((data) => jsonObj = JSON.parse(data["data"]))
+                .catch((err) => console.log("axios err: ", err));
+
+        console.log("jsonObj: ", jsonObj);
+        // console.log("CHECKING JSON FILE: ", results);
+        if(jsonObj["Department"] === "AMS"){
+            this.addAMSdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "ECE"){
+            this.addECEdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "BMI"){
+            this.addBMIdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "CSE"){
+
+        }
     }
 
     checkCSVFile(results) {
@@ -180,54 +232,12 @@ class FileUploadArea extends Component {
         }
     }
 
-    checkJSONfile(results){
-        console.log("CHECKING JSON FILE: ", results);
-        if(results["data"][0]["Department"] === "AMS"){
-            this.addAMSdegreeReq(results["data"][0]);
-        }
-        else if(results["data"][0]["Department"] === "ECE"){
-
-        }
-        else if(results["data"][0]["Department"] === "BMI"){
-
-        }
-        else if(results["data"][0]["Department"] === "CSE"){
-
-        }
-    }
-
     fileParse(file) {
         console.log(file);
         // if(file)
         for (var i = 0; i < file.length; i++) {
             if(file[i]["file"]["name"].indexOf(".json") !== -1){
-                fs.readFile(file[i]["file"]["name"], "r", (err, string) => {
-                    if(err){
-                        console.log("error reading file: ", err);
-                        return;
-                    }
-                    var customer = JSON.parse(string);
-                    console.log("degree req: ", customer);
-                });
-                // console.log(file);
-                // JSON.stringify(file[i]["data"]);
-                // var jsonF = JSON.parse(file[i]["data"]);
-                // console.log("jsonF: ", jsonF);
-                // this.checkJSONfile(file);
-                // Papa.unparse(file[i]["file"], {
-                //     complete : (results) => Papa.parse(results, {
-                //         complete :(help) => this.checkJSONfile(help)
-                //     })
-                // });
-                // fetch(file[i]["file"]["path"], {
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         'Accept': 'application/json'
-                //     }
-                // })
-                // .then(function(data) { console.log(data); return data.json() })
-                // .then((json) => this.checkJSONfile(json))
-                // .catch((err) => console.log(err));
+                this.checkJSONfile(file[i]);
             }
             else {
                 Papa.parse(file[i]["file"], {
