@@ -13,6 +13,7 @@ const degreeSchema = new Schema(
         courseReqs: { type: Map, required: true },
         timeLimit: { type: Number, required: true },
         creditEq: { type: Number, required: true },
+        tracks: { type: Map, required: true},
         thesisOption: { type: Boolean, required: true },
         noThesisOption: { type: Boolean, required: true },
         projectOption: { type: Boolean, required: true },

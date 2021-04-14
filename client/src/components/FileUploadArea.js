@@ -5,6 +5,7 @@ import Config from "../config.json";
 const Papa = require("papaparse");
 const axios = require("axios").default;
 
+
 class FileUploadArea extends Component {
     addStudents(fileObj) {
         var curStudent = null;
@@ -147,7 +148,73 @@ class FileUploadArea extends Component {
         }
     };
 
-    checkFile(results) {
+    addAMSdegreeReq = async function (degreeReq) {
+        await axios
+            .post(Config.URL + "/degreeReqs/add/AMS", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"]
+            })
+            .then((ret) => console.log("ams post:", ret))
+            .catch((err) => console.log("invalid AMS reqs: ", err));
+    }
+
+    addECEdegreeReq = async function (degreeReq) {
+        await axios
+            .post(Config.URL+ "/degreeReqs/add/ECE", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"],
+                thesisOption : true
+            })
+            .then((ret) => console.log("ece post:", ret))
+            .catch((err) => console.log("invalid ece reqs: ", err));
+    }
+
+    addBMIdegreeReq = async function (degreeReq) {
+        await axios
+            .post(Config.URL+"/degreeReqs/add/BMI", {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"],
+            })
+            .then((ret) => console.log("ece post:", ret))
+            .catch((err) => console.log("invalid ece reqs: ", err));
+    }
+
+    checkJSONfile = async function (file){
+        var jsonObj;
+        await axios
+            .get(Config.URL+"/degreeReqs/file/"+file["file"]["name"])
+                .then((data) => jsonObj = JSON.parse(data["data"]))
+                .catch((err) => console.log("axios err: ", err));
+
+        console.log("jsonObj: ", jsonObj);
+        // console.log("CHECKING JSON FILE: ", results);
+        if(jsonObj["Department"] === "AMS"){
+            this.addAMSdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "ECE"){
+            this.addECEdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "BMI"){
+            this.addBMIdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "CSE"){
+
+        }
+    }
+
+    checkCSVFile(results) {
         // NOTE  Courses CSV has 6 elements in each object (row), Student CSV has 13, Course Grades has 7
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
@@ -167,11 +234,17 @@ class FileUploadArea extends Component {
 
     fileParse(file) {
         console.log(file);
+        // if(file)
         for (var i = 0; i < file.length; i++) {
-            Papa.parse(file[i]["file"], {
-                header: true,
-                complete: (results) => this.checkFile(results),
-            });
+            if(file[i]["file"]["name"].indexOf(".json") !== -1){
+                this.checkJSONfile(file[i]);
+            }
+            else {
+                Papa.parse(file[i]["file"], {
+                    header: true,
+                    complete: (results) => this.checkCSVFile(results),
+                });
+            }
         }
     }
 
