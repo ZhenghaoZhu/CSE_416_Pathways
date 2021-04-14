@@ -150,7 +150,7 @@ class FileUploadArea extends Component {
 
     addAMSdegreeReq = async function (degreeReq) {
         await axios
-            .post(Config.URL + "/degreeReqs/add/AMS", {
+            .put(Config.URL+"/degreeReqs/edit/AMS/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
@@ -164,13 +164,13 @@ class FileUploadArea extends Component {
 
     addECEdegreeReq = async function (degreeReq) {
         await axios
-            .post(Config.URL+ "/degreeReqs/add/ECE", {
+            .put(Config.URL+"/degreeReqs/edit/ECE/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
                 reqVersionSem : degreeReq["Version_Semester"],
                 reqVersionYear : degreeReq["Version_Year"],
-                timeLimit : degreeReq["Time_Limit"],
+                timeLimit : degreeReq["GPA_Requirement"],
                 thesisOption : true
             })
             .then((ret) => console.log("ece post:", ret))
@@ -179,7 +179,7 @@ class FileUploadArea extends Component {
 
     addBMIdegreeReq = async function (degreeReq) {
         await axios
-            .post(Config.URL+"/degreeReqs/add/BMI", {
+            .put(Config.URL+"/degreeReqs/edit/BMI/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
                 department : degreeReq["Department"],
                 gpaReq : degreeReq["GPA_Requirement"],
                 tracks : degreeReq["Tracks"],
@@ -187,8 +187,8 @@ class FileUploadArea extends Component {
                 reqVersionYear : degreeReq["Version_Year"],
                 timeLimit : degreeReq["Time_Limit"],
             })
-            .then((ret) => console.log("ece post:", ret))
-            .catch((err) => console.log("invalid ece reqs: ", err));
+            .then((ret) => console.log("bmi post:", ret))
+            .catch((err) => console.log("invalid bmi reqs: ", err));
     }
 
     checkJSONfile = async function (file){

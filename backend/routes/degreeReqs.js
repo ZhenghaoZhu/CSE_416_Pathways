@@ -6,7 +6,7 @@ let bmi = require("../models/BMI_degreeReqs.model");
 let ece = require("../models/CE_degreeReqs.model")
 const fs = require("fs")
 
-
+//get requests
 router.route("/get/AMS/:year/:sem").get((req, res) => {
     ams.findOne({department: "AMS", reqVersionSem: req.params.sem, reqVersionYear: req.params.year})
     .then((cur) => res.json(cur))
@@ -29,6 +29,34 @@ router.route("/get/ECE/:year/:sem").get((req, res) => {
     ece.findOne({department: "ECE", reqVersionSem: req.params.sem, reqVersionYear: req.params.year})
     .then((cur) => res.json(cur))
     .catch((err) => res.status(400).json("Error: " + err));
+})
+
+//updating requests
+router.route("/edit/AMS/:year/:sem").put((req, res) => {
+    ams.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year}, req.body, {
+        upsert: true,
+        returnNewDocument: true,
+    })
+        .then((ret) => res.json(ret))
+        .catch((err) => res.status(400).json("Error: " + err));
+})
+
+router.route("/edit/ECE/:year/:sem").put((req, res) => {
+    ece.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year}, req.body, {
+        upsert: true,
+        returnNewDocument: true,
+    })
+        .then((ret) => res.json(ret))
+        .catch((err) => res.status(400).json("Error: " + err));
+})
+
+router.route("/edit/BMI/:year/:sem").put((req, res) => {
+    bmi.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year}, req.body, {
+        upsert: true,
+        returnNewDocument: true,
+    })
+        .then((ret) => res.json(ret))
+        .catch((err) => res.status(400).json("Error: " + err));
 })
 
 router.route("/add/AMS").post((req, res) => {

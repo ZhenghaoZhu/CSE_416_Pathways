@@ -7,6 +7,7 @@ const degreeSchema = new Schema(
     {
         department: { type: String, required: true },
         gpaReq: { type: Number, required: true },
+        track: { type: String, required: true },
         reqVersionSem: { type: String, required: true },
         reqVersionYear: { type: String, required: true },
         courseReqs: { type: Map, required: true },
