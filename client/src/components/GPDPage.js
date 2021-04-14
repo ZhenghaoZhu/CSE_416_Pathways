@@ -88,12 +88,12 @@ class GPDPage extends Component {
         // remove the \r\n
 
         axios.post("https://sbu-pathways.herokuapp.com/" + "courses/add", {
-            department: course["department"].replace("\r\n","").trim(), // WST
-            courseNum: course["courseNum"].replace("\r\n","").trim(), // 303
-            courseName: course["name"].replace("\r\n","").trim(), // just the name
-            credits: course["numOfCredits"].replace("\r\n","").trim(),
+            department: course["department"],
+            courseNum: course["courseNum"],
+            courseName: course["name"],
+            credits: course["numOfCredits"],
             preReqs: [course["prerequisites"]],
-            courseDescription: course["description"].replace("\r\n","").trim(),
+            courseDescription: course["description"],
             yearTrends: {},
             courseInfo: {},
             professorNames: {},
