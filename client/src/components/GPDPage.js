@@ -5,6 +5,7 @@ import StudentDetail from "./StudentDetail";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import FileUploadArea from "./FileUploadArea";
 // import Dropzone from "react-dropzone";
 // import { CSVReader } from 'react-papaparse'
 // import AddStudent from "./AddStudent";
@@ -162,15 +163,6 @@ class GPDPage extends Component {
                 console.log(reader.error);
             };
             reader.readAsText(file);
-        }else{
-            for(var i = 0; i<files.length; i++){
-                Papa.parse(files[i]["file"], {
-                    header: true,
-                    complete: (results, file1) =>
-                        this.checkFile(results)
-                    }
-                );
-            }
         }
     }
 
@@ -200,14 +192,7 @@ class GPDPage extends Component {
                             <StudentDetail
                                 focusStudent={this.state.focusStudent}
                             />
-                            <DropzoneAreaBase
-                                // onChange={(files) =>
-                                //     console.log("Files:", files)
-                                // }
-                                onAdd={(newFiles) => this.fileParse(newFiles)}
-                                filesLimit={5}
-                                showPreviewsInDropzone={false}
-                                showFileNames={true}
+                            <FileUploadArea
                             />
 
                             <ButtonGroup
