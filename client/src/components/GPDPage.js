@@ -25,7 +25,6 @@ class GPDPage extends Component {
             },
         };
     }
-
     add(fileObj){
         var i = 0
         for(i; i < fileObj["data"].length; i++){
@@ -174,7 +173,6 @@ class GPDPage extends Component {
             }
         }
     }
-
 
     onSub(e) {
         e.preventDefault();
