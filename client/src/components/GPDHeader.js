@@ -52,13 +52,13 @@ class GPDHeader extends Component {
                     </Typography>
                     <Typography variant="h6" style={{ marginLeft: "35px" }}>
                         <Link
-                            to="/register"
+                            to="/enrollmentTrends"
                             style={{
                                 textDecoration: "none",
                                 color: "inherit",
                             }}
                         >
-                            Register Page
+                            Enrollment Trends
                         </Link>
                     </Typography>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
