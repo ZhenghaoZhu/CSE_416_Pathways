@@ -37,13 +37,14 @@ class LoginForm extends Component {
                 var curUser = undefined;
                 for (var i = 0; i < allGPD.length; i++) {
                     curUser = allGPD[i];
-                    console.log(curUser);
-                    console.log(this.state);
                     if (
                         curUser["email"] === this.state.curEmail &&
                         curUser["password"] === this.state.curPassword
                     ) {
-                        this.props.history.push("/");
+                        this.props.history.push({
+                            pathname: "/gpd",
+                            loggedInGPD: curUser,
+                        });
                     }
                 }
             })
@@ -55,16 +56,18 @@ class LoginForm extends Component {
             .get(Config.URL + "/student")
             .then((response) => {
                 var allStudents = response.data;
-                var curUser = undefined;
+                let curUser = undefined;
                 for (var i = 0; i < allStudents.length; i++) {
                     curUser = allStudents[i];
-                    console.log(curUser);
-                    console.log(this.state);
                     if (
                         curUser["email"] === this.state.curEmail &&
                         curUser["password"] === this.state.curPassword
                     ) {
-                        this.props.history.push("/studentDetail");
+                        console.log(curUser);
+                        this.props.history.push({
+                            pathname: "/student",
+                            loggedInStudent: curUser,
+                        });
                     }
                 }
             })

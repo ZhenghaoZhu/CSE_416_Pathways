@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import { AppBar, IconButton, Toolbar, Typography } from "@material-ui/core";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import { Link } from "react-router-dom";
+import { MenuItem, Menu } from "@material-ui/core";
+import Config from "../config.json";
 
 class GPDHeader extends Component {
     constructor(props) {
         super(props);
         this.state = {
             anchorEl: null,
+            currentGPD: this.props.curGPD,
         };
     }
 
@@ -20,6 +23,14 @@ class GPDHeader extends Component {
         this.setState({ anchorEl: null });
     };
     render() {
+        var gpdName = "Emerson True";
+        console.log(this.state);
+        if (this.state.currentGPD !== undefined) {
+            gpdName =
+                this.state.currentGPD.firstName +
+                " " +
+                this.state.currentGPD.lastName;
+        }
         return (
             <AppBar position="static" style={{ background: "#e35a5a" }}>
                 <Toolbar>
@@ -62,7 +73,7 @@ class GPDHeader extends Component {
                         </Link>
                     </Typography>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
-                        Emerson True
+                        {gpdName}
                     </Typography>
                     <IconButton color="inherit">
                         <AccountBoxIcon />

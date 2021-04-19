@@ -13,6 +13,7 @@ import {
     VictoryStack,
     VictoryTooltip,
 } from "victory";
+import Config from "../config.json";
 
 class EnrollmentTrends extends Component {
     constructor(props) {

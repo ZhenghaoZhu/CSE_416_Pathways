@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import Config from "../config.json";
 
 class StudentDetail extends Component {
     constructor(props) {
@@ -9,10 +10,14 @@ class StudentDetail extends Component {
         var curFocusStudent = {};
         if (this.props.focusStudent !== undefined) {
             curFocusStudent = this.props.focusStudent.row;
+        } else if (this.props.location.loggedInStudent !== undefined) {
+            curFocusStudent = this.props.location.loggedInStudent;
         }
         this.state = {
             curStudent: curFocusStudent,
         };
+        console.log(this.props);
+        console.log(this.state);
     }
 
     BuildTypography(title, text) {
@@ -31,10 +36,11 @@ class StudentDetail extends Component {
     render() {
         var studentInfo = undefined;
         if (
-            this.props.focusStudent !== undefined &&
-            this.props.focusStudent.row !== undefined
+            this.state.curStudent !== undefined &&
+            Object.keys(this.state.curStudent).length !== 0
         ) {
-            studentInfo = this.props.focusStudent.row;
+            studentInfo = this.state.curStudent;
+            console.log(studentInfo);
         } else {
             studentInfo = {
                 firstName: "Benjamin",
