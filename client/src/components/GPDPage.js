@@ -23,6 +23,7 @@ class GPDPage extends Component {
             focusStudent: this.props.focusStudent,
             curGPD: this.props.location.loggedInGPD,
         };
+        console.log(this.state);
     }
     add(fileObj) {
         for (var i = 0; i < fileObj["data"].length; i++) {
@@ -208,7 +209,6 @@ class GPDPage extends Component {
                                 focusStudent={this.state.focusStudent}
                             />
                             <FileUploadArea />
-
                             <ButtonGroup
                                 variant="contained"
                                 style={{
