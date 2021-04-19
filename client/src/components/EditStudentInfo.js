@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
-import { DropzoneAreaBase } from "material-ui-dropzone";
 import GPDHeader from "./GPDHeader";
 import Config from "../config.json";
 
@@ -76,7 +75,7 @@ class EditStudent extends Component {
     }
     onSubmit(e) {
         axios
-            .post("https://sbu-pathways.herokuapp.com/student/edit", {
+            .post(Config.URL + "/edit", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
