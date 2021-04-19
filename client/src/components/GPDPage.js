@@ -19,14 +19,10 @@ class GPDPage extends Component {
         //         pathname: "/login",
         //     });
         // }
-        var curStudent = this.props.focusStudent;
         this.state = {
-            focusStudent: {
-                curStudent,
-            },
+            focusStudent: this.props.focusStudent,
             curGPD: this.props.location.loggedInGPD,
         };
-        console.log(this.state);
     }
     add(fileObj) {
         for (var i = 0; i < fileObj["data"].length; i++) {
@@ -193,7 +189,6 @@ class GPDPage extends Component {
     }
 
     render() {
-        console.log(this.state.focusStudent);
         return (
             <Box style={{ width: "99.82%" }}>
                 <GPDHeader curGPD={this.state.curGPD} />
