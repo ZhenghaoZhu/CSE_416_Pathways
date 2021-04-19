@@ -24,7 +24,6 @@ class GPDHeader extends Component {
     };
     render() {
         var gpdName = "Emerson True";
-        console.log(this.state);
         if (this.state.currentGPD !== undefined) {
             gpdName =
                 this.state.currentGPD.firstName +
