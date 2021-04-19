@@ -85,7 +85,7 @@ class FileUploadArea extends Component {
                 department: fileObj["department"],
                 courseNum: fileObj["course_num"],
                 courseName: "Another CS Class",
-                credits: 3,
+                credits: "3",
                 preReqs: [],
                 courseDescription: "Description",
                 yearTrends: {},
