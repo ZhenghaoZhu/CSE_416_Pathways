@@ -13,21 +13,23 @@ class EditStudent extends Component {
         this.state = {
             firstName: "Anthony",
             lastName: "Anthony",
-            id: 3122,
+            id: 3122435454,
             email: "gmail@gmail.com",
-            gpa: 3,
+            gpa: 0.0,
             department: "dd",
             track: "dd",
-            reqVersion: "dd",
+            reqVersionSem: "Spring",
+            reqVersionYear: "2021",
             entrySem: "dd",
             entryYear: "dd",
-            gradSem: "dd",
-            coursePlan: "plan",
-            projectOption: "option",
-            facultyAdvisor: "advisor",
+            gradSem: "Fall",
+            gradYear: "2025",
+            coursePlan: [],
+            projectOption: "None",
+            facultyAdvisor: "None",
             proficiencyReq: [],
-            degreeRequirements: "reqs",
-            password: "dd",
+            degreeRequirements: "None",
+            password: "password",
             graduated: false,
             settings: "settings",
             comments: [],
@@ -57,28 +59,24 @@ class EditStudent extends Component {
     setEntryYear(e) {
         this.setState({ entryYear: e.target.value });
     }
-    // setReqSem(e){
-    //   this.stateHolder["reqSem"] = e.target.value;
-    // }
-    // setReqYear(e){
-    //   this.stateHolder["reqYear"] = e.target.value;
-    // }
+    setReqSem(e) {
+        this.setState({ reqVersionSem: e.target.value });
+    }
+    setReqYear(e) {
+        this.setState({ reqVersionYear: e.target.value });
+    }
     setGradSem(e) {
         this.setState({ gradSem: e.target.value });
-        console.log(this.state.gradSem);
     }
     setGradYear(e) {
-        console.log(this.state.gradYear);
         this.setState({ gradYear: e.target.value });
-        console.log(this.state.gradYear);
     }
     setPassword(e) {
         this.setState({ password: e.target.value });
-        console.log(this.state.password);
     }
     onSubmit(e) {
         axios
-            .post(Config.URL + "/student/add", {
+            .post("https://sbu-pathways.herokuapp.com/student/edit", {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
@@ -86,10 +84,12 @@ class EditStudent extends Component {
                 gpa: this.state.gpa,
                 department: this.state.department,
                 track: this.state.track,
-                reqVersion: this.state.reqVersion,
+                reqVersionSem: this.state.reqVersionSem,
+                reqVersionYear: this.state.reqVersionYear,
                 entrySem: this.state.entrySem,
                 entryYear: this.state.entryYear,
                 gradSem: this.state.gradSem,
+                gradYear: this.state.gradYear,
                 coursePlan: this.state.coursePlan,
                 projectOption: this.state.projectOption,
                 facultyAdvisor: this.state.facultyAdvisor,
@@ -100,12 +100,8 @@ class EditStudent extends Component {
                 settings: this.state.settings,
                 comments: this.state.comments,
             })
-            .then((response) => {
-                console.log("Reply: ", response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+            .then((cur) => console.log("Edited student: ", cur))
+            .catch((err) => console.log("Error happened :(", err));
     }
 
     render() {

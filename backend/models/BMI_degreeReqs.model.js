@@ -16,16 +16,14 @@ const BmiDegreeSchema = new Schema(
     gpaReq: { type: Number, required: true },
     reqVersionSem: { type: String, required: true },
     reqVersionYear: { type: String, required: true },
-    requiredCourseReqs: { type: Map, required: true },
-    electiveCourseReqs: { type: Map, required: true },
     timeLimit: { type: Number, required: true },
-    tracks: { type: String, required: true },
+    tracks: { type: Map, required: true },
   },
   {
     timestamps: true,
   }
 );
 
-const BmiDegreeReqs = mongoose.model("BmiDegreeReqs", BmiDegreeSchema);
+const BmiDegreeReqs = mongoose.model("BMI", BmiDegreeSchema);
 
 module.exports = BmiDegreeReqs;

@@ -4,27 +4,26 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const CEdegreeSchema = new Schema(
-  {
-    department: {
-      type: String,
-      required: true,
-      trim: true,
+    {
+        department: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        gpaReq: { type: Number, required: true },
+        //removed track since no track needed.
+        reqVersionSem: { type: String, required: true },
+        reqVersionYear: { type: String, required: true },
+        timeLimit: { type: Number, required: true },
+        tracks: {type: Map, require: true },
+        thesisOption: { type: Boolean, required: true },
+        //removed project since there is no project required.
     },
-    gpaReq: { type: Number, required: true },
-    //removed track since no track needed.
-    reqVersionSem: { type: String, required: true },
-    reqVersionYear: { type: String, required: true },
-    requiredCourseReqs: { type: Map, required: true },
-    electiveCourseReqs: { type: Map, required: true },
-    timeLimit: { type: Number, required: true },
-    thesisOption: { type: Boolean, required: true },
-    //removed project since there is no project required.
-  },
-  {
-    timestamps: true,
-  }
+    {
+        timestamps: true,
+    }
 );
 
-const CEdegreeReq = mongoose.model("Degree", CEdegreeSchema);
+const CEdegreeReq = mongoose.model("ece", CEdegreeSchema);
 
 module.exports = CEdegreeReq;

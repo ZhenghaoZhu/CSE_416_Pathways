@@ -17,6 +17,6 @@ const amsDegreeSchema = new Schema(
     }
 );
 
-const DegreeReqs = mongoose.model("amsDegreeSchema", amsDegreeSchema);
+const DegreeReqs = mongoose.model("ams", amsDegreeSchema);
 
 module.exports = DegreeReqs;

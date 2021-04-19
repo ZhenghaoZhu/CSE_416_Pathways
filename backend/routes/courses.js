@@ -64,15 +64,15 @@ router.route("/update/classID/:id").put((req, res) => {
 
 router.route("/add").post((req, res) => {
     const id = req.body.department + req.body.courseNum;
-    const department = req.body.department;
-    const courseNum = req.body.courseNum;
-    const courseName = req.body.courseName;
-    const credits = req.body.credits;
-    const preReqs = req.body.preReqs;
-    const courseDescription = req.body.courseDescription;
-    const yearTrends = req.body.yearTrends;
-    const courseInfo = req.body.courseInfo;
-    const professorNames = req.body.professorNames;
+    const department = req.body.department || "None";
+    const courseNum = req.body.courseNum || "None";
+    const courseName = req.body.courseName || "None";
+    const credits = req.body.credits || "None";
+    const preReqs = req.body.preReqs || [];
+    const courseDescription = req.body.courseDescription|| "None";
+    const yearTrends = req.body.yearTrends|| {};
+    const courseInfo = req.body.courseInfo || {};
+    const professorNames = req.body.professorNames || {};
 
     const newCourse = new Courses({
         id,

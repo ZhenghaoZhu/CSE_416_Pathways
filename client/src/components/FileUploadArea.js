@@ -5,6 +5,7 @@ import Config from "../config.json";
 const Papa = require("papaparse");
 const axios = require("axios").default;
 
+
 class FileUploadArea extends Component {
     addStudents(fileObj) {
         var curStudent = null;
@@ -84,7 +85,7 @@ class FileUploadArea extends Component {
                 department: fileObj["department"],
                 courseNum: fileObj["course_num"],
                 courseName: "Another CS Class",
-                credits: 3,
+                credits: "3",
                 preReqs: [],
                 courseDescription: "Description",
                 yearTrends: {},
@@ -147,7 +148,73 @@ class FileUploadArea extends Component {
         }
     };
 
-    checkFile(results) {
+    addAMSdegreeReq = async function (degreeReq) {
+        await axios
+            .put(Config.URL+"/degreeReqs/edit/AMS/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"]
+            })
+            .then((ret) => console.log("ams post:", ret))
+            .catch((err) => console.log("invalid AMS reqs: ", err));
+    }
+
+    addECEdegreeReq = async function (degreeReq) {
+        await axios
+            .put(Config.URL+"/degreeReqs/edit/ECE/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["GPA_Requirement"],
+                thesisOption : true
+            })
+            .then((ret) => console.log("ece post:", ret))
+            .catch((err) => console.log("invalid ece reqs: ", err));
+    }
+
+    addBMIdegreeReq = async function (degreeReq) {
+        await axios
+            .put(Config.URL+"/degreeReqs/edit/BMI/"+degreeReq["Version_Year"]+"/"+degreeReq["Version_Semester"], {
+                department : degreeReq["Department"],
+                gpaReq : degreeReq["GPA_Requirement"],
+                tracks : degreeReq["Tracks"],
+                reqVersionSem : degreeReq["Version_Semester"],
+                reqVersionYear : degreeReq["Version_Year"],
+                timeLimit : degreeReq["Time_Limit"],
+            })
+            .then((ret) => console.log("bmi post:", ret))
+            .catch((err) => console.log("invalid bmi reqs: ", err));
+    }
+
+    checkJSONfile = async function (file){
+        var jsonObj;
+        await axios
+            .get(Config.URL+"/degreeReqs/file/"+file["file"]["name"])
+                .then((data) => jsonObj = JSON.parse(data["data"]))
+                .catch((err) => console.log("axios err: ", err));
+
+        console.log("jsonObj: ", jsonObj);
+        // console.log("CHECKING JSON FILE: ", results);
+        if(jsonObj["Department"] === "AMS"){
+            this.addAMSdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "ECE"){
+            this.addECEdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "BMI"){
+            this.addBMIdegreeReq(jsonObj);
+        }
+        else if(jsonObj["Department"] === "CSE"){
+
+        }
+    }
+
+    checkCSVFile(results) {
         // NOTE  Courses CSV has 6 elements in each object (row), Student CSV has 13, Course Grades has 7
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
@@ -165,13 +232,95 @@ class FileUploadArea extends Component {
         }
     }
 
-    fileParse(file) {
-        console.log(file);
-        for (var i = 0; i < file.length; i++) {
-            Papa.parse(file[i]["file"], {
-                header: true,
-                complete: (results) => this.checkFile(results),
-            });
+    addCourse(course){
+        var depID = course["courseName"].split(" ");
+        course["courseNum"] = depID[1].substring(0, depID[1].length - 1);
+        course["name"] = course["courseName"].split(": ")[1];
+        course["department"] = depID[0];
+        // console.log(course);
+        //fix course Num to delete colon :
+        //fix course name, ID, courseNum
+        // remove the \r\n
+
+        axios.post(Config.URL+ "/courses/add", {
+            department: course["department"],
+            courseNum: course["courseNum"],
+            courseName: course["name"],
+            credits: course["numOfCredits"],
+            preReqs: [course["prerequisites"]],
+            courseDescription: course["description"],
+            yearTrends: {},
+            courseInfo: {},
+            professorNames: {},
+        })
+        .then((course) => console.log("Course added", course))
+        .catch((err) => console.log(err));
+    }
+
+    fileParse(files) {
+        console.log(files);
+        // if(file)
+        for (var i = 0; i < files.length; i++) {
+            if(files[i]["file"]["name"].indexOf(".json") !== -1){
+                this.checkJSONfile(files[i]);
+            }
+            else if(files[i].file.type === "text/plain"){  // parse the course information
+                let file = files[0].file;
+                let reader = new FileReader();
+        
+                const self = this;
+                reader.onload = function() {
+                    let textFile = reader.result;
+                    // parse
+                    let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
+                    const courses = course_array.map(course => {
+                        let course_fields = course.match(/(.+(\r?\n))+/gm); 
+                        let courseName = course_fields[0];
+                        let description = course_fields[1];
+                        let prerequisites = ["None"];
+                        let numOfCredits = null;
+        
+                        let matches = course.match(/\d{1}(\-\d+)? credit/); 
+                        let creditNum = matches === null ? "" : matches[0];
+                        if(!creditNum.includes("-")){ // single digit credit
+                            numOfCredits = creditNum[0];
+                        }else { // range of credit exp 0-12
+                            if(creditNum.length === 10){ 
+                                numOfCredits = creditNum.substring(0,3);
+                            }else if(creditNum.length === 11){
+                                numOfCredits = creditNum.substring(0,4);
+                            };
+                        };
+        
+                        let prereq_match = course.match(/Prerequisite.+/);
+                        let prereq_text = prereq_match === null? "":prereq_match[0];
+        
+                        if(course.toLowerCase().includes("prerequisite")){
+                            prerequisites = prereq_text.substring(prereq_text.indexOf(":")+2).split(",");
+                        };
+                        // console.log(prerequisites);
+                        return{
+                            courseName,
+                            description,
+                            numOfCredits,
+                            prerequisites
+                        }
+                        
+                    });
+                    // console.log(courses);
+                    courses.map((course) => self.addCourse(course));
+                };
+                reader.onerror = function() {
+                    console.log(reader.error);
+                };
+                reader.readAsText(file);
+            }
+            else {
+                Papa.parse(files[i]["file"], {
+                    header: true,
+                    complete: (results) => this.checkCSVFile(results),
+                });
+            }
         }
     }
 

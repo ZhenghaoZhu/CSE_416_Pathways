@@ -193,7 +193,7 @@ class Selection extends Component {
     }
 }
 
-class EnrollmentTrends extends Component {
+class EnrollmentTrendsPage extends Component {
     constructor(props) {
         super(props);
 
@@ -415,4 +415,4 @@ class EnrollmentTrends extends Component {
     }
 }
 
-export default EnrollmentTrends;
+export default EnrollmentTrendsPage;
