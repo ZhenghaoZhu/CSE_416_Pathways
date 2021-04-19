@@ -213,7 +213,6 @@ class GPDPage extends Component {
                                 focusStudent={this.state.focusStudent}
                             />
                             <FileUploadArea />
-
                             <ButtonGroup
                                 variant="contained"
                                 style={{
