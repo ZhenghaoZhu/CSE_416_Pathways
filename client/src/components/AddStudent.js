@@ -27,6 +27,8 @@ class AddStudent extends Component {
             facultyAdvisor: "None",
             proficiencyReq: [],
             degreeRequirements: "None",
+            curSem: "Spring",
+            curYear: "2021",
             password: "password",
             graduated: false,
             settings: "settings",
@@ -69,6 +71,12 @@ class AddStudent extends Component {
     setGradYear(e) {
         this.setState({ gradYear: e.target.value });
     }
+    setCurSem(e) {
+        this.setState({ curSem: e.target.value });
+    }
+    setCurYear(e) {
+        this.setState({ curYear: e.target.value });
+    }
     setPassword(e) {
         this.setState({ password: e.target.value });
     }
@@ -94,6 +102,8 @@ class AddStudent extends Component {
                 facultyAdvisor: this.state.facultyAdvisor,
                 proficienyReq: this.state.proficiencyReq,
                 degreeRequirements: this.state.degreeRequirements,
+                curSem: this.state.curSem,
+                curYear: this.state.curYear,
                 password: this.state.password,
                 graduated: this.state.graduated,
                 settings: this.state.settings,
@@ -258,6 +268,30 @@ class AddStudent extends Component {
                                     variant="outlined"
                                     required={true}
                                     onChange={(val) => this.setGradYear(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="cur_semester"
+                                    label="Current Semester"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setCurSem(val)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    style={{
+                                        padding: "10px",
+                                    }}
+                                    id="cur_year"
+                                    label="Current Year"
+                                    variant="outlined"
+                                    required={true}
+                                    onChange={(val) => this.setCurYear(val)}
                                 />
                             </Grid>
                             <Grid item>

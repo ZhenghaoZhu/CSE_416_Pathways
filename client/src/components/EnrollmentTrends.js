@@ -13,6 +13,7 @@ import {
     VictoryContainer,
     VictoryTooltip,
 } from "victory";
+import Config from "../config.json";
 
 class EnrollmentChart extends Component {
     render() {

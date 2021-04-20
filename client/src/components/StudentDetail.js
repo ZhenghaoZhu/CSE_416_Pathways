@@ -2,17 +2,24 @@ import React, { Component } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import Config from "../config.json";
 
 class StudentDetail extends Component {
     constructor(props) {
         super(props);
-        var curFocusStudent = {};
-        if (this.props.focusStudent !== undefined) {
-            curFocusStudent = this.props.focusStudent.row;
-        }
         this.state = {
-            curStudent: curFocusStudent,
+            curStudent: {},
         };
+        console.log(this.props);
+        console.log(this.state);
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        var curFocusStudent = {};
+        if (props !== undefined && props.focusStudent !== undefined) {
+            curFocusStudent = props.focusStudent.row;
+        }
+        return { curStudent: curFocusStudent };
     }
 
     BuildTypography(title, text) {
@@ -30,10 +37,7 @@ class StudentDetail extends Component {
     }
     render() {
         var studentInfo = undefined;
-        if (
-            this.props.focusStudent !== undefined &&
-            this.props.focusStudent.row !== undefined
-        ) {
+        if (Object.keys(this.state.curStudent).length !== 0) {
             studentInfo = this.props.focusStudent.row;
         } else {
             studentInfo = {
@@ -61,9 +65,10 @@ class StudentDetail extends Component {
                 comments: "None",
             };
         }
+        // console.log(this.props.focusStudent.row);
+        // console.log(studentInfo);
 
-        var expectedGrad = studentInfo.gradSem + " " + studentInfo.gradYear;
-
+        // var expectedGrad = studentInfo.gradSem + " " + studentInfo.gradYear;
         return (
             <Card
                 style={{
