@@ -185,7 +185,7 @@ class GPDPage extends Component {
 
     onSub(e) {
         e.preventDefault();
-        axios.delete(Config.URL + "student/remove");
+        axios.delete(Config.URL + "/student/remove");
         console.log("All Student Data Deleted");
     }
 
