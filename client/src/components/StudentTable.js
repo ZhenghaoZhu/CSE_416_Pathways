@@ -49,6 +49,7 @@ class StudentTable extends Component {
     }
 
     filterStudent(e) {
+        // courses: CSE530, firstName: john
         // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
         var newStudentFilter = this.state.curStudents.filter((student) =>
             student.firstName.toUpperCase().includes(e.toUpperCase(), 0)
@@ -57,7 +58,6 @@ class StudentTable extends Component {
     }
 
     cancelStudentSearch(e) {
-        console.log(e);
         var allStudents = this.state.curStudents;
         this.setState({ studentFilter: allStudents });
     }
