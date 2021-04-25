@@ -14,6 +14,13 @@ router.route("/get/:id").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/:department/:track").get((req,res) => {
+  Student.find({department : req.params.department, track: req.params.track}, (err, docs) => {
+  })
+  .then((ret) => res.json(ret))
+  .catch((err) => res.status(400).json("Invalid department or track: ", err));
+})
+
 router.route("/get/sbuID/:id").put((req, res) => {
   Student.findOneAndReplace({ id: req.params.id }, req.body, {
     upsert: true,
