@@ -1,22 +1,15 @@
-
-
 const axios = require("axios").default;
 
 class coursePlan {
-    constructor(student) {
-        this.student = student
-    }
+	constructor(student) {
+		this.student = student;
+	}
 
-    smartCoursePlan() {
-        allStudents = this.obtainStudents();
+	smartCoursePlan() {
+		allStudents = this.obtainStudents();
+	}
 
-    }
+	coursePlanConstraints() {}
 
-    coursePlanConstraints(){
-
-    }
-
-    obtainStudents(department, track){
-
-    }
+	obtainStudents(department, track) {}
 }

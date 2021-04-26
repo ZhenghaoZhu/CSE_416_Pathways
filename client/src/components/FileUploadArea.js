@@ -19,36 +19,32 @@ class FileUploadArea extends Component {
                 curStudent["track"] = " ";
             }
             axios
-                .put(
-                    Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"],
-                    {
-                        firstName: curStudent["first_name"],
-                        lastName: curStudent["last_name"],
-                        id: curStudent["sbu_id"],
-                        email: curStudent["email"],
-                        gpa: 0,
-                        department: curStudent["department"],
-                        track: curStudent["track"],
-                        reqVersionSem:
-                            curStudent["requirement_version_semester"],
-                        reqVersionYear: curStudent["requirement_version_year"],
-                        entrySem: curStudent["entry_semester"],
-                        entryYear: curStudent["entry_year"],
-                        gradSem: curStudent["graduation_semester"],
-                        gradYear: curStudent["graduation_year"],
-                        coursePlan: {},
-                        projectOption: " ",
-                        facultyAdvisor: " ",
-                        proficienyReq: [],
-                        degreeRequirements: " ",
-                        curSem: "Spring",
-                        curYear: "2021",
-                        password: curStudent["password"],
-                        graduated: false,
-                        settings: " ",
-                        comments: [],
-                    }
-                )
+                .put(Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"], {
+                    firstName: curStudent["first_name"],
+                    lastName: curStudent["last_name"],
+                    id: curStudent["sbu_id"],
+                    email: curStudent["email"],
+                    gpa: 0,
+                    department: curStudent["department"],
+                    track: curStudent["track"],
+                    reqVersionSem: curStudent["requirement_version_semester"],
+                    reqVersionYear: curStudent["requirement_version_year"],
+                    entrySem: curStudent["entry_semester"],
+                    entryYear: curStudent["entry_year"],
+                    gradSem: curStudent["graduation_semester"],
+                    gradYear: curStudent["graduation_year"],
+                    coursePlan: {},
+                    projectOption: " ",
+                    facultyAdvisor: " ",
+                    proficienyReq: [],
+                    degreeRequirements: {},
+                    curSem: "Spring",
+                    curYear: "2021",
+                    password: curStudent["password"],
+                    graduated: false,
+                    settings: " ",
+                    comments: [],
+                })
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
@@ -56,24 +52,17 @@ class FileUploadArea extends Component {
 
     updateStudentGrades = async function (curClassObj, student) {
         var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
-        var curItem = [
-            curClassObj["section"],
-            curClassObj["department"] + " " + curClassObj["course_num"],
-            curClassObj["grade"],
-        ];
+        var curItem = [curClassObj["section"], curClassObj["department"] + " " + curClassObj["course_num"], curClassObj["grade"]];
         if (student["coursePlan"][curSemester] === undefined) {
-            console.log(student["coursePlan"]);
             student["coursePlan"][curSemester] = [];
             student["coursePlan"][curSemester].push(curItem);
-            console.log(student["coursePlan"]);
         } else {
             student["coursePlan"][curSemester].push(curItem);
-            console.log(student["coursePlan"]);
         }
         await axios
             .post(Config.URL + "/student/update/" + student["id"], student)
-            .then((cur) => console.log("Added student: ", cur))
-            .catch((err) => console.log("Error happened :(", err));
+            .then((cur) => console.debug("Update student grades: ", curItem))
+            .catch((err) => console.debug("Error happened :(", err));
     };
 
     createCourse = async function (fileObj) {
@@ -110,10 +99,7 @@ class FileUploadArea extends Component {
         newCourseInfo[curKey].push(newSection);
         curCourse["courseInfo"] = newCourseInfo;
         await axios
-            .put(
-                Config.URL + "/courses/update/classID/" + curCourse["id"],
-                curCourse
-            )
+            .put(Config.URL + "/courses/update/classID/" + curCourse["id"], curCourse)
             .then((cur) => console.log("Update course: ", cur))
             .catch((err) => console.log("Error happened :(", err));
     };
@@ -127,90 +113,184 @@ class FileUploadArea extends Component {
                 curClassID = curCourse["department"] + curCourse["course_num"];
                 axios
                     .get(Config.URL + "/courses/get/classID/" + curClassID)
-                    .then((res) =>
-                        res["data"].length === 0
-                            ? this.createCourse(curCourse)
-                            : this.updateCourse(res, curCourse)
-                    )
+                    .then((res) => (res["data"].length === 0 ? this.createCourse(curCourse) : this.updateCourse(res, curCourse)))
                     .catch((err) => console.log("Course not added, ", err));
             }
             return 1;
         });
     };
 
+    checkCourseGrade(curGrade) {
+        if (curGrade === "") {
+            return false;
+        }
+        if (curGrade.match(/^(A\+|A|A-|B\+|B|B-|C\+|C)$/)) {
+            return true;
+        }
+    }
+
+    getAllStudentCourses(curStudent) {
+        var retAllCourses = [];
+        var curCoursePlan = curStudent["coursePlan"];
+        for (const [key, value] of Object.entries(curCoursePlan)) {
+            value.map((curClass) => {
+                if (this.checkCourseGrade(curClass[2])) {
+                    retAllCourses.push(curClass[1]);
+                }
+            });
+        }
+        return retAllCourses;
+    }
+
+    updateStudentDegreeRequirements = async function (curStudent) {
+        var curDegreeReq = null;
+        var curDegreeReqPath = curStudent["department"] + "/" + curStudent["reqVersionYear"] + "/" + curStudent["reqVersionSem"];
+        await axios
+            .get(Config.URL + "/degreeReqs/get/" + curDegreeReqPath)
+            .then((degreeReq) => {
+                curDegreeReq = degreeReq;
+            })
+            .catch((err) => console.log("Error: ", err));
+
+        var curTrack = curDegreeReq["data"]["tracks"][curStudent["track"]];
+        var allCourses = this.getAllStudentCourses(curStudent);
+        var curReqCourse = null;
+        var curElecCourse = null;
+        var seenBool = false;
+        allCourses.forEach((curCourse) => {
+            for (var i = 0; i < curTrack["Required Courses"].length; i++) {
+                curReqCourse = curTrack["Required Courses"][i];
+                console.info(curReqCourse);
+                if (curReqCourse !== undefined && curReqCourse.indexOf("-") > -1) {
+                    var curCourseNum = curCourse.split(" ")[1];
+                    var curReqCourseNums = curReqCourse.split(" ");
+                    if (curCourseNum >= curReqCourseNums[1] && curCourseNum <= curReqCourseNums[3]) {
+                        curReqCourse[0] = curReqCourse[0] - 1;
+                        if (curReqCourse[0] == 0) {
+                            curTrack["Required Courses"].splice(i, 1);
+                        }
+                        seenBool = true;
+                        break;
+                    }
+                } else {
+                    if (curReqCourse !== undefined && curReqCourse[1] === curCourse) {
+                        curReqCourse[0] = curReqCourse[0] - 1;
+                        if (curReqCourse[0] == 0) {
+                            curTrack["Required Courses"].splice(i, 1);
+                        }
+                        seenBool = true;
+                        break;
+                    }
+                }
+            }
+            if (!seenBool) {
+                for (var j = 0; j < curTrack["Elective Courses"].length; j++) {
+                    curElecCourse = curTrack["Elective Courses"][i];
+                    if (curReqCourse !== undefined && curReqCourse.indexOf("-") > -1) {
+                        var curCourseNum = curCourse.split(" ")[1];
+                        var curElecCourseNums = curElecCourse.split(" ");
+                        if (curCourseNum >= curElecCourseNums[1] && curCourseNum <= curElecCourseNums[3]) {
+                            curElecCourse[0] = curElecCourse[0] - 1;
+                            if (curElecCourse[0] == 0) {
+                                curTrack["Elective Courses"].splice(i, 1);
+                            }
+                            seenBool = true;
+                            break;
+                        }
+                    } else {
+                        if (curElecCourse !== undefined && curElecCourse[1] === curCourse) {
+                            curElecCourse[0] = curElecCourse[0] - 1;
+                            if (curElecCourse[0] == 0) {
+                                delete curTrack["Elective Courses"].splice(i, 1);
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            seenBool = false;
+        });
+
+        curDegreeReq["data"]["tracks"][curStudent["track"]] = curTrack;
+        curStudent["degreeRequirements"] = curDegreeReq["data"];
+        await axios
+            .post(Config.URL + "/student/update/" + curStudent["id"], curStudent)
+            .then((cur) => console.log("Updated student: ", cur))
+            .catch((err) => console.log("Error happened :(", err));
+        return 1;
+    };
+
+    updateStudentGPA = async function (curStudent) {
+        // console.log("wow2", curStudent);
+        return 1;
+    };
+
     addCourseGrades = async function (fileObj) {
         var curData = fileObj["data"];
-        console.log(process);
+        var curSBUIDs = [];
+        console.log(curData);
         for (let i = 0; i < curData.length; i++) {
             await axios
                 .get(Config.URL + "/student/get/" + curData[i]["sbu_id"])
-                .then((student) =>
-                    this.updateStudentGrades(curData[i], student["data"])
-                )
+                .then(async (student) => {
+                    if (!curSBUIDs.includes(curData[i]["sbu_id"])) {
+                        curSBUIDs.push(curData[i]["sbu_id"]);
+                    }
+                    await this.updateStudentGrades(curData[i], student["data"]);
+                })
+                .catch((err) => console.log("Error: ", err));
+        }
+
+        for (let i = 0; i < curSBUIDs.length; i++) {
+            await axios
+                .get(Config.URL + "/student/get/" + curSBUIDs[i])
+                .then((student) => {
+                    this.updateStudentDegreeRequirements(student["data"]);
+                    this.updateStudentGPA(student["data"]);
+                })
                 .catch((err) => console.log("Error: ", err));
         }
     };
 
     addAMSdegreeReq = async function (degreeReq) {
         await axios
-            .put(
-                Config.URL +
-                    "/degreeReqs/edit/AMS/" +
-                    degreeReq["Version_Year"] +
-                    "/" +
-                    degreeReq["Version_Semester"],
-                {
-                    department: degreeReq["Department"],
-                    gpaReq: degreeReq["GPA_Requirement"],
-                    tracks: degreeReq["Tracks"],
-                    reqVersionSem: degreeReq["Version_Semester"],
-                    reqVersionYear: degreeReq["Version_Year"],
-                    timeLimit: degreeReq["Time_Limit"],
-                }
-            )
+            .put(Config.URL + "/degreeReqs/edit/AMS/" + degreeReq["Version_Year"] + "/" + degreeReq["Version_Semester"], {
+                department: degreeReq["Department"],
+                gpaReq: degreeReq["GPA_Requirement"],
+                tracks: degreeReq["Tracks"],
+                reqVersionSem: degreeReq["Version_Semester"],
+                reqVersionYear: degreeReq["Version_Year"],
+                timeLimit: degreeReq["Time_Limit"],
+            })
             .then((ret) => console.log("ams post:", ret))
             .catch((err) => console.log("invalid AMS reqs: ", err));
     };
 
     addECEdegreeReq = async function (degreeReq) {
         await axios
-            .put(
-                Config.URL +
-                    "/degreeReqs/edit/ECE/" +
-                    degreeReq["Version_Year"] +
-                    "/" +
-                    degreeReq["Version_Semester"],
-                {
-                    department: degreeReq["Department"],
-                    gpaReq: degreeReq["GPA_Requirement"],
-                    tracks: degreeReq["Tracks"],
-                    reqVersionSem: degreeReq["Version_Semester"],
-                    reqVersionYear: degreeReq["Version_Year"],
-                    timeLimit: degreeReq["GPA_Requirement"],
-                    thesisOption: true,
-                }
-            )
+            .put(Config.URL + "/degreeReqs/edit/ECE/" + degreeReq["Version_Year"] + "/" + degreeReq["Version_Semester"], {
+                department: degreeReq["Department"],
+                gpaReq: degreeReq["GPA_Requirement"],
+                tracks: degreeReq["Tracks"],
+                reqVersionSem: degreeReq["Version_Semester"],
+                reqVersionYear: degreeReq["Version_Year"],
+                timeLimit: degreeReq["GPA_Requirement"],
+                thesisOption: true,
+            })
             .then((ret) => console.log("ece post:", ret))
             .catch((err) => console.log("invalid ece reqs: ", err));
     };
 
     addBMIdegreeReq = async function (degreeReq) {
         await axios
-            .put(
-                Config.URL +
-                    "/degreeReqs/edit/BMI/" +
-                    degreeReq["Version_Year"] +
-                    "/" +
-                    degreeReq["Version_Semester"],
-                {
-                    department: degreeReq["Department"],
-                    gpaReq: degreeReq["GPA_Requirement"],
-                    tracks: degreeReq["Tracks"],
-                    reqVersionSem: degreeReq["Version_Semester"],
-                    reqVersionYear: degreeReq["Version_Year"],
-                    timeLimit: degreeReq["Time_Limit"],
-                }
-            )
+            .put(Config.URL + "/degreeReqs/edit/BMI/" + degreeReq["Version_Year"] + "/" + degreeReq["Version_Semester"], {
+                department: degreeReq["Department"],
+                gpaReq: degreeReq["GPA_Requirement"],
+                tracks: degreeReq["Tracks"],
+                reqVersionSem: degreeReq["Version_Semester"],
+                reqVersionYear: degreeReq["Version_Year"],
+                timeLimit: degreeReq["Time_Limit"],
+            })
             .then((ret) => console.log("bmi post:", ret))
             .catch((err) => console.log("invalid bmi reqs: ", err));
     };
@@ -293,9 +373,7 @@ class FileUploadArea extends Component {
                 reader.onload = function () {
                     let textFile = reader.result;
                     // parse
-                    let course_array = textFile.match(
-                        /^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm
-                    );
+                    let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
                     const courses = course_array.map((course) => {
                         let course_fields = course.match(/(.+(\r?\n))+/gm);
                         let courseName = course_fields[0];
@@ -318,13 +396,10 @@ class FileUploadArea extends Component {
                         }
 
                         let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text =
-                            prereq_match === null ? "" : prereq_match[0];
+                        let prereq_text = prereq_match === null ? "" : prereq_match[0];
 
                         if (course.toLowerCase().includes("prerequisite")) {
-                            prerequisites = prereq_text
-                                .substring(prereq_text.indexOf(":") + 2)
-                                .split(",");
+                            prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
                         }
                         // console.log(prerequisites);
                         return {

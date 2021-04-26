@@ -11,15 +11,15 @@ import EditStudentInfo from "./components/EditStudentInfo";
 import EnrollmentTrends from "./components/EnrollmentTrends";
 
 ReactDOM.render(
-    <BrowserRouter>
-        <Switch>
-            <Route exact path={["/", "/gpd"]} component={GPDPage} />
-            <Route path="/login" component={LoginForm} />
-            <Route path="/student" component={StudentDetail} />
-            <Route path="/addStudent" component={AddStudent} />
-            <Route path="/editStudent" component={EditStudentInfo} />
-            <Route path="/enrollmentTrends" component={EnrollmentTrends} />
-        </Switch>
-    </BrowserRouter>,
-    document.getElementById("root")
+	<BrowserRouter>
+		<Switch>
+			<Route exact path={["/", "/gpd"]} component={GPDPage} />
+			<Route path="/login" component={LoginForm} />
+			<Route path="/student" component={StudentDetail} />
+			<Route path="/addStudent" component={AddStudent} />
+			<Route path="/editStudent" component={EditStudentInfo} />
+			<Route path="/enrollmentTrends" component={EnrollmentTrends} />
+		</Switch>
+	</BrowserRouter>,
+	document.getElementById("root")
 );
