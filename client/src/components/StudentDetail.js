@@ -61,7 +61,6 @@ class StudentDetail extends Component {
 		}
 		// console.log(this.props.focusStudent.row);
 		// console.log(studentInfo);
-
 		// var expectedGrad = studentInfo.gradSem + " " + studentInfo.gradYear;
 		return (
 			<Card
