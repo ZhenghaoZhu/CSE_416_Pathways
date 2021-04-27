@@ -135,7 +135,7 @@ class FileUploadArea extends Component {
         for (const [key, value] of Object.entries(curCoursePlan)) {
             value.map((curClass) => {
                 if (this.checkCourseGrade(curClass[2])) {
-                    retAllCourses.push(curClass[1]);
+                    retAllCourses.push(curClass[1] + " " + curClass[2]);
                 }
             });
         }
@@ -148,9 +148,15 @@ class FileUploadArea extends Component {
             curCourseCheck = curCourseArray[i];
             if (curCourseCheck !== undefined && curCourseCheck[1].indexOf("-") > -1) {
                 // NOTE  Has Range
-                var curCourseNum = curCourse.split(" ")[1];
+                var curCourseSplit = curCourse.split(" ");
+                var curCourseDep = curCourseSplit[0];
+                var curCourseNum = curCourseSplit[1];
                 var curCourseCheckNums = curCourseCheck[1].split(" ");
-                if (curCourseNum >= parseInt(curCourseCheckNums[1]) && curCourseNum <= parseInt(curCourseCheckNums[3])) {
+                if (
+                    curCourseDep === curCourseCheckNums[0] &&
+                    curCourseNum >= parseInt(curCourseCheckNums[1]) &&
+                    curCourseNum <= parseInt(curCourseCheckNums[3])
+                ) {
                     curCourseCheck[0] = curCourseCheck[0] - 1;
                     if (curCourseCheck[0] === 0) {
                         curCourseArray.splice(i, 1);
@@ -158,8 +164,11 @@ class FileUploadArea extends Component {
                     return true;
                 }
             } else {
-                var curCourseDep = curCourse.split(" ")[0];
-                if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck[1] === curCourse)) {
+                var curCourseSplit = curCourse.split(" ");
+                var curCourseName = curCourseSplit[0] + " " + curCourseSplit[1];
+                var curCourseDep = curCourseSplit[0];
+                console.info(curCourseCheck[1], curCourseDep, curCourse);
+                if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck[1] === curCourseName)) {
                     curCourseCheck[0] = curCourseCheck[0] - 1;
                     if (curCourseCheck[0] === 0) {
                         curCourseArray.splice(i, 1);
@@ -210,8 +219,46 @@ class FileUploadArea extends Component {
     }
 
     updateStudentGPA = async function (curStudent) {
-        // console.log("wow2", curStudent);
-        return 1;
+        var gradeMap = {
+            "A+": 4.0,
+            A: 4.0,
+            "A-": 3.67,
+            "B+": 3.3,
+            B: 3.0,
+            "B-": 2.67,
+            "C+": 2.3,
+            C: 2.0,
+            "C-": 1.67,
+            "D+": 1.3,
+            D: 1,
+            "D-": 0.67,
+            F: 0,
+        };
+        var allCourses = this.getAllStudentCourses(curStudent);
+        var gpaCalc = 0;
+        var curGrade = "";
+        var curCourseCredits = 3;
+        var totalCredits = 0;
+        console.info(allCourses);
+        allCourses.forEach((curCourse) => {
+            // TODO  Get credits for each class
+            curCourseCredits = 3;
+            totalCredits += curCourseCredits;
+            curGrade = curCourse.split(" ")[2];
+            gpaCalc += gradeMap[curGrade] * curCourseCredits;
+        });
+        var gpaCalc = gpaCalc / totalCredits;
+        curStudent["gpa"] = gpaCalc;
+        await axios
+            .post(Config.URL + "/student/update/" + curStudent["id"], curStudent)
+            .then((cur) => console.log("Updated student: ", cur))
+            .catch((err) => console.log("Error happened :(", err));
+    };
+
+    updateDegreeReqAndGPA = async function (curStudent) {
+        await this.updateStudentDegreeRequirements(curStudent["data"]);
+        console.info("DONEEEEEE");
+        await this.updateStudentGPA(curStudent["data"]);
     };
 
     addCourseGrades = async function (fileObj) {
@@ -234,8 +281,7 @@ class FileUploadArea extends Component {
             await axios
                 .get(Config.URL + "/student/get/" + curSBUIDs[i])
                 .then((student) => {
-                    this.updateStudentDegreeRequirements(student["data"]);
-                    this.updateStudentGPA(student["data"]);
+                    this.updateDegreeReqAndGPA(student);
                 })
                 .catch((err) => console.log("Error: ", err));
         }
