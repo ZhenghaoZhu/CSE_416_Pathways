@@ -6,6 +6,7 @@ import { Grid, Button, ButtonGroup, Box } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import FileUploadArea from "./FileUploadArea";
 import Config from "../config.json";
+import SuggestCourse from "./suggestCP";
 
 const Papa = require("papaparse");
 const fs = require("fs");
@@ -189,6 +190,14 @@ class GPDPage extends Component {
         console.log("All Student Data Deleted");
     }
 
+    sendStudentData = (e) => {
+        e.preventDefault();
+        this.props.history.push({
+            pathname: "/suggestCourse",
+            student: this.state["focusStudent"],
+        });
+    }
+
     render() {
         return (
             <Box style={{ width: "99.82%" }}>
@@ -239,7 +248,21 @@ class GPDPage extends Component {
                                         Edit Student
                                     </Link>
                                 </Button>
-                                <Button>Suggest Course Plan</Button>
+                                <Button onClick={this.sendStudentData}>
+                                    <Link
+                                        to={{
+                                            pathname: "/suggestCourse",
+                                        }}
+
+                                        style={{
+                                            textDecoration: "none",
+                                            color: "inherit",
+                                        }}
+                                    >
+                                    Suggest Course Plan    
+                                    </Link>
+                                    
+                                </Button>
                                 <Button onClick={this.onSub}>
                                     Delete All{" "}
                                 </Button>
