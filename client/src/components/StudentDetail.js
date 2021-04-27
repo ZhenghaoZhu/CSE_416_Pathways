@@ -114,10 +114,10 @@ class StudentDetail extends Component {
                         "Faculty Advisor",
                         studentInfo.facultyAdvisor
                     )}
-                    {this.BuildTypography(
+                    {/* {this.BuildTypography(
                         "Degree Requirements",
                         studentInfo.degreeRequirements
-                    )}
+                    )} */}
                     {this.BuildTypography(
                         "Graduated",
                         studentInfo.graduated ? "Yes" : "No"

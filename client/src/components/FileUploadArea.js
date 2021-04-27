@@ -4,6 +4,7 @@ import Config from "../config.json";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
+const fs = require("fs");
 
 class FileUploadArea extends Component {
     constructor(props) {
@@ -215,23 +216,32 @@ class FileUploadArea extends Component {
             .catch((err) => console.log("invalid bmi reqs: ", err));
     };
 
-    checkJSONfile = async function (file) {
+    checkJSONfile(file) {
         var jsonObj;
-        await axios
-            .get(Config.URL + "/degreeReqs/file/" + file["file"]["name"])
-            .then((data) => (jsonObj = JSON.parse(data["data"])))
-            .catch((err) => console.log("axios err: ", err));
-
-        console.log("jsonObj: ", jsonObj);
-        // console.log("CHECKING JSON FILE: ", results);
-        if (jsonObj["Department"] === "AMS") {
-            this.addAMSdegreeReq(jsonObj);
-        } else if (jsonObj["Department"] === "ECE") {
-            this.addECEdegreeReq(jsonObj);
-        } else if (jsonObj["Department"] === "BMI") {
-            this.addBMIdegreeReq(jsonObj);
-        } else if (jsonObj["Department"] === "CSE") {
+        var reader = new FileReader();
+        const self = this;
+        reader.onload = function () {
+            var str = reader.result;
+            str.replace("\r", "");
+            str.replace("\n", "");
+            console.log("reader ->", str);
+            console.log(" object -> ", JSON.parse(str));
+            jsonObj = JSON.parse(str);
+            console.log("jsonObj: ", jsonObj);
+            // console.log("CHECKING JSON FILE: ", results);
+            if (jsonObj["Department"] === "AMS") {
+                self.addAMSdegreeReq(jsonObj);
+            } else if (jsonObj["Department"] === "ECE") {
+                self.addECEdegreeReq(jsonObj);
+            } else if (jsonObj["Department"] === "BMI") {
+                self.addBMIdegreeReq(jsonObj);
+            } else if (jsonObj["Department"] === "CSE") {
+            }
         }
+        reader.onerror = function () {
+            console.log(reader.error);
+        };
+        reader.readAsText(file["file"]);
     };
 
     checkCSVFile(results) {
