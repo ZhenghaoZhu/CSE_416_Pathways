@@ -142,7 +142,37 @@ class FileUploadArea extends Component {
         return retAllCourses;
     }
 
+    checkSelectedCourses(curCourseArray, curCourse) {
+        var curCourseCheck = null;
+        for (var i = 0; i < curCourseArray.length; i++) {
+            curCourseCheck = curCourseArray[i];
+            if (curCourseCheck !== undefined && curCourseCheck[1].indexOf("-") > -1) {
+                // NOTE  Has Range
+                var curCourseNum = curCourse.split(" ")[1];
+                var curCourseCheckNums = curCourseCheck[1].split(" ");
+                if (curCourseNum >= parseInt(curCourseCheckNums[1]) && curCourseNum <= parseInt(curCourseCheckNums[3])) {
+                    curCourseCheck[0] = curCourseCheck[0] - 1;
+                    if (curCourseCheck[0] === 0) {
+                        curCourseArray.splice(i, 1);
+                    }
+                    return true;
+                }
+            } else {
+                var curCourseDep = curCourse.split(" ")[0];
+                if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck[1] === curCourse)) {
+                    curCourseCheck[0] = curCourseCheck[0] - 1;
+                    if (curCourseCheck[0] === 0) {
+                        curCourseArray.splice(i, 1);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     updateStudentDegreeRequirements = async function (curStudent) {
+        console.info(curStudent);
         var curDegreeReq = null;
         var curDegreeReqPath = curStudent["department"] + "/" + curStudent["reqVersionYear"] + "/" + curStudent["reqVersionSem"];
         await axios
@@ -151,74 +181,33 @@ class FileUploadArea extends Component {
                 curDegreeReq = degreeReq;
             })
             .catch((err) => console.log("Error: ", err));
-
+        // TODO  Handle non existent degree requirements
         var curTrack = curDegreeReq["data"]["tracks"][curStudent["track"]];
         var allCourses = this.getAllStudentCourses(curStudent);
-        var curReqCourse = null;
-        var curElecCourse = null;
         var seenBool = false;
         allCourses.forEach((curCourse) => {
-            for (var i = 0; i < curTrack["Required Courses"].length; i++) {
-                curReqCourse = curTrack["Required Courses"][i];
-                console.info(curReqCourse);
-                if (curReqCourse !== undefined && curReqCourse.indexOf("-") > -1) {
-                    var curCourseNum = curCourse.split(" ")[1];
-                    var curReqCourseNums = curReqCourse.split(" ");
-                    if (curCourseNum >= curReqCourseNums[1] && curCourseNum <= curReqCourseNums[3]) {
-                        curReqCourse[0] = curReqCourse[0] - 1;
-                        if (curReqCourse[0] == 0) {
-                            curTrack["Required Courses"].splice(i, 1);
-                        }
-                        seenBool = true;
-                        break;
-                    }
-                } else {
-                    if (curReqCourse !== undefined && curReqCourse[1] === curCourse) {
-                        curReqCourse[0] = curReqCourse[0] - 1;
-                        if (curReqCourse[0] == 0) {
-                            curTrack["Required Courses"].splice(i, 1);
-                        }
-                        seenBool = true;
-                        break;
-                    }
-                }
-            }
+            seenBool = this.checkSelectedCourses(curTrack["Required Courses"], curCourse);
             if (!seenBool) {
-                for (var j = 0; j < curTrack["Elective Courses"].length; j++) {
-                    curElecCourse = curTrack["Elective Courses"][i];
-                    if (curReqCourse !== undefined && curReqCourse.indexOf("-") > -1) {
-                        var curCourseNum = curCourse.split(" ")[1];
-                        var curElecCourseNums = curElecCourse.split(" ");
-                        if (curCourseNum >= curElecCourseNums[1] && curCourseNum <= curElecCourseNums[3]) {
-                            curElecCourse[0] = curElecCourse[0] - 1;
-                            if (curElecCourse[0] == 0) {
-                                curTrack["Elective Courses"].splice(i, 1);
-                            }
-                            seenBool = true;
-                            break;
-                        }
-                    } else {
-                        if (curElecCourse !== undefined && curElecCourse[1] === curCourse) {
-                            curElecCourse[0] = curElecCourse[0] - 1;
-                            if (curElecCourse[0] == 0) {
-                                delete curTrack["Elective Courses"].splice(i, 1);
-                            }
-                        }
-                    }
-                    break;
-                }
+                this.checkSelectedCourses(curTrack["Elective Courses"], curCourse);
             }
             seenBool = false;
         });
 
         curDegreeReq["data"]["tracks"][curStudent["track"]] = curTrack;
         curStudent["degreeRequirements"] = curDegreeReq["data"];
+        curStudent["graduated"] = this.fulfillsDegreeRequirements(curStudent);
         await axios
             .post(Config.URL + "/student/update/" + curStudent["id"], curStudent)
             .then((cur) => console.log("Updated student: ", cur))
             .catch((err) => console.log("Error happened :(", err));
         return 1;
     };
+
+    fulfillsDegreeRequirements(curStudent) {
+        var curTrack = curStudent["track"];
+        var curRequirements = curStudent["degreeRequirements"]["tracks"][curTrack];
+        return curRequirements["Required Courses"].length == 0 && curRequirements["Elective Courses"].length == 0;
+    }
 
     updateStudentGPA = async function (curStudent) {
         // console.log("wow2", curStudent);
@@ -354,8 +343,8 @@ class FileUploadArea extends Component {
                 courseInfo: {},
                 professorNames: {},
             })
-            .then((course) => console.log("Course added", course))
-            .catch((err) => console.log(err));
+            .then((course) => console.debug("Course added", course))
+            .catch((err) => console.debug(err));
     }
 
     fileParse(files) {
