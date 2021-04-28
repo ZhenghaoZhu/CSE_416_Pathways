@@ -31,6 +31,12 @@ router.route("/get/classID/:id").get((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/dep/:department").get((req, res) => {
+    Courses.find({ department: req.params.department })
+        .then((curCourse) => res.json(curCourse))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/remove").delete(function (req, res) {
     Courses.deleteMany()
         .then((body) => res.json(body))
@@ -48,18 +54,13 @@ router.route("/update/classID/:id").put((req, res) => {
 });
 
 router.route("/update/classID/:id").put((req, res) => {
-  Courses.findOneAndUpdate(
-    { id: req.params.id },
-    req.body,
-    { new: true },
-    (err, docs) => {
-      if (err) {
-        return res.status(400).send(err);
-      }
-    }
-  )
-    .then((course) => res.json(course))
-    .catch((err) => res.status(400).json("Error: " + err));
+    Courses.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, docs) => {
+        if (err) {
+            return res.status(400).send(err);
+        }
+    })
+        .then((course) => res.json(course))
+        .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/add").post((req, res) => {
@@ -67,10 +68,10 @@ router.route("/add").post((req, res) => {
     const department = req.body.department || "None";
     const courseNum = req.body.courseNum || "None";
     const courseName = req.body.courseName || "None";
-    const credits = req.body.credits || "None";
+    const credits = req.body.credits || 0;
     const preReqs = req.body.preReqs || [];
-    const courseDescription = req.body.courseDescription|| "None";
-    const yearTrends = req.body.yearTrends|| {};
+    const courseDescription = req.body.courseDescription || "None";
+    const yearTrends = req.body.yearTrends || {};
     const courseInfo = req.body.courseInfo || {};
     const professorNames = req.body.professorNames || {};
 
