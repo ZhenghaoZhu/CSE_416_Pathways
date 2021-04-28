@@ -136,7 +136,7 @@ class FileUploadArea extends Component {
         for (const [key, value] of Object.entries(curCoursePlan)) {
             value.map((curClass) => {
                 if (this.checkCourseGrade(curClass[2])) {
-                    retAllCourses.push(curClass[1] + " " + curClass[2]);
+                    retAllCourses.push(curClass[1] + " " + curClass[2] + " " + key);
                 }
             });
         }
@@ -182,7 +182,9 @@ class FileUploadArea extends Component {
     }
 
     updateStudentDegreeRequirements = async function (curStudent) {
-        console.info(curStudent);
+        if (curStudent === null) {
+            return 1;
+        }
         var curDegreeReq = null;
         var curDegreeReqPath = curStudent["department"] + "/" + curStudent["reqVersionYear"] + "/" + curStudent["reqVersionSem"];
         await axios
@@ -220,6 +222,9 @@ class FileUploadArea extends Component {
     }
 
     updateStudentGPA = async function (curStudent) {
+        if (curStudent === null) {
+            return 1;
+        }
         var gradeMap = {
             "A+": 4.0,
             A: 4.0,
@@ -258,7 +263,6 @@ class FileUploadArea extends Component {
 
     updateDegreeReqAndGPA = async function (curStudent) {
         await this.updateStudentDegreeRequirements(curStudent["data"]);
-        console.info("DONEEEEEE");
         await this.updateStudentGPA(curStudent["data"]);
     };
 
@@ -273,7 +277,9 @@ class FileUploadArea extends Component {
                     if (!curSBUIDs.includes(curData[i]["sbu_id"])) {
                         curSBUIDs.push(curData[i]["sbu_id"]);
                     }
-                    await this.updateStudentGrades(curData[i], student["data"]);
+                    if (student["data"] != null) {
+                        await this.updateStudentGrades(curData[i], student["data"]);
+                    }
                 })
                 .catch((err) => console.log("Error: ", err));
         }
@@ -282,7 +288,9 @@ class FileUploadArea extends Component {
             await axios
                 .get(Config.URL + "/student/get/" + curSBUIDs[i])
                 .then((student) => {
-                    this.updateDegreeReqAndGPA(student);
+                    if (student != null) {
+                        this.updateDegreeReqAndGPA(student);
+                    }
                 })
                 .catch((err) => console.log("Error: ", err));
         }
@@ -352,12 +360,12 @@ class FileUploadArea extends Component {
                 self.addBMIdegreeReq(jsonObj);
             } else if (jsonObj["Department"] === "CSE") {
             }
-        }
+        };
         reader.onerror = function () {
             console.log(reader.error);
         };
         reader.readAsText(file["file"]);
-    };
+    }
 
     checkCSVFile(results) {
         // NOTE  Courses CSV has 6 elements in each object (row), Student CSV has 13, Course Grades has 7
