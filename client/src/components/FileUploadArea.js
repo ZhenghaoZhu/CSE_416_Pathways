@@ -62,13 +62,13 @@ class FileUploadArea extends Component {
             curClassObj["grade"],
         ];
         if (student["coursePlan"][curSemester] === undefined) {
-            console.log(student["coursePlan"]);
+            // console.log(student["coursePlan"]);
             student["coursePlan"][curSemester] = [];
             student["coursePlan"][curSemester].push(curItem);
-            console.log(student["coursePlan"]);
+            // console.log(student["coursePlan"]);
         } else {
             student["coursePlan"][curSemester].push(curItem);
-            console.log(student["coursePlan"]);
+            // console.log(student["coursePlan"]);
         }
         await axios
             .post(Config.URL + "/student/update/" + student["id"], student)
@@ -77,7 +77,7 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        console.log(fileObj);
+        // console.log(fileObj);
         var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var curCourseInfo = {};
@@ -140,7 +140,7 @@ class FileUploadArea extends Component {
 
     addCourseGrades = async function (fileObj) {
         var curData = fileObj["data"];
-        console.log(process);
+        // console.log(process);
         for (let i = 0; i < curData.length; i++) {
             await axios
                 .get(Config.URL + "/student/get/" + curData[i]["sbu_id"])
@@ -222,7 +222,7 @@ class FileUploadArea extends Component {
             .then((data) => (jsonObj = JSON.parse(data["data"])))
             .catch((err) => console.log("axios err: ", err));
 
-        console.log("jsonObj: ", jsonObj);
+        // console.log("jsonObj: ", jsonObj);
         // console.log("CHECKING JSON FILE: ", results);
         if (jsonObj["Department"] === "AMS") {
             this.addAMSdegreeReq(jsonObj);
@@ -321,6 +321,7 @@ class FileUploadArea extends Component {
                         let prereq_text =
                             prereq_match === null ? "" : prereq_match[0];
 
+                        console.log(prereq_text);
                         if (course.toLowerCase().includes("prerequisite")) {
                             prerequisites = prereq_text
                                 .substring(prereq_text.indexOf(":") + 2)
@@ -335,7 +336,7 @@ class FileUploadArea extends Component {
                         };
                     });
                     // console.log(courses);
-                    courses.map((course) => self.addCourse(course));
+                    // courses.map((course) => self.addCourse(course));
                 };
                 reader.onerror = function () {
                     console.log(reader.error);
