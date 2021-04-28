@@ -67,7 +67,7 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        console.log(fileObj);
+        // console.log(fileObj);
         var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var curCourseInfo = {};
@@ -443,6 +443,7 @@ class FileUploadArea extends Component {
                         let prereq_match = course.match(/Prerequisite.+/);
                         let prereq_text = prereq_match === null ? "" : prereq_match[0];
 
+                        console.log(prereq_text);
                         if (course.toLowerCase().includes("prerequisite")) {
                             prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
                         }
@@ -455,7 +456,7 @@ class FileUploadArea extends Component {
                         };
                     });
                     // console.log(courses);
-                    courses.map((course) => self.addCourse(course));
+                    // courses.map((course) => self.addCourse(course));
                 };
                 reader.onerror = function () {
                     console.log(reader.error);
