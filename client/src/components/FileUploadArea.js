@@ -464,7 +464,13 @@ class FileUploadArea extends Component {
                         };
                     });
                     // console.log(courses);
-                    // courses.map((course) => self.addCourse(course));
+                    var RateLimiter = require("limiter").RateLimiter;
+                    var limiter = new RateLimiter(50, 100);
+                    courses.map((course) => {
+                        limiter.removeTokens(1, function () {
+                            self.addCourse(course);
+                        });
+                    });
                 };
                 reader.onerror = function () {
                     console.log(reader.error);
