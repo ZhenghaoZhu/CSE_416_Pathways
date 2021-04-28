@@ -78,7 +78,7 @@ class FileUploadArea extends Component {
                 department: fileObj["department"],
                 courseNum: fileObj["course_num"],
                 courseName: "Another CS Class",
-                credits: "3",
+                credits: 3,
                 preReqs: [],
                 courseDescription: "Description",
                 yearTrends: {},
@@ -431,7 +431,7 @@ class FileUploadArea extends Component {
                         let course_fields = course.match(/(.+(\r?\n))+/gm);
                         let courseName = course_fields[0];
                         let description = course_fields[1];
-                        let prerequisites = ["None"];
+                        let prerequisites = [];
                         let numOfCredits = null;
 
                         let matches = course.match(/\d{1}(\-\d+)? credit/);
@@ -440,17 +440,35 @@ class FileUploadArea extends Component {
                             // single digit credit
                             numOfCredits = creditNum[0];
                         } else {
-                            // range of credit exp 0-12
-                            if (creditNum.length === 10) {
-                                numOfCredits = creditNum.substring(0, 3);
-                            } else if (creditNum.length === 11) {
-                                numOfCredits = creditNum.substring(0, 4);
+                            // if 3 is in the range, take 3. Else, take the minimum
+                            if(creditNum.substring(0,1) > 3){
+                                numOfCredits = 3;
+                            }else if(creditNum.substring(0,1) <=3){
+                                numOfCredits = parseInt(creditNum.substring(0,1));
+                            }
+                            if (creditNum.length === 10) { //1-9
+                                if(creditNum.substring(0,1) >= 3){ //3-x,4-x
+                                    numOfCredits = parseInt(creditNum.substring(0,1));
+                                }else if(creditNum.substring(0,1) <3){ //1-x
+                                    if(creditNum.substring(2,3) > 3){ //1-4
+                                        numOfCredits = 3;
+                                    }else{ //1-2
+                                        numOfCredits = parseInt(creditNum.substring(0,1));
+                                    }
+                                }
+                            } else if (creditNum.length === 11) { //1-12
+                                if(creditNum.substring(0,1) < 3){ //2-11 = 3
+                                    numOfCredits = 3;
+                                }else{ //5-12 = 5
+                                    numOfCredits = parseInt(creditNum.substring(0,1));
+                                }
                             }
                         }
-
                         let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0];
-
+                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":")+2);
+                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);                        
+                        let w = preq_corse_match === null ? [] : preq_corse_match
+                        prerequisites = w.filter(preq => parseInt(preq.substring(4,5)) > 4);
                         console.log(prereq_text);
                         if (course.toLowerCase().includes("prerequisite")) {
                             prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
@@ -463,7 +481,6 @@ class FileUploadArea extends Component {
                             prerequisites,
                         };
                     });
-                    // console.log(courses);
                     var RateLimiter = require("limiter").RateLimiter;
                     var limiter = new RateLimiter(50, 100);
                     courses.map((course) => {
