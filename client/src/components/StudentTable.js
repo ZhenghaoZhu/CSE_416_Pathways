@@ -10,13 +10,12 @@ var columns = [
     { field: "firstName", headerName: "First name", width: 130 },
     { field: "lastName", headerName: "Last name", width: 130 },
     { field: "department", headerName: "Department", width: 130 },
-    { field: "track", headerName: "Track", width: 130 },
+    { field: "track", headerName: "Track", width: 200 },
     { field: "gpa", headerName: "GPA", type: "number", width: 80 },
-    { field: "projectOption", headerName: "Project Option", width: 130 },
-    { field: "facultyAdvisor", headerName: "Faculty Advisor", width: 130 },
+    { field: "projectOption", headerName: "Project Option", width: 190 },
     { field: "entryYear", headerName: "Entry Year", width: 130 },
-    { field: "gradSem", headerName: "Graduating Semester", width: 130 },
-    { field: "graduated", headerName: "Graduated", width: 110 },
+    { field: "gradYear", headerName: "Graduating Year", width: 160 },
+    { field: "graduated", headerName: "Graduated", width: 120 },
 ];
 
 class StudentTable extends Component {
@@ -49,6 +48,7 @@ class StudentTable extends Component {
     }
 
     filterStudent(e) {
+        // courses: CSE530, firstName: john
         // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
         var newStudentFilter = this.state.curStudents.filter((student) =>
             student.firstName.toUpperCase().includes(e.toUpperCase(), 0)
@@ -57,7 +57,6 @@ class StudentTable extends Component {
     }
 
     cancelStudentSearch(e) {
-        console.log(e);
         var allStudents = this.state.curStudents;
         this.setState({ studentFilter: allStudents });
     }
