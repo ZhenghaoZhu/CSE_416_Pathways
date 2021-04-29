@@ -8,7 +8,7 @@ const coursesSchema = new Schema(
         department: { type: String, required: true}, // CSE
         courseNum: { type: String, required: true}, // 220
         courseName: { type: String, required: true}, // Sys Fundamentals
-        credits: { type: String, required: true }, // 3
+        credits: { type: Number, required: true }, // 3
         preReqs: { type: Array, required: true }, // [CSE Course1, CSE Course2]
         courseDescription: { type: String, required: true}, // "Something"
         yearTrends: { type: Map, required: true }, // See PowerPoint
