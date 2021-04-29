@@ -441,34 +441,43 @@ class FileUploadArea extends Component {
                             numOfCredits = creditNum[0];
                         } else {
                             // if 3 is in the range, take 3. Else, take the minimum
-                            if(creditNum.substring(0,1) > 3){
+                            if (creditNum.substring(0, 1) > 3) {
                                 numOfCredits = 3;
-                            }else if(creditNum.substring(0,1) <=3){
-                                numOfCredits = parseInt(creditNum.substring(0,1));
+                            } else if (creditNum.substring(0, 1) <= 3) {
+                                numOfCredits = parseInt(creditNum.substring(0, 1));
                             }
-                            if (creditNum.length === 10) { //1-9
-                                if(creditNum.substring(0,1) >= 3){ //3-x,4-x
-                                    numOfCredits = parseInt(creditNum.substring(0,1));
-                                }else if(creditNum.substring(0,1) <3){ //1-x
-                                    if(creditNum.substring(2,3) > 3){ //1-4
+                            if (creditNum.length === 10) {
+                                //1-9
+                                if (creditNum.substring(0, 1) >= 3) {
+                                    //3-x,4-x
+                                    numOfCredits = parseInt(creditNum.substring(0, 1));
+                                } else if (creditNum.substring(0, 1) < 3) {
+                                    //1-x
+                                    if (creditNum.substring(2, 3) > 3) {
+                                        //1-4
                                         numOfCredits = 3;
-                                    }else{ //1-2
-                                        numOfCredits = parseInt(creditNum.substring(0,1));
+                                    } else {
+                                        //1-2
+                                        numOfCredits = parseInt(creditNum.substring(0, 1));
                                     }
                                 }
-                            } else if (creditNum.length === 11) { //1-12
-                                if(creditNum.substring(0,1) < 3){ //2-11 = 3
+                            } else if (creditNum.length === 11) {
+                                //1-12
+                                if (creditNum.substring(0, 1) < 3) {
+                                    //2-11 = 3
                                     numOfCredits = 3;
-                                }else{ //5-12 = 5
-                                    numOfCredits = parseInt(creditNum.substring(0,1));
+                                } else {
+                                    //5-12 = 5
+                                    numOfCredits = parseInt(creditNum.substring(0, 1));
                                 }
                             }
                         }
                         let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":")+2);
-                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);                        
-                        let w = preq_corse_match === null ? [] : preq_corse_match
-                        prerequisites = w.filter(preq => parseInt(preq.substring(4,5)) > 4);
+                        let prereq_text =
+                            prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":") + 2);
+                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
+                        let w = preq_corse_match === null ? [] : preq_corse_match;
+                        prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
                         console.log(prereq_text);
                         if (course.toLowerCase().includes("prerequisite")) {
                             prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
@@ -482,7 +491,7 @@ class FileUploadArea extends Component {
                         };
                     });
                     var RateLimiter = require("limiter").RateLimiter;
-                    var limiter = new RateLimiter(50, 100);
+                    var limiter = new RateLimiter(30, 100);
                     courses.map((course) => {
                         limiter.removeTokens(1, function () {
                             self.addCourse(course);
