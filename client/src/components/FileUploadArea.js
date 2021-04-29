@@ -469,8 +469,8 @@ class FileUploadArea extends Component {
                             prerequisites,
                         };
                     });
-                    console.log(courses);
-                    // courses.map((course) => self.addCourse(course));
+                    // console.log(courses);
+                    courses.map((course) => self.addCourse(course));
                 };
                 reader.onerror = function () {
                     console.log(reader.error);
