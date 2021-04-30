@@ -126,7 +126,7 @@ class AddStudent extends Component {
                 projectOption: this.state.projectOption,
                 facultyAdvisor: this.state.facultyAdvisor,
                 proficienyReq: this.state.proficiencyReq,
-                degreeRequirements: this.state.degreeRequirements,
+                degreeRequirements: {},
                 curSem: this.state.curSem,
                 curYear: this.state.curYear,
                 password: this.state.password,

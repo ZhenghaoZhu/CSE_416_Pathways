@@ -58,7 +58,7 @@ class LoginForm extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-
+        console.log("WHYYYYY");
         axios
             .get(Config.URL + "/student")
             .then((response) => {

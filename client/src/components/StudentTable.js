@@ -23,8 +23,8 @@ class StudentTable extends Component {
         super(props);
         this.state = {
             curStudents: [],
+            studentFilter: [],
             dataGridLoading: true,
-            curDepartment: this.props.curDepartment,
         };
     }
 
@@ -32,17 +32,13 @@ class StudentTable extends Component {
         this.getStudents();
     }
 
-    filterByDepartment(curStudentData) {
-        var filteredStudents = curStudentData.filter((student) => student.department === this.state.curDepartment);
-        return filteredStudents;
-    }
-
     getStudents() {
         axios
             .get(Config.URL + "/student/")
             .then((response) => {
                 this.setState({
-                    curStudents: this.filterByDepartment(response.data),
+                    curStudents: response.data,
+                    studentFilter: response.data,
                     dataGridLoading: false,
                 });
             })
@@ -54,9 +50,13 @@ class StudentTable extends Component {
     filterStudent(e) {
         // courses: CSE530, firstName: john
         // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
-        this.getStudents();
-        var newStudentData = this.state.curStudents.filter((student) => student.firstName.toUpperCase().includes(e.toUpperCase(), 0));
-        this.setState({ curStudents: newStudentData });
+        var newStudentFilter = this.state.curStudents.filter((student) => student.firstName.toUpperCase().includes(e.toUpperCase(), 0));
+        this.setState({ studentFilter: newStudentFilter });
+    }
+
+    cancelStudentSearch(e) {
+        var allStudents = this.state.curStudents;
+        this.setState({ studentFilter: allStudents });
     }
 
     render() {
@@ -74,17 +74,17 @@ class StudentTable extends Component {
                     placeholder="Search by Student Name, ID, Courses, ..."
                     style={{ marginBottom: 10 }}
                     onRequestSearch={(student) => this.filterStudent(student)}
-                    onCancelSearch={this.getStudents()}
+                    onCancelSearch={(e) => this.cancelStudentSearch(e)}
                     cancelOnEscape={true}
                 />
                 <Box style={{ height: "130%", backgroundColor: "#f1f0f0" }}>
                     <DataGrid
-                        rows={this.state.curStudents}
+                        rows={this.state.studentFilter}
                         columns={columns}
                         pageSize={15}
                         disableSelectionOnClick={true}
                         autoPageSize={true}
-                        loading={this.state.curStudents.length === 0}
+                        loading={this.state.studentFilter.length === 0}
                         onRowClick={(e) => this.props.changeFocusStudent(e)}
                     />
                 </Box>
