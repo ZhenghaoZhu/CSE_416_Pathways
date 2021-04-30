@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -6,6 +7,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
+
+import allCourses from "./allCourses";
 
 import {
     VictoryBar,
@@ -47,7 +50,7 @@ class EnrollmentChart extends Component {
         return (
             <>
                 <Container>
-                    <Grid container xs={12}>
+                    <Grid container>
                         <Grid item xs={12}>
                             <VictoryChart
                                 height={500}
@@ -94,7 +97,7 @@ class EnrollmentTable extends Component {
         return (
             <>
                 <Container>
-                    <Grid container xs={12}>
+                    <Grid container>
                         <Grid item xs={12}>
                             <TableContainer>
                                 <Table>
@@ -150,26 +153,6 @@ class Selection extends Component {
         );
     }
 
-    allCourses = [
-        "AMS 500",
-        "AMS 501",
-        "AMS 502",
-        "AMS 503",
-        "AMS 504",
-        "AMS 505",
-        "AMS 507",
-        "AMS 510",
-        "AMS 511",
-        "AMS 512",
-        "AMS 513",
-        "AMS 514",
-        "AMS 515",
-        "AMS 516",
-        "AMS 517",
-        "AMS 518",
-        "AMS 519",
-    ];
-
     handleCourseSubmit = (e) => {
         this.props.onCourseSubmit();
         e.preventDefault();
@@ -205,8 +188,8 @@ class Selection extends Component {
 
         return (
             <>
-                <Grid container>
-                    <Grid item justify="center" xs={12}>
+                <Grid container justify="center">
+                    <Grid item xs={12}>
                         <GPDHeader />
                     </Grid>
                 </Grid>
@@ -235,7 +218,7 @@ class Selection extends Component {
                                         label="Select Course"
                                         helperText="Please select a Course"
                                     >
-                                        {this.allCourses.map((course) => (
+                                        {allCourses.map((course) => (
                                             <MenuItem
                                                 key={course}
                                                 value={course}
@@ -367,6 +350,7 @@ class EnrollmentTrends extends Component {
             selectedSemester: "",
             selectedCourses: [],
             selectedSemesters: [],
+            yearTrendsArray: [],
         };
     }
 
@@ -455,20 +439,39 @@ class EnrollmentTrends extends Component {
 
     handleCourseSubmit = () => {
         // alert(`Course added: ${this.state.course}`);
-        let coursesArr;
         if (
             !this.state.selectedCourses.includes(this.state.course) &&
             this.state.selectedCourses.length <= 2 &&
             this.state.course != ""
         ) {
-            coursesArr = this.state.selectedCourses.concat(this.state.course);
-        } else {
-            coursesArr = this.state.selectedCourses;
+            this.setState((prevState) => ({
+                selectedCourses: [
+                    ...prevState.selectedCourses,
+                    this.state.course,
+                ],
+            }));
+            axios
+                .get(
+                    "http://localhost:5000/courses/get/classID/" +
+                        this.state.course.split(" ").join("")
+                )
+                .then((response) => {
+                    this.setState((prevState) => ({
+                        yearTrendsArray: [
+                            ...prevState.yearTrendsArray,
+                            response.data[0].yearTrends,
+                        ],
+                    }));
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
-        this.setState({
-            selectedCourses: coursesArr,
-        });
     };
+
+    getDescription(course) {
+        return course.data.courseDescription;
+    }
 
     handleCourseChange = (value) => {
         this.setState({
@@ -518,23 +521,7 @@ class EnrollmentTrends extends Component {
     };
 
     render() {
-        const yearTrends = [
-            {
-                2019: { Spring: 55, Summer: 30, Fall: 50, Winter: 25 },
-                2020: { Spring: 60, Summer: 25, Fall: 70, Winter: 35 },
-                2021: { Winter: 25, Spring: 60 },
-            },
-            {
-                2019: { Spring: 45, Summer: 35, Fall: 55, Winter: 25 },
-                2020: { Spring: 60, Summer: 40, Fall: 75, Winter: 40 },
-                2021: { Winter: 25, Spring: 60 },
-            },
-            {
-                2019: { Spring: 75, Summer: 25, Fall: 60, Winter: 25 },
-                2020: { Spring: 65, Summer: 30, Fall: 60, Winter: 35 },
-                2021: { Winter: 25, Spring: 65 },
-            },
-        ];
+        let yearTrends = this.state.yearTrendsArray;
 
         let yearAndSemesterArray = this.state.selectedSemesters.map((sem) =>
             sem.split(" ")
@@ -566,6 +553,8 @@ class EnrollmentTrends extends Component {
                 {/* {console.log(enrollmentTrendsForTable)} */}
                 {/* {console.log(enrollmentTrendsForChart)} */}
                 {/* {console.log(victoryObjectArray)} */}
+                {/* {console.log(this.state.yearTrendsArray)} */}
+                {/* {console.log(yearTrends2)} */}
                 <Grid container>
                     <Grid item>
                         <Selection
