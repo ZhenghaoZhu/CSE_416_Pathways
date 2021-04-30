@@ -24,14 +24,10 @@ class StudentHeader extends Component {
         return (
             <AppBar position="static" style={{ background: "#e35a5a" }}>
                 <Toolbar>
-                    <img
-                        src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png"
-                        width="38px"
-                        alt=""
-                    />
+                    <img src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png" width="38px" alt="" />
                     <Typography variant="h6" style={{ marginLeft: "45px" }}>
                         <Link
-                            to="/"
+                            to="/student"
                             style={{
                                 textDecoration: "none",
                                 color: "inherit",
@@ -49,17 +45,6 @@ class StudentHeader extends Component {
                             }}
                         >
                             Login
-                        </Link>
-                    </Typography>
-                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
-                        <Link
-                            to="/enrollmentTrends"
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Enrollment Trends
                         </Link>
                     </Typography>
                     <Typography variant="h5" style={{ marginLeft: "auto" }}>
