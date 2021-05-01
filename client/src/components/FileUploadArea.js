@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Config from "../config.json";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,TextField } from "@material-ui/core";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
@@ -9,8 +10,14 @@ const fs = require("fs");
 class FileUploadArea extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            popFlag: false,
+            semester : "",
+            year : "",
+            department: "",
+            courseFile:[]
+        };
     }
-
     addStudents(fileObj) {
         var curStudent = null;
         for (var i = 0; i < fileObj["data"].length; i++) {
@@ -410,89 +417,110 @@ class FileUploadArea extends Component {
             .then((course) => console.debug("Course added", course))
             .catch((err) => console.debug(err));
     }
+    scrapeCourseInfo(files){
+        let file = files[0].file;
+        let reader = new FileReader();  
 
+        const self = this;
+        let department = this.state.department;
+        let semester = this.state.semester;
+        let year = this.state.year;
+
+        // let department = "CSE";
+        reader.onload = function () {
+            let textFile = reader.result;
+            // parse
+            let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
+            course_array = course_array.filter(item => item.substring(0,3) === department); // filter the department
+            console.log(course_array);
+            
+            const courses = course_array.map((course) => {
+                let course_fields = course.match(/(.+(\r?\n))+/gm);
+                let courseName = course_fields[0];
+                let description = course_fields[1]; 
+                let prerequisites = []; // default no prereq
+                let numOfCredits = 3; // Default value = 3
+
+                let matches = course.match(/\d{1}(\-\d+)? credit/);
+                let creditNum = matches === null ? "" : matches[0];
+                if(creditNum === ""){ // if not found, default is 3 credits.
+                    numOfCredits = 3;
+                }else if (!creditNum.includes("-")) {
+                    // single digit credit
+                    numOfCredits = creditNum[0];
+                } else {
+                    // if 3 is in the range, take 3. Else, take the minimum
+                    if (creditNum.substring(0, 1) > 3) {
+                        numOfCredits = 3;
+                    } else if (creditNum.substring(0, 1) <= 3) {
+                        numOfCredits = parseInt(creditNum.substring(0, 1));
+                    }
+                    if (creditNum.length === 10) {
+                        //1-9
+                        if (creditNum.substring(0, 1) >= 3) {
+                            //3-x,4-x
+                            numOfCredits = parseInt(creditNum.substring(0, 1));
+                        } else if (creditNum.substring(0, 1) < 3) {
+                            //1-x
+                            if (creditNum.substring(2, 3) > 3) {
+                                //1-4
+                                numOfCredits = 3;
+                            } else {
+                                //1-2
+                                numOfCredits = parseInt(creditNum.substring(0, 1));
+                            }
+                        }
+                    } else if (creditNum.length === 11) {
+                        //1-12
+                        if (creditNum.substring(0, 1) < 3) {
+                            //2-11 = 3
+                            numOfCredits = 3;
+                        } else {
+                            //5-12 = 5
+                            numOfCredits = parseInt(creditNum.substring(0, 1));
+                        }
+                    }
+                }
+                let prereq_match = course.match(/Prerequisite.+/);
+                let prereq_text =
+                    prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":"));
+                let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
+                let w = preq_corse_match === null ? [] : preq_corse_match;
+                prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
+                // console.log(prereq_text);
+                // console.log(prerequisites);
+                return {
+                    courseName,
+                    description,    
+                    numOfCredits,
+                    prerequisites,
+                    semester,
+                    year
+                };
+            });
+            console.log(courses);
+
+            // var RateLimiter = require("limiter").RateLimiter;
+            // var limiter = new RateLimiter(50, 100);
+            // courses.map((course) => {
+            //     limiter.removeTokens(1, function () {
+            //         self.addCourse(course);
+            //     });
+            // });
+        };
+        reader.onerror = function () {
+            console.log(reader.error);
+        };
+        reader.readAsText(file);
+    }
     fileParse(files) {
         console.log(files);
-        // if(file)
         for (var i = 0; i < files.length; i++) {
             if (files[i]["file"]["name"].indexOf(".json") !== -1) {
                 this.checkJSONfile(files[i]);
             } else if (files[i].file.type === "text/plain") {
-                // parse the course information
-                let file = files[0].file;
-                let reader = new FileReader();
-
-                const self = this;
-                reader.onload = function () {
-                    let textFile = reader.result;
-                    // parse
-                    let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
-                    const courses = course_array.map((course) => {
-                        let course_fields = course.match(/(.+(\r?\n))+/gm);
-                        let courseName = course_fields[0];
-                        let description = course_fields[1];
-                        let prerequisites = [];
-                        let numOfCredits = null;
-
-                        let matches = course.match(/\d{1}(\-\d+)? credit/);
-                        let creditNum = matches === null ? "" : matches[0];
-                        if (!creditNum.includes("-")) {
-                            // single digit credit
-                            numOfCredits = creditNum[0];
-                        } else {
-                            // if 3 is in the range, take 3. Else, take the minimum
-                            if(creditNum.substring(0,1) > 3){
-                                numOfCredits = 3;
-                            }else if(creditNum.substring(0,1) <=3){
-                                numOfCredits = parseInt(creditNum.substring(0,1));
-                            }
-                            if (creditNum.length === 10) { //1-9
-                                if(creditNum.substring(0,1) >= 3){ //3-x,4-x
-                                    numOfCredits = parseInt(creditNum.substring(0,1));
-                                }else if(creditNum.substring(0,1) <3){ //1-x
-                                    if(creditNum.substring(2,3) > 3){ //1-4
-                                        numOfCredits = 3;
-                                    }else{ //1-2
-                                        numOfCredits = parseInt(creditNum.substring(0,1));
-                                    }
-                                }
-                            } else if (creditNum.length === 11) { //1-12
-                                if(creditNum.substring(0,1) < 3){ //2-11 = 3
-                                    numOfCredits = 3;
-                                }else{ //5-12 = 5
-                                    numOfCredits = parseInt(creditNum.substring(0,1));
-                                }
-                            }
-                        }
-                        let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":")+2);
-                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);                        
-                        let w = preq_corse_match === null ? [] : preq_corse_match
-                        prerequisites = w.filter(preq => parseInt(preq.substring(4,5)) > 4);
-                        console.log(prereq_text);
-                        if (course.toLowerCase().includes("prerequisite")) {
-                            prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
-                        }
-                        // console.log(prerequisites);
-                        return {
-                            courseName,
-                            description,
-                            numOfCredits,
-                            prerequisites,
-                        };
-                    });
-                    var RateLimiter = require("limiter").RateLimiter;
-                    var limiter = new RateLimiter(50, 100);
-                    courses.map((course) => {
-                        limiter.removeTokens(1, function () {
-                            self.addCourse(course);
-                        });
-                    });
-                };
-                reader.onerror = function () {
-                    console.log(reader.error);
-                };
-                reader.readAsText(file);
+                this.handleOpen();
+                this.setFile(files);
             } else {
                 Papa.parse(files[i]["file"], {
                     header: true,
@@ -501,15 +529,65 @@ class FileUploadArea extends Component {
             }
         }
     }
-
+    setFile(files){
+        this.setState({files:files});
+        console.log(this.state);
+    }
+    setSem(e){
+        this.setState({semester:e.target.value})
+        console.log(this.state);
+    }
+    setYear(e){
+        this.setState({year:e.target.value})
+        console.log(this.state);
+    }
+    setDepartment(e){
+        this.setState({department:e.target.value})
+    }
+    handleCancle(){
+        this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
+    }
+    handleOpen = () => {
+        this.setState({ popFlag: true });
+    };
+    handleClose = () =>{
+        this.setState({ popFlag: false });
+        console.log(this.state);
+        this.scrapeCourseInfo(this.state.files);
+    };
     render() {
         return (
-            <DropzoneAreaBase
-                onAdd={(newFiles) => this.fileParse(newFiles)}
-                filesLimit={5}
-                showPreviewsInDropzone={false}
-                showFileNames={true}
-            />
+            <div>
+                <Dialog open={this.state.popFlag} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
+                    <DialogContent>
+                        <TextField id="semester" label="Semester" fullWidth                            
+                            onChange={(val) => this.setSem(val)}
+                        />
+                        <TextField id="year" label="Year" fullWidth
+                            onChange={(val) => this.setYear(val)}
+                        />
+                        <TextField id="department" label="Department" fullWidth 
+                            onChange={(val) => this.setDepartment(val)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleCancle} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            Enter
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <DropzoneAreaBase
+                    onAdd={(newFiles) => this.fileParse(newFiles)}
+                    filesLimit={5}
+                    showPreviewsInDropzone={false}
+                    showFileNames={true}
+                />
+            </div>
         );
     }
 }

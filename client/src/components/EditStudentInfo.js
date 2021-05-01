@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
-import { Typography, Grid, Button } from "@material-ui/core";
+import { Typography, Grid, Button, ButtonGroup,Card,CardContent} from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
 import Config from "../config.json";
 import { Link } from "react-router-dom";
@@ -10,7 +10,8 @@ class EditStudent extends Component {
     constructor(props) {
         super(props);
         this.state = this.props.location.focusStudent.row;
-        console.error(this.state)
+        this.state.commentInput = "";
+        console.error(this.state);
     }
     setID(e) {
         this.setState({ id: e.target.value });
@@ -51,6 +52,39 @@ class EditStudent extends Component {
     setPassword(e) {
         this.setState({ password: e.target.value });
     }
+    makeCards(comments){
+        let cmt = []
+        comments.map(e =>{
+            cmt.push(
+                <Card>
+                    <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                        {e}
+                    </Typography>
+                    <Button onClick={(val) => this.deleteComment(val)}>
+                        Delete Comment
+                    </Button>
+                    </CardContent>
+                </Card>
+            )
+        })
+        return cmt;
+    }
+    setCommentInput(e){
+        this.setState({ commentInput: e.target.value});
+    }
+    addComment(e) {
+        // this.setState(prevState => ({
+        //     comments: [...prevState.comments, e.target.val]
+        //   }))
+        this.setState({ comments: ["okokokokokko I am a comment"] });
+    }
+    deleteComment(e) {
+        // this.setState(prevState => ({
+        //     comments: [...prevState.comments, e.target.val]
+        //   }))
+        this.setState({ comments: ["Deleted"] });
+    }    
     onSubmit(e) {
         axios
             .post(Config.URL + "/student/update/" + this.state.id, {
@@ -123,6 +157,15 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setFirst(val)}
                                 />
                             </Grid>
+
+                            {/* <Grid item xs={3}>
+                                <TextField
+                                    id="comments"   
+                                    label="Comments"
+                                    variant="outlined"
+                                    
+                                />
+                            </Grid> */}
                         </Grid>
 
                         <Grid container>
@@ -282,8 +325,7 @@ class EditStudent extends Component {
                                     <Link
                                         to={{
                                             pathname: "/",
-                                            focusStudent: this.state
-
+                                            focusStudent: this.state,
                                         }}
                                         style={{
                                             textDecoration: "none",
@@ -295,7 +337,21 @@ class EditStudent extends Component {
                                 </Button>
                             </Grid>
                         </Grid>
+                        <TextField id="comments" label="Comments" variant="outlined" onChange = {(val) => this.setCommentInput(val)}/>
+                        <ButtonGroup
+                            variant="contained"
+                            style={{
+                                color: "#000000",
+                                marginTop: 13,
+                            }}
+                        >
+                        <Button onClick={(val) => this.addComment(val)}>Add Comment</Button>
+                        </ButtonGroup>
                     </form>
+
+                    <ul>
+                        {this.makeCards(this.state.comments)}
+                    </ul>
                 </div>
             </>
         );
