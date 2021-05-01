@@ -1,6 +1,7 @@
 import Config from "../config.json";
 import React, { Component } from "react";
 import { Button } from "@material-ui/core";
+import { exists } from "../../../backend/models/courses.model";
 // import { useLocation } from "react-router-dom"
 
 const axios = require("axios").default;
@@ -12,6 +13,7 @@ class coursePlan extends Component {
         // this.student = location.state.student;
         this.student = this.props.location.student["row"]
         this.courseP = new Map(); //course plans
+        // {"Spring 2021": [[1,"AMS 310", "MW 10"],[1,"CSE 320", "MW 12"]]}
         this.year = 2020 //default year for now
         this.sem = "Spring" //default semes
         //used as globals for suggest course algo when adding classes
@@ -33,6 +35,8 @@ class coursePlan extends Component {
         }
         this.coursesAdded = 0;
         this.maxCoursesAllowed = 4; //default is 4
+        this.times = new Map(); //{"Fall 2020": [["MW 10:30..."],["F 10:30"]]}
+        this.degReqs = this.student["degreeRequirements"]["Tracks"][this.student["track"]];
     }
 
     smartCoursePlan = () => {
@@ -120,71 +124,113 @@ class coursePlan extends Component {
         classesMap[Symbol.iterator] = function* () { //sorts the courses so highest occurrence at top
             yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
         }
+        //TODO may need to loop til degree reqs are good
         for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
             console.log(key + ' ' + value);
-            this.addCourse(key, studentMap);
+            var addCourseRet = this.addCourse(key, studentMap);
+            if(addCourseRet == " "){
+                break;
+            }
         }
         console.log("sorted list of classes by occurrences: ", classesMap);
     }
+    //key = class name like "AMS 310"
     //studentMap = //map to store cur student's courses taken
     addCourse(key, studentMap){
         //check pre-reqs and time constraints
         if(studentMap[key] !== undefined){ //this means the course in question has already been taken by the student
             return;
         }
-        else{//now we attempt to add the course to courseP, which is our coursePlan for the student
-            //lets say 4 classess is max per semester //TODO summer courses?
-            if(this.maxCoursesAllowed == this.coursesAdded){//so we've reached max courses in a sem, move to next
-                this.nextSemester();
-                this.coursesAdded = 0;
+        //now we attempt to add the course to courseP, which is our coursePlan for the student
+        //lets say 4 classess is max per semester //TODO summer courses?
+        if(this.maxCoursesAllowed == this.coursesAdded){//so we've reached max courses in a sem, move to next
+            var star = this.nextSemester();
+            if(star == " "){
+                return " ";
             }
-            if(this.courseP[this.sem+" "+this.year] == undefined){
-                this.courseP[this.sem+" "+this.year] = []
-            }
-            //check for prereqs and time constraints here **
-            var courseInfo = this.retrieveCourseInfo(studentMap[key]); //gets the course info from db
-            //
-            var status = this.meetPrereq(courseInfo[0], studentMap);
-            if(status){ //if pre req is not met, do not attempt to add course
-                return; 
-            }
-            // this.courseP[this.sem+" "+this.year].push 
+            this.coursesAdded = 0;
         }
+        if(this.courseP[this.sem+" "+this.year] == undefined){
+            this.courseP[this.sem+" "+this.year] = []
+        }
+        //check for prereqs and time constraints here **
+        var courseInfo = this.retrieveCourseInfo(studentMap[key]); //gets the course info from db
+        if(courseInfo == null){
+            return;
+        }
+        //TODO CHeck for no classes returned from courseinfo
+        var status = this.meetPrereq(courseInfo[0], studentMap);
+        if(status){ //if pre req is not met, do not attempt to add course
+            return; 
+        }
+        var timeTF = this.meetTimeReq(courseInfo[0]); //pass in map 
+        //returns the time that works with user
+        if(timeTF === ""){//time contraints not met
+            return;
+        }
+        //now we want to go through the degReqs and remove from it
+        this.removeFromDegReqsList(courseInfo[0]);
+        //increment the course count
         this.coursesAdded += 1;
+        this.courseP.get(this.sem+" "+this.year).push([1, key, timeTF]);
         //after a class is added, check if deg reqs are done
         if(this.degreeReqsSatisfied()){
             //return a course plan ()
-            return this.courseP;
+            return " ";
         }
     }
-    
+    //look at the deg req list and remove from it
+    removeFromDegReqsList(courseInfoMap){
+        //TODO might need to handle checking for excluded courses
+        var flag = 0; //flag to see if course is in required courses
+        //if not, check elective courses
+        var reqC = this.degReqs["Required Courses"];
+        for(var i = 0; i < reqC.length; i++){
+            //check if course name + number matches
+            for(var j = 1; j < reqC[i].length; j++){
+                if(reqC[i][j] === courseInfoMap["department"]+" "+ courseInfoMap["courseNum"]){
+                    flag = 1;
+                    //delete that degReq
+                    reqC.splice(i, 1);
+                    return;
+                }
+            }
+            //break outer loop
+        }
+        var electiveC = this.degReqs["Elective Courses"];
+        if(flag == 0){
+            
+        }
+    }
 
     //check if degree requirements are met
     //TODO what if the student has a plan already
-    //TODO how would we remove from the student's degree req??
     degreeReqsSatisfied(){
-        //combine student's current plans  with courseP
-
+        //check the degReqs object and see if the req and elective coures is empty
+        if(this.degReqs["Required Courses"] == [] && this.degReqs["Elective Courses"] == []){
+            return true;
+        }
+        return false;
     }
 
     retrieveCourseInfo = async function (className) {
         var courseInfo = undefined;
-        var arr = className.split(" ");
-        var dep = arr[0];
-        var idNumber = arr[1];
+        className = className.replace(" ", "");
+        // var arr = className.split(" ");
+        // var dep = arr[0];
+        // var idNumber = arr[1];
         await axios
-            .get("http://localhost:5000"+ "/get/course/"+dep+"/"+idNumber)
+            .get("http://localhost:5000"+ "/get/course/"+className+"/"+this.sem+"/"+this.year)
             .then((course) => courseInfo = course)
             .catch((err) => console.log("course error: ", err));
-        if(courseInfo === undefined){
-            //errir
+        if(courseInfo === undefined || courseInfo === []){//if undefined or doesn't exist
+            return null;
         }
-        return courseInfo;
-        //else keep going
-        
+        return courseInfo;        
     }
+
     //info = course information from db
-    //studentMap = map
+    //studentMap = map with the student's already taken/taking courses
     meetPrereq(info, studentMap){
         console.log("Inside meetPrereq");
         if(info[0].length == 0){ //if no pre reqs
@@ -203,16 +249,34 @@ class coursePlan extends Component {
             //now we must loop through the courses in the course planner,
             for(var i = 0; i < req.length; i++){
                 for (var key of Object.keys(this.courseP)) {//go through all courses taken by the student already
-                    if(key === req[i]){//if pre-req is taken by the student already
-                        return true;
+                    var courses = this.courseP.get(key)
+                    for(var k = 0; k < courses.length; k++){
+                        if(courses[k] === req[i]){//if pre-req is taken by the student already
+                            return true;
+                        }
                     }
                 }
             }
         }
+        //if no pre-req is found
+        return false;
     }
-
-    meetTimeReq(){
-
+    //course = course object from db
+    meetTimeReq(course){
+        var arr = this.courseP[this.sem+" "+this.year];
+        var timeSlot = "";
+        var flag = 0;
+        for(var j = 0; j < course["courseInfo"].size; j++){
+            for(var i = 0; i < arr.length; i++){
+                if(course["courseInfo"][j] === arr[i][2]){//if there is a time conflict\
+                    flag = 1;
+                }
+            }
+            if(flag == 0){
+                timeSlot = course["courseInfo"][j];
+            }
+        }
+        return timeSlot;
     }
 
     //moves globals sem and year to next semester
@@ -235,6 +299,10 @@ class coursePlan extends Component {
         }
         else {
             console.log("Invalid semester: nextSemester()");
+        }
+        //TODO rn i break the algo when we go past the student's assigned grad date
+        if(this.sem === this.student["gradSem"] && this.year === this.student["gradYear"]){
+            return " ";
         }
     }
 
