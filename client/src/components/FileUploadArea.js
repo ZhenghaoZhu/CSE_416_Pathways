@@ -4,22 +4,54 @@ import Config from "../config.json";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
+const crypto = require("crypto");
 const fs = require("fs");
+
+var SHA256 = require("crypto-js/sha256");
 
 class FileUploadArea extends Component {
     constructor(props) {
         super(props);
     }
 
-    addStudents(fileObj) {
+    encryptPassword(password, salt) {
+        var hash = crypto.createHmac("sha512", salt); /** Hashing algorithm sha512 */
+        hash.update(password);
+        var value = hash.digest("hex");
+        return [salt, value];
+    }
+
+    addStudents = async function (fileObj) {
         var curStudent = null;
         for (var i = 0; i < fileObj["data"].length; i++) {
             curStudent = fileObj["data"][i];
-            console.log(curStudent);
+            var curSalt = crypto.randomBytes(16).toString("base64");
+            curStudent["password"] = this.encryptPassword(curStudent["password"], curSalt);
             if (curStudent["track"] === "") {
                 curStudent["track"] = " ";
             }
-            axios
+            var curDegreeReqs = null;
+            var curDegreeReqPath =
+                curStudent["department"] + "/" + curStudent["requirement_version_year"] + "/" + curStudent["requirement_version_semester"];
+            console.info(curStudent);
+            await axios
+                .get(Config.URL + "/degreeReqs/get/" + curDegreeReqPath)
+                .then((degreeReq) => {
+                    curDegreeReqs = degreeReq.data;
+                })
+                .catch((err) => console.log("Error: ", err));
+            if (curDegreeReqs === null || curDegreeReqs === undefined) {
+                await axios
+                    .get(Config.URL + "/degreeReqs/get/" + curStudent["department"])
+                    .then((degreeReq) => {
+                        curDegreeReqs = degreeReq.data[0];
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+            await axios
                 .put(Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"], {
                     firstName: curStudent["first_name"],
                     lastName: curStudent["last_name"],
@@ -38,7 +70,7 @@ class FileUploadArea extends Component {
                     projectOption: " ",
                     facultyAdvisor: " ",
                     proficienyReq: [],
-                    degreeRequirements: {},
+                    degreeRequirements: curDegreeReqs,
                     curSem: "Spring",
                     curYear: "2021",
                     password: curStudent["password"],
@@ -49,7 +81,7 @@ class FileUploadArea extends Component {
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
-    }
+    };
 
     updateStudentGrades = async function (curClassObj, student) {
         var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
@@ -67,7 +99,6 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        // console.log(fileObj);
         var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var curCourseInfo = {};
@@ -168,7 +199,6 @@ class FileUploadArea extends Component {
                 var curCourseSplit = curCourse.split(" ");
                 var curCourseName = curCourseSplit[0] + " " + curCourseSplit[1];
                 var curCourseDep = curCourseSplit[0];
-                console.info(curCourseCheck[1], curCourseDep, curCourse);
                 if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck[1] === curCourseName)) {
                     curCourseCheck[0] = curCourseCheck[0] - 1;
                     if (curCourseCheck[0] === 0) {
@@ -245,7 +275,6 @@ class FileUploadArea extends Component {
         var curGrade = "";
         var curCourseCredits = 3;
         var totalCredits = 0;
-        console.info(allCourses);
         allCourses.forEach((curCourse) => {
             // TODO  Get credits for each class
             curCourseCredits = 3;
@@ -269,7 +298,6 @@ class FileUploadArea extends Component {
     addCourseGrades = async function (fileObj) {
         var curData = fileObj["data"];
         var curSBUIDs = [];
-        console.log(curData);
         for (let i = 0; i < curData.length; i++) {
             await axios
                 .get(Config.URL + "/student/get/" + curData[i]["sbu_id"])
@@ -511,14 +539,7 @@ class FileUploadArea extends Component {
     }
 
     render() {
-        return (
-            <DropzoneAreaBase
-                onAdd={(newFiles) => this.fileParse(newFiles)}
-                filesLimit={5}
-                showPreviewsInDropzone={false}
-                showFileNames={true}
-            />
-        );
+        return <DropzoneAreaBase onAdd={(newFiles) => this.fileParse(newFiles)} filesLimit={5} showPreviewsInDropzone={false} showFileNames={true} />;
     }
 }
 
