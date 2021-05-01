@@ -178,6 +178,7 @@ class GPDPage extends Component {
 
     sendStudentData = (e) => {
         e.preventDefault();
+		console.log("sendStudentData()")
         this.props.history.push({
             pathname: "/suggestCourse",
             student: this.state["focusStudent"],
@@ -237,7 +238,7 @@ class GPDPage extends Component {
                                         Edit Student
                                     </Link>
                                 </Button>
-                                <Button>
+                                <Button onClick={this.sendStudentData}>
                                     <Link
                                         to={{
                                             pathname: "/suggestCourse",
