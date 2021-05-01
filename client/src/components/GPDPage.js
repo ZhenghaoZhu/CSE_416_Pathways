@@ -14,6 +14,7 @@ const axios = require("axios").default;
 
 class GPDPage extends Component {
 	constructor(props) {
+		console.log(props);
 		super(props);
 		// if (this.props.location.loggedInGPD === undefined) {
 		//     this.props.history.push({
@@ -24,8 +25,8 @@ class GPDPage extends Component {
 			focusStudent: this.props.focusStudent,
 			curGPD: this.props.location.loggedInGPD,
 		};
-		console.log(this.state);
 	}
+
 	add(fileObj) {
 		for (var i = 0; i < fileObj["data"].length; i++) {
 			console.log(i, fileObj["data"][i]);
@@ -177,12 +178,12 @@ class GPDPage extends Component {
 
     sendStudentData = (e) => {
         e.preventDefault();
+		console.log("sendStudentData()")
         this.props.history.push({
             pathname: "/suggestCourse",
             student: this.state["focusStudent"],
         });
     }
-
     render() {
         return (
             <Box style={{ width: "99.82%" }}>
@@ -191,8 +192,8 @@ class GPDPage extends Component {
                     <Grid item xs={8}>
                         <StudentTable
                             focusStudent={this.state.focusStudent}
-                            changeFocusStudent={(newStudent) =>
-                                this.setState({ focusStudent: newStudent })
+                            changeFocusStudent={(student) =>
+                                this.setState({ focusStudent: student })
                             }
                         />
                     </Grid>
@@ -224,7 +225,11 @@ class GPDPage extends Component {
                                 </Button>
                                 <Button>
                                     <Link
-                                        to="/editStudent"
+                                        to= {{
+											pathname: "/editStudent",
+											focusStudent: this.state.focusStudent
+											}}
+
                                         style={{
                                             textDecoration: "none",
                                             color: "inherit",

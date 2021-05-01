@@ -6,21 +6,7 @@ import { MenuItem, Menu } from "@material-ui/core";
 import Config from "../config.json";
 
 class StudentHeader extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         anchorEl: null,
-    //         currentGPD: this.props.curGPD,
-    //     };
-    // }
     render() {
-        // var studentName = "Student Name";
-        // if (this.state.currentGPD !== undefined) {
-        //     studentName =
-        //         this.state.currentGPD.firstName +
-        //         " " +
-        //         this.state.currentGPD.lastName;
-        // }
         return (
             <AppBar position="static" style={{ background: "#e35a5a" }}>
                 <Toolbar>
