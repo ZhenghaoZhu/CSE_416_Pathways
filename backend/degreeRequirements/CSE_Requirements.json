@@ -146,6 +146,7 @@
             ],
             "Elective Courses": [[8, "CSE"]],
             "Excluded Courses": ["CSE 523", "CSE 524", "CSE 599"]
+
         }
     }
 }
