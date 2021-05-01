@@ -426,18 +426,13 @@ class FileUploadArea extends Component {
         course["courseNum"] = depID[1].substring(0, depID[1].length - 1);
         course["name"] = course["courseName"].split(": ")[1];
         course["department"] = depID[0];
-        // console.log(course);
-        //fix course Num to delete colon :
-        //fix course name, ID, courseNum
-        // remove the \r\n
-
         axios
             .post(Config.URL + "/courses/add", {
                 department: course["department"],
                 courseNum: course["courseNum"],
                 courseName: course["name"],
-                semester: "Spring", //TODO default value for now, change when model is implemented - Anthony
-                year: "2021", //TODO default value for now, change when model is implemented - Anthony
+                semester: course["semester"], //TODO default value for now, change when model is implemented - Anthony
+                year: course["year"], //TODO default value for now, change when model is implemented - Anthony
                 credits: course["numOfCredits"],
                 preReqs: [course["prerequisites"]],
                 courseDescription: course["description"],
@@ -531,13 +526,13 @@ class FileUploadArea extends Component {
             });
             console.log(courses);
 
-            // var RateLimiter = require("limiter").RateLimiter;
-            // var limiter = new RateLimiter(50, 100);
-            // courses.map((course) => {
-            //     limiter.removeTokens(1, function () {
-            //         self.addCourse(course);
-            //     });
-            // });
+            var RateLimiter = require("limiter").RateLimiter;
+            var limiter = new RateLimiter(50, 100);
+            courses.map((course) => {
+                limiter.removeTokens(1, function () {
+                    self.addCourse(course);
+                });
+            });
         };
         reader.onerror = function () {
             console.log(reader.error);
