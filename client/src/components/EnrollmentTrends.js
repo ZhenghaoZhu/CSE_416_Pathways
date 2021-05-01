@@ -107,10 +107,10 @@ class EnrollmentTable extends Component {
                                                 Course Name
                                             </TableCell>
                                             <TableCell align="left">
-                                                Year
+                                                Semester
                                             </TableCell>
                                             <TableCell align="left">
-                                                Semester
+                                                Year
                                             </TableCell>
                                             <TableCell align="left">
                                                 Enrollment
