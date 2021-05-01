@@ -1,5 +1,7 @@
 const allCourses = [
     "AAS 500",
+    "AAS 501",
+    "AAS 534",
     "ACC 542",
     "ACC 543",
     "AMS 500",

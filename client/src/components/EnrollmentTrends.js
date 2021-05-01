@@ -452,14 +452,15 @@ class EnrollmentTrends extends Component {
             }));
             axios
                 .get(
-                    "http://localhost:5000/courses/get/classID/" +
+                    Config.URL +
+                        "/courses/get/classID/" +
                         this.state.course.split(" ").join("")
                 )
                 .then((response) => {
                     this.setState((prevState) => ({
                         yearTrendsArray: [
                             ...prevState.yearTrendsArray,
-                            response.data[0].yearTrends,
+                            response.data[0].yearTrends[0],
                         ],
                     }));
                 })
