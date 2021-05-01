@@ -198,9 +198,9 @@ class coursePlan extends Component {
             //break outer loop
         }
         var electiveC = this.degReqs["Elective Courses"];
-        if(flag == 0){
+        // if(flag == 0){
             
-        }
+        // }
     }
 
     //check if degree requirements are met
