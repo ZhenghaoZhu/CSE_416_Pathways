@@ -3,6 +3,8 @@ import TextField from "@material-ui/core/TextField";
 import { Typography, Grid, Button } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
 import Config from "../config.json";
+import { Link } from "react-router-dom";
+
 import StudentHeader from "./StudentHeader";
 
 const axios = require("axios").default;
@@ -10,30 +12,12 @@ const axios = require("axios").default;
 class LimitedEditStudent extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            firstName: "Anthony",
-            lastName: "Anthony",
-            id: 3122435454,
-            email: "gmail@gmail.com",
-            gpa: 0.0,
-            department: "dd",
-            track: "dd",
-            reqVersionSem: "Spring",
-            reqVersionYear: "2021",
-            entrySem: "dd",
-            entryYear: "dd",
-            gradSem: "Fall",
-            gradYear: "2025",
-            coursePlan: [],
-            projectOption: "None",
-            facultyAdvisor: "None",
-            proficiencyReq: [],
-            degreeRequirements: "None",
-            password: "password",
-            graduated: false,
-            settings: "settings",
-            comments: [],
-        };
+        console.log(props);
+        this.state = this.props.location.loggedInStudent;
+        console.log(this.state);
+    }
+    setID(e) {
+        this.setState({ id: e.target.value });
     }
     setFirst(e) {
         this.setState({ firstName: e.target.value });
@@ -73,7 +57,7 @@ class LimitedEditStudent extends Component {
     }
     onSubmit(e) {
         axios
-            .post(Config.URL + "/edit", {
+            .post(Config.URL + "/student/update/" + this.state.id, {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 id: this.state.id,
@@ -127,7 +111,8 @@ class LimitedEditStudent extends Component {
                                     id="sbu_id"
                                     label="SBU ID"
                                     variant="outlined"
-                                    disabled = {true}
+                                    value={this.state.id}
+                                    onChange={(val) => this.setID(val)}
                                 />
                             </Grid>
                             <Grid item xs={3}>
@@ -136,6 +121,7 @@ class LimitedEditStudent extends Component {
                                     label="First Name"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.firstName}
                                     onChange={(val) => this.setFirst(val)}
                                 />
                             </Grid>
@@ -151,6 +137,7 @@ class LimitedEditStudent extends Component {
                                     label="Last Name"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.lastName}
                                     onChange={(val) => this.setLast(val)}
                                 />
                             </Grid>
@@ -160,6 +147,7 @@ class LimitedEditStudent extends Component {
                                     label="Email"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.email}
                                     onChange={(val) => this.setEmail(val)}
                                 />
                             </Grid>
@@ -175,6 +163,7 @@ class LimitedEditStudent extends Component {
                                     label="Department"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.department}
                                     onChange={(val) => this.setDepartment(val)}
                                 />
                             </Grid>
@@ -185,6 +174,7 @@ class LimitedEditStudent extends Component {
                                     label="Track"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.track}
                                     onChange={(val) => this.setTrack(val)}
                                 />
                             </Grid>
@@ -200,6 +190,7 @@ class LimitedEditStudent extends Component {
                                     label="Entry Semester"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.entrySem}
                                     onChange={(val) => this.setEntrySem(val)}
                                 />
                             </Grid>
@@ -210,6 +201,7 @@ class LimitedEditStudent extends Component {
                                     label="Entry Year"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.entryYear}
                                     onChange={(val) => this.setEntryYear(val)}
                                 />
                             </Grid>
@@ -225,6 +217,7 @@ class LimitedEditStudent extends Component {
                                     label="Requirement Version Semester"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.reqVersionSem}
                                     onChange={(val) => this.setReqSem(val)}
                                 />
                             </Grid>
@@ -234,6 +227,7 @@ class LimitedEditStudent extends Component {
                                     label="Requirement Version Year"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.reqVersionYear}
                                     onChange={(val) => this.setReqYear(val)}
                                 />
                             </Grid>
@@ -249,6 +243,7 @@ class LimitedEditStudent extends Component {
                                     label="Graduation Semester"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.gradSem}
                                     onChange={(val) => this.setGradSem(val)}
                                 />
                             </Grid>
@@ -258,6 +253,7 @@ class LimitedEditStudent extends Component {
                                     label="Graduation Year"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.gradYear}
                                     onChange={(val) => this.setGradYear(val)}
                                 />
                             </Grid>
@@ -273,6 +269,7 @@ class LimitedEditStudent extends Component {
                                     label="Password"
                                     variant="outlined"
                                     required={true}
+                                    value={this.state.password}
                                     onChange={(val) => this.setPassword(val)}
                                 />
                             </Grid>
@@ -284,7 +281,18 @@ class LimitedEditStudent extends Component {
                                     style={{ marginTop: "20px" }}
                                     onClick={(e) => this.onSubmit(e)}
                                 >
-                                    Save Changes
+                                    <Link
+                                        to={{
+                                            pathname: "/student",
+                                            loggedInStudent: this.state
+                                        }}
+                                        style={{
+                                            textDecoration: "none",
+                                            color: "inherit",
+                                        }}
+                                    >
+                                        Save Changes
+                                    </Link>{" "}
                                 </Button>
                             </Grid>
                         </Grid>

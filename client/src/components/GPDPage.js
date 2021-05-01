@@ -40,12 +40,12 @@ class GPDPage extends Component {
 
     sendStudentData = (e) => {
         e.preventDefault();
+        console.log("sendStudentData()");
         this.props.history.push({
             pathname: "/suggestCourse",
             student: this.state["focusStudent"],
         });
     };
-
     render() {
         return (
             <Box style={{ width: "99.82%" }}>
@@ -84,7 +84,10 @@ class GPDPage extends Component {
                                 </Button>
                                 <Button>
                                     <Link
-                                        to="/editStudent"
+                                        to={{
+                                            pathname: "/editStudent",
+                                            focusStudent: this.state.focusStudent,
+                                        }}
                                         style={{
                                             textDecoration: "none",
                                             color: "inherit",
