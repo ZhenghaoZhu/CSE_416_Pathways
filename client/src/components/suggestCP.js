@@ -1,7 +1,6 @@
 import Config from "../config.json";
 import React, { Component } from "react";
 import { Button } from "@material-ui/core";
-import { exists } from "../../../backend/models/courses.model";
 // import { useLocation } from "react-router-dom"
 
 const axios = require("axios").default;
