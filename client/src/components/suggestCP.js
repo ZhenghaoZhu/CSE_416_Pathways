@@ -13,7 +13,6 @@ class coursePlan extends Component {
         // this.student = location.state.student;
         this.student = this.props.location.student["row"]
         this.courseP = new Map(); //course plans
-        // {"Spring 2021": [[1,"AMS 310", "MW 10"],[1,"CSE 320", "MW 12"]]}
         this.year = 2020 //default year for now
         this.sem = "Spring" //default semes
         //used as globals for suggest course algo when adding classes

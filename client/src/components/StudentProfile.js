@@ -56,6 +56,7 @@ class StudentProfile extends Component {
                         <td style={{ backgroundColor: "#f0f0f0" }}>{this.props.graduated ? "Yes" : "No"}</td>
                     </tr>
                 </thead>
+
             </table>
         );
     }
