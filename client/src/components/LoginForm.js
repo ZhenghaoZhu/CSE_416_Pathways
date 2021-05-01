@@ -107,7 +107,6 @@ class LoginForm extends Component {
                         sm={8}
                         md={7}
                         elevation={6}
-                        square
                         style={{
                             verticalAlign: "middle",
                             paddingTop: "12%",

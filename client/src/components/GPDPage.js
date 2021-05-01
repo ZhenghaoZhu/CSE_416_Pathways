@@ -26,6 +26,14 @@ class GPDPage extends Component {
             curGPD: this.props.location.loggedInGPD,
             curDepartment: this.props.location.curDep,
         };
+        if (this.state.curDepartment === undefined) {
+            if (localStorage.getItem("curDepartment") != undefined) {
+                this.state.curDepartment = localStorage.getItem("curDepartment");
+            } else {
+                this.state.curDepartment = "AMS";
+            }
+        }
+        localStorage.setItem("curDepartment", this.state.curDepartment);
     }
 
     updateStudent(fileObj, student, i) {

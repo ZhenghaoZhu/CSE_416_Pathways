@@ -25,20 +25,23 @@ class StudentTable extends Component {
             curStudents: [],
             studentFilter: [],
             dataGridLoading: true,
+            department: this.props.curDepartment,
         };
+        this.getStudents();
     }
 
     componentDidMount() {
-        this.getStudents();
+        return;
     }
 
     getStudents() {
         axios
             .get(Config.URL + "/student/")
             .then((response) => {
+                var filteredDepartment = response.data.filter((student) => student.department === this.state.department);
                 this.setState({
-                    curStudents: response.data,
-                    studentFilter: response.data,
+                    curStudents: filteredDepartment,
+                    studentFilter: filteredDepartment,
                     dataGridLoading: false,
                 });
             })
