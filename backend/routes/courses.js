@@ -63,6 +63,12 @@ router.route("/update/classID/:id").put((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/course/:department/:number").get((req, res) => {
+    Courses.find({department: req.params.department, courseNum: req.params.number})
+    .then((response) => res.json(response))
+    .catch((err) => res.status(400).json("Error: " + err));
+})
+
 router.route("/add").post((req, res) => {
     const id = req.body.department + req.body.courseNum;
     const department = req.body.department || "None";
