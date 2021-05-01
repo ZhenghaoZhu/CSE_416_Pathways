@@ -21,7 +21,7 @@ class FileUploadArea extends Component {
         return [salt, value];
     }
 
-    addStudents(fileObj) {
+    addStudents = async function (fileObj) {
         var curStudent = null;
         for (var i = 0; i < fileObj["data"].length; i++) {
             curStudent = fileObj["data"][i];
@@ -30,7 +30,28 @@ class FileUploadArea extends Component {
             if (curStudent["track"] === "") {
                 curStudent["track"] = " ";
             }
-            axios
+            var curDegreeReqs = null;
+            var curDegreeReqPath =
+                curStudent["department"] + "/" + curStudent["requirement_version_year"] + "/" + curStudent["requirement_version_semester"];
+            console.info(curStudent);
+            await axios
+                .get(Config.URL + "/degreeReqs/get/" + curDegreeReqPath)
+                .then((degreeReq) => {
+                    curDegreeReqs = degreeReq.data;
+                })
+                .catch((err) => console.log("Error: ", err));
+            if (curDegreeReqs === null || curDegreeReqs === undefined) {
+                await axios
+                    .get(Config.URL + "/degreeReqs/get/" + curStudent["department"])
+                    .then((degreeReq) => {
+                        curDegreeReqs = degreeReq.data[0];
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+            await axios
                 .put(Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"], {
                     firstName: curStudent["first_name"],
                     lastName: curStudent["last_name"],
@@ -49,7 +70,7 @@ class FileUploadArea extends Component {
                     projectOption: " ",
                     facultyAdvisor: " ",
                     proficienyReq: [],
-                    degreeRequirements: {},
+                    degreeRequirements: curDegreeReqs,
                     curSem: "Spring",
                     curYear: "2021",
                     password: curStudent["password"],
@@ -60,7 +81,7 @@ class FileUploadArea extends Component {
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
-    }
+    };
 
     updateStudentGrades = async function (curClassObj, student) {
         var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
