@@ -7,7 +7,6 @@ import Config from "../config.json";
 class StudentProfile extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     render() {

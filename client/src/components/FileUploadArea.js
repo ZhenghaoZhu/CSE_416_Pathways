@@ -501,10 +501,10 @@ class FileUploadArea extends Component {
                             }
                         }
                         let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":") + 2);
-                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
-                        let w = preq_corse_match === null ? [] : preq_corse_match;
-                        prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
+                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":")+2);
+                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);                        
+                        let w = preq_corse_match === null ? [] : preq_corse_match
+                        prerequisites = w.filter(preq => parseInt(preq.substring(4,5)) > 4);
                         console.log(prereq_text);
                         if (course.toLowerCase().includes("prerequisite")) {
                             prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");

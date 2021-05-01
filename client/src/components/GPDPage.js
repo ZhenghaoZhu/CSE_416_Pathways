@@ -48,7 +48,7 @@ class GPDPage extends Component {
 
     sendStudentData = (e) => {
         e.preventDefault();
-        console.log("sendStudentData()");
+		console.log("sendStudentData()")
         this.props.history.push({
             pathname: "/suggestCourse",
             student: this.state["focusStudent"],
