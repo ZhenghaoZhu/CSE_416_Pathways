@@ -4,12 +4,10 @@ import Config from "../config.json";
 
 const axios = require("axios").default;
 const crypto = require("crypto");
-var popupMsg = "Invalid Password/Username. Please try again";
-
 class LoginForm extends Component {
     constructor(props) {
         super(props);
-        this.state = { curEmail: "", curPassword: "", anchorEl: null };
+        this.state = { curEmail: "", curPassword: "", anchorEl: null, foundUser: 0, popupMsg: "Invalid username/password. Please try again." };
         this.classes = {
             form: {
                 width: "500px",
@@ -34,11 +32,12 @@ class LoginForm extends Component {
         return value;
     }
 
-    getUser(e) {
+    getUser = async function (e) {
         if (e != null) {
             e.preventDefault();
         }
-        axios
+        var pushUser = null;
+        await axios
             .get(Config.URL + "/gpd")
             .then((response) => {
                 var allGPD = response.data;
@@ -51,43 +50,51 @@ class LoginForm extends Component {
                     curValue = curUser["password"][1];
                     // if (curUser["email"] === this.state.curEmail && curValue === this.encryptPassword(this.state.curPassword, curSalt)) {
                     if (curUser["email"] === this.state.curEmail && curValue === this.encryptPassword(this.state.curPassword, curSalt)) {
-                        this.props.history.push({
-                            pathname: "/gpd",
-                            loggedInGPD: curUser,
-                            curDep: curUser["department"],
-                        });
-                        popupMsg = "Succesful Login";
+                        this.setState({ foundUser: 1 });
+                        pushUser = curUser;
                     }
                 }
             })
             .catch(function (error) {
                 console.log(error);
             });
-        axios
-            .get(Config.URL + "/student")
-            .then((response) => {
-                var allStudents = response.data;
-                let curUser = undefined;
-                var curSalt = null;
-                var curValue = null;
-                for (var i = 0; i < allStudents.length; i++) {
-                    curUser = allStudents[i];
-                    curSalt = curUser["password"][0];
-                    curValue = curUser["password"][1];
-                    if (curUser["email"] === this.state.curEmail && curValue === this.encryptPassword(this.state.curPassword, curSalt)) {
-                        this.props.history.push({
-                            pathname: "/student",
-                            loggedInStudent: curUser,
-                        });
-                        popupMsg = "Succesful Login";
+        if (this.state.foundUser === 0) {
+            await axios
+                .get(Config.URL + "/student")
+                .then((response) => {
+                    var allStudents = response.data;
+                    let curUser = undefined;
+                    var curSalt = null;
+                    var curValue = null;
+                    for (var i = 0; i < allStudents.length; i++) {
+                        curUser = allStudents[i];
+                        curSalt = curUser["password"][0];
+                        curValue = curUser["password"][1];
+                        if (curUser["email"] === this.state.curEmail && curValue === this.encryptPassword(this.state.curPassword, curSalt)) {
+                            this.setState({ foundUser: 2 });
+                            pushUser = curUser;
+                        }
                     }
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        if (this.state.foundUser == 1) {
+            this.props.history.push({
+                pathname: "/gpd",
+                loggedInGPD: pushUser,
+                curDep: pushUser["department"],
             });
+        } else if (this.state.foundUser == 2) {
+            this.props.history.push({
+                pathname: "/student",
+                loggedInStudent: pushUser,
+            });
+        }
         this.handleOpen();
-    }
+    };
 
     handleKeypress = (e) => {
         if (e.key === "Enter") {
@@ -104,6 +111,7 @@ class LoginForm extends Component {
     };
 
     render() {
+        console.log(this.state.popupMessage);
         return (
             <>
                 <Grid container component="main" className={this.classes.root} onKeyPress={this.handleKeypress}>
@@ -122,7 +130,7 @@ class LoginForm extends Component {
                             horizontal: "center",
                         }}
                     >
-                        <Typography>{popupMsg}</Typography>
+                        <Typography>{this.state.popupMsg}</Typography>
                     </Popover>
                     <Grid item xs={false} sm={4} md={5}>
                         <img
