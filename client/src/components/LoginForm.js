@@ -1,20 +1,24 @@
 import React, { Component } from "react";
-import { Button, ButtonGroup, CssBaseline, Grid, TextField } from "@material-ui/core";
+import { Button, ButtonGroup, CssBaseline, Grid, TextField, Popover, Typography } from "@material-ui/core";
 import Config from "../config.json";
 
 const axios = require("axios").default;
 const crypto = require("crypto");
+var popupMsg = "Invalid Password/Username. Please try again";
 
 class LoginForm extends Component {
     constructor(props) {
         super(props);
-        this.state = { curEmail: "", curPassword: "" };
-        this.classes = {};
+        this.state = { curEmail: "", curPassword: "", anchorEl: null };
+        this.classes = {
+            form: {
+                width: "500px",
+                marginLeft: "30%",
+                marginTop: "10%",
+            },
+        };
     }
 
-    componentDidMount() {
-        // let classes = useStyles();
-    }
     signInUpdateEmail(e) {
         this.setState({ curEmail: e.target.value });
     }
@@ -52,13 +56,13 @@ class LoginForm extends Component {
                             loggedInGPD: curUser,
                             curDep: curUser["department"],
                         });
+                        popupMsg = "Succesful Login";
                     }
                 }
             })
             .catch(function (error) {
                 console.log(error);
             });
-        console.log("WHYYYYY");
         axios
             .get(Config.URL + "/student")
             .then((response) => {
@@ -75,12 +79,14 @@ class LoginForm extends Component {
                             pathname: "/student",
                             loggedInStudent: curUser,
                         });
+                        popupMsg = "Succesful Login";
                     }
                 }
             })
             .catch(function (error) {
                 console.log(error);
             });
+        this.handleOpen();
     }
 
     handleKeypress = (e) => {
@@ -89,11 +95,35 @@ class LoginForm extends Component {
         }
     };
 
+    handleOpen = () => {
+        this.setState({ anchorEl: true });
+    };
+
+    handleClose = () => {
+        this.setState({ anchorEl: null });
+    };
+
     render() {
         return (
             <>
                 <Grid container component="main" className={this.classes.root} onKeyPress={this.handleKeypress}>
                     <CssBaseline />
+                    <Popover
+                        id="simple-popover"
+                        open={Boolean(this.state.anchorEl)}
+                        anchorEl={this.state.anchorEl}
+                        onClose={this.handleClose}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
+                        }}
+                        transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}
+                    >
+                        <Typography>{popupMsg}</Typography>
+                    </Popover>
                     <Grid item xs={false} sm={4} md={5}>
                         <img
                             alt="http://www.davescomputertips.com/wp-content/uploads/2013/09/alt-key.jpg"
@@ -114,16 +144,12 @@ class LoginForm extends Component {
                         }}
                     >
                         <div className={this.classes.paper}>
-                            <ButtonGroup color="primary" aria-label="outlined primary button group">
-                                <Button className={this.classes.signInButton}>Sign In</Button>
-                                <Button className={this.classes.signUpButton}>Sign Up</Button>
-                            </ButtonGroup>
-                            <form className={this.classes.form} noValidate>
+                            <form style={this.classes.form} noValidate>
                                 <TextField
                                     variant="outlined"
-                                    margin="normal"
                                     required
                                     fullWidth
+                                    style={{ marginBottom: "2%", backgroundColor: "white", borderRadius: "4px" }}
                                     id="email"
                                     label="Email Address"
                                     name="email"
@@ -134,9 +160,9 @@ class LoginForm extends Component {
                                 />
                                 <TextField
                                     variant="outlined"
-                                    margin="normal"
                                     required
                                     fullWidth
+                                    style={{ marginBottom: "2%", backgroundColor: "white", borderRadius: "4px" }}
                                     name="password"
                                     label="Password"
                                     type="password"
@@ -147,9 +173,9 @@ class LoginForm extends Component {
                                 />
                                 <Button
                                     type="button"
-                                    fullWidth
                                     variant="contained"
                                     color="primary"
+                                    style={{ marginTop: "1%", width: "60%", marginLeft: "19%" }}
                                     className={this.classes.submit}
                                     onClick={(e) => this.getUser(e)}
                                 >
@@ -158,7 +184,7 @@ class LoginForm extends Component {
                                 <p
                                     style={{
                                         verticalAlign: "middle",
-                                        marginLeft: "42%",
+                                        marginLeft: "30%",
                                         fontSize: "19px",
                                         textDecoration: "underline",
                                     }}
