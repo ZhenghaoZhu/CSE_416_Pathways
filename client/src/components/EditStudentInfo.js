@@ -157,15 +157,6 @@ class EditStudent extends Component {
                                     onChange={(val) => this.setFirst(val)}
                                 />
                             </Grid>
-
-                            {/* <Grid item xs={3}>
-                                <TextField
-                                    id="comments"   
-                                    label="Comments"
-                                    variant="outlined"
-                                    
-                                />
-                            </Grid> */}
                         </Grid>
 
                         <Grid container>

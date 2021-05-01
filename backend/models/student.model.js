@@ -30,7 +30,7 @@ const studentSchema = new Schema(
         degreeRequirements: { type: Map, required: true }, //TODO CHECK
         curSem: { type: String, required: true },
         curYear: { type: String, required: true },
-        password: { type: String, required: true },
+        password: { type: Array, required: true },
         graduated: { type: Boolean, required: true },
         settings: { type: String, required: true },
         comments: { type: Array, required: true },
