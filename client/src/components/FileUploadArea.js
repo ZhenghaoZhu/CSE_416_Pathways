@@ -428,12 +428,14 @@ class FileUploadArea extends Component {
                 department: course["department"],
                 courseNum: course["courseNum"],
                 courseName: course["name"],
+                semester: "Spring", //TODO default value for now, change when model is implemented - Anthony
+                year: "2021", //TODO default value for now, change when model is implemented - Anthony
                 credits: course["numOfCredits"],
                 preReqs: [course["prerequisites"]],
                 courseDescription: course["description"],
-                yearTrends: {},
-                courseInfo: {},
-                professorNames: {},
+                yearTrends: [],
+                courseInfo: [],
+                professorNames: [],
             })
             .then((course) => console.debug("Course added", course))
             .catch((err) => console.debug(err));
