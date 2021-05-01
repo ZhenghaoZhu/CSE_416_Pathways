@@ -188,7 +188,7 @@ class Selection extends Component {
 
         return (
             <>
-                <Grid container justify="center">
+                <Grid container>
                     <Grid item xs={12}>
                         <GPDHeader />
                     </Grid>
@@ -557,7 +557,7 @@ class EnrollmentTrends extends Component {
                 {/* {console.log(this.state.yearTrendsArray)} */}
                 {/* {console.log(yearTrends2)} */}
                 <Grid container>
-                    <Grid item>
+                    <Grid item xs={12}>
                         <Selection
                             course={this.state.course}
                             year={this.state.year}
@@ -573,7 +573,7 @@ class EnrollmentTrends extends Component {
                             }
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={12}>
                         <EnrollmentChart
                             victoryObjectArray={victoryObjectArray}
                             scaleFactor={this.state.selectedSemesters.length}
@@ -581,7 +581,7 @@ class EnrollmentTrends extends Component {
                             selectedSemesters={this.state.selectedSemesters}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={12}>
                         <EnrollmentTable
                             enrollmentTrendsForTable={enrollmentTrendsForTable}
                         />
