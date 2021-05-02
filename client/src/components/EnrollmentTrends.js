@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-import allCourses from "./allCourses";
+// import allCourses from "./allCourses";
 
 import { VictoryBar, VictoryChart, VictoryGroup, VictoryContainer, VictoryTooltip, VictoryStack, VictoryAxis, VictoryTheme } from "victory";
 import Config from "../config.json";
@@ -122,9 +122,8 @@ class Selection extends Component {
 
     componentWillMount() {
         axios
-            .get(Config.URL + "/courses/")
+            .get("http://localhost:5000" + "/courses/")
             .then((response) => {
-                console.log(response);
                 let courseData = response.data;
                 let allCourseIds = courseData.map((data) => data.id);
                 this.setState({ allCourses: allCourseIds });
@@ -155,7 +154,7 @@ class Selection extends Component {
     };
 
     getCourseIds = () => {
-        return axios.get(Config.URL + "/courses/").then((response) => {
+        return axios.get("http://localhost:5000" + "/courses/").then((response) => {
             this.response = response.data;
             return this.response[0].id;
         });
@@ -170,7 +169,7 @@ class Selection extends Component {
 
         return (
             <>
-                {console.log(this.state.allCourses)}
+                {/* {console.log(this.state.allCourses)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <GPDHeader />
@@ -197,8 +196,8 @@ class Selection extends Component {
                                         label="Select Course"
                                         helperText="Please select a Course"
                                     >
-                                        {this.state.allCourses.map((course) => (
-                                            <MenuItem key={course} value={course}>
+                                        {this.state.allCourses.map((course, index) => (
+                                            <MenuItem key={index} value={course}>
                                                 {course}
                                             </MenuItem>
                                         ))}
@@ -251,14 +250,20 @@ class Selection extends Component {
                                         <MenuItem key={"Spring"} value={"Spring"}>
                                             {"Spring"}
                                         </MenuItem>
-                                        <MenuItem key={"Summer"} value={"Summer"}>
-                                            {"Summer"}
+                                        <MenuItem key={"SummerI"} value={"SummerI"}>
+                                            {"SummerI"}
+                                        </MenuItem>
+                                        <MenuItem key={"SummerII"} value={"SummerII"}>
+                                            {"SummerII"}
                                         </MenuItem>
                                         <MenuItem key={"Fall"} value={"Fall"}>
                                             {"Fall"}
                                         </MenuItem>
-                                        <MenuItem key={"Winter"} value={"Winter"}>
-                                            {"Winter"}
+                                        <MenuItem key={"WinterI"} value={"WinterI"}>
+                                            {"WinterI"}
+                                        </MenuItem>
+                                        <MenuItem key={"WinterII"} value={"WinterII"}>
+                                            {"WinterII"}
                                         </MenuItem>
                                     </TextField>
                                 </div>
@@ -340,7 +345,7 @@ class EnrollmentTrends extends Component {
             for (let j = 0; j < yearAndSemesterArray.length; j++) {
                 let semester = yearAndSemesterArray[j][0];
                 let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][year][semester];
+                let enrollment = yearTrends[i][2];
                 let course = coursesArray[i];
                 elemArray.push([semester, year, enrollment, course]);
             }
@@ -355,8 +360,8 @@ class EnrollmentTrends extends Component {
             for (let j = 0; j < yearAndSemesterArray.length; j++) {
                 let semester = yearAndSemesterArray[j][0];
                 let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][year][semester];
-                let course = coursesArray[i];
+                let enrollment = yearTrends[i][2];
+                let course = coursesArray[i % this.state.selectedCourses.length];
                 enrollmentTrendsForTable.push([semester, year, enrollment, course]);
             }
         }
@@ -369,16 +374,49 @@ class EnrollmentTrends extends Component {
             this.setState((prevState) => ({
                 selectedCourses: [...prevState.selectedCourses, this.state.course],
             }));
-            axios
-                .get(Config.URL + "/courses/get/classID/" + this.state.course.split(" ").join(""))
-                .then((response) => {
-                    this.setState((prevState) => ({
-                        yearTrendsArray: [...prevState.yearTrendsArray, response.data[0].yearTrends[0]],
-                    }));
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+        }
+    };
+
+    handleYearAndSemesterSubmit = () => {
+        // alert(`Semester added: ${this.state.semester} ${this.state.year}`);
+        let yearAndSemStr = this.state.semester + " " + this.state.year;
+        if (
+            !this.state.selectedSemesters.includes(yearAndSemStr) &&
+            this.state.selectedSemesters.length <= 6 &&
+            this.state.year != "" &&
+            this.state.semester != ""
+        ) {
+            for (let i = 0; i < this.state.selectedCourses.length; i++) {
+                axios
+                    .get(
+                        "http://localhost:5000" +
+                            "/courses/get/course/" +
+                            this.state.selectedCourses[i].split(" ").join("") +
+                            "/" +
+                            this.state.semester +
+                            "/" +
+                            this.state.year
+                    )
+                    .then((response) => {
+                        console.log(response.data);
+                        let courseYearTrends = response.data[0].yearTrends;
+
+                        console.log(courseYearTrends);
+                        let courseEnrollment = courseYearTrends.reduce((a, b) => a + b, 0);
+                        console.log(courseEnrollment);
+
+                        this.setState((prevState) => ({
+                            yearTrendsArray: [
+                                ...prevState.yearTrendsArray,
+                                [this.state.year, this.state.semester, this.state.course, courseEnrollment],
+                            ],
+                        }));
+                    })
+                    .catch((err) => console.log(err));
+                this.setState((prevState) => ({
+                    selectedSemesters: [...prevState.selectedSemesters, yearAndSemStr],
+                }));
+            }
         }
     };
 
@@ -401,26 +439,6 @@ class EnrollmentTrends extends Component {
     handleSemesterChange = (value) => {
         this.setState({
             semester: value,
-        });
-    };
-
-    handleYearAndSemesterSubmit = () => {
-        // alert(`Semester added: ${this.state.semester} ${this.state.year}`);
-        let yearAndSemStr = this.state.semester + " " + this.state.year;
-        let yearAndSemArr;
-        if (
-            !this.state.selectedSemesters.includes(yearAndSemStr) &&
-            this.state.selectedSemesters.length <= 6 &&
-            this.state.year != "" &&
-            this.state.semester != ""
-        ) {
-            yearAndSemArr = this.state.selectedSemesters.concat(yearAndSemStr);
-        } else {
-            yearAndSemArr = this.state.selectedSemesters;
-        }
-
-        this.setState({
-            selectedSemesters: yearAndSemArr,
         });
     };
 
@@ -453,8 +471,9 @@ class EnrollmentTrends extends Component {
                 {/* {console.log(enrollmentTrendsForTable)} */}
                 {/* {console.log(enrollmentTrendsForChart)} */}
                 {/* {console.log(victoryObjectArray)} */}
-                {/* {console.log(this.state.yearTrendsArray)} */}
+                {console.log(this.state.yearTrendsArray)}
                 {/* {console.log(yearTrends2)} */}
+                {/* {console.log(yearAndSemesterArray)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Selection
