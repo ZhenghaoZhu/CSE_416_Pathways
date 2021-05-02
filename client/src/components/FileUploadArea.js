@@ -15,10 +15,10 @@ class FileUploadArea extends Component {
         super(props);
         this.state = {
             popFlag: false,
-            semester : "",
-            year : "",
+            semester: "",
+            year: "",
             department: "",
-            courseFile:[]
+            courseFile: [],
         };
     }
 
