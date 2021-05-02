@@ -107,22 +107,20 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
-        var curCourseInfo = {};
-        curCourseInfo[curKey] = [];
-        curCourseInfo[curKey].push(newSection);
+        var curCourseInfo = [];
+        curCourseInfo.push(newSection);
         await axios
             .post(Config.URL + "/courses/add", {
                 department: fileObj["department"],
                 courseNum: fileObj["course_num"],
-                courseName: "Another CS Class",
+                courseName: "(Name Missing)",
                 credits: 3,
                 preReqs: [],
-                courseDescription: "Description",
-                yearTrends: {},
+                courseDescription: "(Description Missing)",
+                yearTrends: [],
                 courseInfo: curCourseInfo,
-                professorNames: {},
+                professorNames: [],
             })
             .then((course) => console.log("Course Added ", course))
             .catch((err) => console.log(err));
@@ -130,13 +128,9 @@ class FileUploadArea extends Component {
 
     updateCourse = async function (curCourse, fileObj) {
         curCourse = curCourse["data"][0];
-        var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var newCourseInfo = curCourse["courseInfo"];
-        if (newCourseInfo[curKey] === undefined) {
-            newCourseInfo[curKey] = [];
-        }
-        newCourseInfo[curKey].push(newSection);
+        newCourseInfo.push(newSection);
         curCourse["courseInfo"] = newCourseInfo;
         await axios
             .put(Config.URL + "/courses/update/classID/" + curCourse["id"], curCourse)
