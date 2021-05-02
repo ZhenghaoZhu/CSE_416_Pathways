@@ -40,7 +40,7 @@ export default class SuggestCoursePlanView extends Component {
                 <Grid container spacing={1} direction="column" justify="center" style={{ width: "95%" }}>
                     <Grid item xs={12} style={{ marginTop: "13%", marginLeft: "22%" }}>
                         <Typography style={{ marginBottom: "20px", marginLeft: "19%", fontSize: "30px", fontWeight: "bold" }}>
-                            Select Constraints to Create Course Plan(s)
+                            Input Constraints to Create Course Plan(s)
                         </Typography>
                         <FormControl variant="outlined" style={{ width: "36%", marginRight: "28px" }}>
                             <InputLabel>Course Per Semester</InputLabel>
