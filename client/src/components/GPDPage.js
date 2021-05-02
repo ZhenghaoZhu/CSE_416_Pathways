@@ -21,6 +21,7 @@ class GPDPage extends Component {
         //         pathname: "/login",
         //     });
         // }
+        
         this.state = {
             focusStudent: this.props.focusStudent,
             curGPD: this.props.location.loggedInGPD,
@@ -56,6 +57,8 @@ class GPDPage extends Component {
         });
     };
     render() {
+
+        let disabled = this.state.focusStudent === undefined?true:false;
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />
@@ -91,7 +94,7 @@ class GPDPage extends Component {
                                         Add Student Form
                                     </Link>
                                 </Button>
-                                <Button>
+                                <Button  disabled = {disabled}>
                                     <Link
                                         to={{
                                             pathname: "/editStudent",

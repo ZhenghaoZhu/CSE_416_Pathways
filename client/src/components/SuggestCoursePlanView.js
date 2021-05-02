@@ -5,7 +5,6 @@ import GPDHeader from "./GPDHeader";
 import Config from "../config.json";
 
 const axios = require("axios").default;
-
 const maxClassesList = [...Array(10).keys()];
 const timeConstraintsList = [
     "MWF 08:00AM-08:53AM",
