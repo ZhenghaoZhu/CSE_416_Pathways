@@ -13,12 +13,6 @@ router.route("/get/AMS").get((req, res) => {
     ams.find()
         .then((users) => res.json(users))
         .catch((err) => res.status(400).json("Error: " + err));
-    bmi.find()
-        .then((users) => res.json(users))
-        .catch((err) => res.status(400).json("Error: " + err));
-    ece.find()
-        .then((users) => res.json(users))
-        .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/get/BMI").get((req, res) => {
