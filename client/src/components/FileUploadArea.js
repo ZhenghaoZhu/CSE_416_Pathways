@@ -431,13 +431,8 @@ class FileUploadArea extends Component {
                 department: course["department"],
                 courseNum: course["courseNum"],
                 courseName: course["name"],
-<<<<<<< HEAD
-                semester: "Spring", //TODO default value for now, change when model is implemented - Anthony
-                year: "2021", //TODO default value for now, change when model is implemented - Anthony
-=======
                 semester: course["semester"], //TODO default value for now, change when model is implemented - Anthony
                 year: course["year"], //TODO default value for now, change when model is implemented - Anthony
->>>>>>> 96fcb214bbfafd380d43c27ae6159eb9293f32d2
                 credits: course["numOfCredits"],
                 preReqs: [course["prerequisites"]],
                 courseDescription: course["description"],
