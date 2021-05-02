@@ -2,18 +2,7 @@ import React, { Component } from "react";
 import StudentHeader from "./StudentHeader";
 import StudentTable from "./StudentTable";
 import StudentDetail from "./StudentDetail";
-import {
-    Grid,
-    Button,
-    ButtonGroup,
-    Box,
-    Accordion,
-    AccordionSummary,
-    Typography,
-    AccordionDetails,
-    Card,
-    CardContent
-} from "@material-ui/core";
+import { Grid, Button, ButtonGroup, Box, Accordion, AccordionSummary, Typography, AccordionDetails, Card, CardContent } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { Link } from "react-router-dom";
@@ -28,19 +17,26 @@ class StudentPage extends Component {
         this.state = this.props.location.loggedInStudent;
         console.log(this.state);
     }
-    makeCards(course_plan){
-        let courses = []
-        course_plan.map(e =>{
+    makeCards(course_plan) {
+        let courses = [];
+        course_plan.map((e) => {
+            console.log(e);
             courses.push(
-                <Card>
+                <Card style={{ marginRight: "20px", backgroundColor: "#edecec" }}>
                     <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
-                        {e}
-                    </Typography>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            Section: {e[0]}
+                        </Typography>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            Class: {e[1]}
+                        </Typography>
+                        <Typography variant="h5" component="h2">
+                            Grade: {e[2]}
+                        </Typography>
                     </CardContent>
                 </Card>
-            )
-        })
+            );
+        });
         return courses;
     }
     // editStudentData = (e) => {
@@ -54,21 +50,12 @@ class StudentPage extends Component {
         const courseplanObj = [];
         for (const [semester, course_plan] of Object.entries(this.state.coursePlan)) {
             courseplanObj.push(
-                <Accordion
-                    style={{ width: "80%", margin: "auto", marginTop: "20px" }}
-                >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
+                <Accordion style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                         <Typography>{semester}</Typography>
                     </AccordionSummary>
-                    
-                    <AccordionDetails>
-                    {this.makeCards(course_plan)}
-                    </AccordionDetails>
 
+                    <AccordionDetails>{this.makeCards(course_plan)}</AccordionDetails>
                 </Accordion>
             );
         }
@@ -76,19 +63,13 @@ class StudentPage extends Component {
         return (
             <Box style={{ width: "99.82%" }}>
                 {/* <StudentHeader curStudent={this.state.curStudent} /> */}
-                <StudentHeader name = {this.state.firstName + " " + this.state.lastName}/>
-                <Accordion
-                    style={{ width: "80%", margin: "auto", marginTop: "20px" }}
-                >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
+                <StudentHeader name={this.state.firstName + " " + this.state.lastName} />
+                <Accordion style={{ width: "80%", margin: "auto", marginTop: "20px" }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                         <Typography>Student Profile</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <StudentProfile {...this.state}/>
+                        <StudentProfile {...this.state} />
                     </AccordionDetails>
                 </Accordion>
                 {courseplanObj}
@@ -101,10 +82,10 @@ class StudentPage extends Component {
                     }}
                 >
                     <Button>
-                        <Link 
+                        <Link
                             to={{
                                 pathname: "/limitedEditStudent",
-                                loggedInStudent: this.state
+                                loggedInStudent: this.state,
                             }}
                             style={{
                                 textDecoration: "none",
