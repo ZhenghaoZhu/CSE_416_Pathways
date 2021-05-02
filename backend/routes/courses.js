@@ -74,17 +74,21 @@ router.route("/add").post((req, res) => {
     const department = req.body.department || "None";
     const courseNum = req.body.courseNum || "None";
     const courseName = req.body.courseName || "None";
+    const semester = req.body.semester || "None";
+    const year = req.body.year || "None";
     const credits = req.body.credits || 0;
     const preReqs = req.body.preReqs || [];
     const courseDescription = req.body.courseDescription || "None";
-    const yearTrends = req.body.yearTrends || {};
-    const courseInfo = req.body.courseInfo || {};
-    const professorNames = req.body.professorNames || {};
+    const yearTrends = req.body.yearTrends || [];
+    const courseInfo = req.body.courseInfo || [];
+    const professorNames = req.body.professorNames || [];
 
     const newCourse = new Courses({
         id,
         department,
         courseNum,
+        semester,
+        year,
         courseName,
         credits,
         preReqs,
