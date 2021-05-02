@@ -15,10 +15,10 @@ class FileUploadArea extends Component {
         super(props);
         this.state = {
             popFlag: false,
-            semester: "",
-            year: "",
+            semester : "",
+            year : "",
             department: "",
-            courseFile: [],
+            courseFile:[]
         };
     }
 
@@ -446,7 +446,6 @@ class FileUploadArea extends Component {
     scrapeCourseInfo(files) {
         let file = files[0].file;
         let reader = new FileReader();
-
         const self = this;
         let department = this.state.department;
         let semester = this.state.semester;
@@ -497,14 +496,14 @@ class FileUploadArea extends Component {
                                 numOfCredits = parseInt(creditNum.substring(0, 1));
                             }
                         }
-                        let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":") + 2);
-                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
-                        let w = preq_corse_match === null ? [] : preq_corse_match;
-                        prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
-                        console.log(prereq_text);
-                        if (course.toLowerCase().includes("prerequisite")) {
-                            prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
+                    } else if (creditNum.length === 11) {
+                        //1-12
+                        if (creditNum.substring(0, 1) < 3) {
+                            //2-11 = 3
+                            numOfCredits = 3;
+                        } else {
+                            //5-12 = 5
+                            numOfCredits = parseInt(creditNum.substring(0, 1));
                         }
                     }
                 }
@@ -600,7 +599,6 @@ class FileUploadArea extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
                 <DropzoneAreaBase onAdd={(newFiles) => this.fileParse(newFiles)} filesLimit={5} showPreviewsInDropzone={false} showFileNames={true} />
             </div>
         );
