@@ -126,7 +126,11 @@ class Selection extends Component {
             .then((response) => {
                 let courseData = response.data;
                 let allCourseIds = courseData.map((data) => data.id);
-                this.setState({ allCourses: allCourseIds });
+                let uniqueCourseIds = allCourseIds.reduce((a, b) => {
+                    if (a.indexOf(b) < 0) a.push(b);
+                    return a;
+                }, []);
+                this.setState({ allCourses: uniqueCourseIds });
             })
             .catch((error) => console.log(error));
     }
@@ -151,13 +155,6 @@ class Selection extends Component {
     handleYearAndSemesterSubmit = (e) => {
         this.props.onYearAndSemesterSubmit();
         e.preventDefault();
-    };
-
-    getCourseIds = () => {
-        return axios.get("http://localhost:5000" + "/courses/").then((response) => {
-            this.response = response.data;
-            return this.response[0].id;
-        });
     };
 
     render() {
@@ -408,7 +405,7 @@ class EnrollmentTrends extends Component {
                         this.setState((prevState) => ({
                             yearTrendsArray: [
                                 ...prevState.yearTrendsArray,
-                                [this.state.year, this.state.semester, this.state.course, courseEnrollment],
+                                [this.state.year, this.state.semester, this.state.selectedCourses[i], courseEnrollment],
                             ],
                         }));
                     })
