@@ -107,22 +107,20 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
-        var curCourseInfo = {};
-        curCourseInfo[curKey] = [];
-        curCourseInfo[curKey].push(newSection);
+        var curCourseInfo = [];
+        curCourseInfo.push(newSection);
         await axios
             .post(Config.URL + "/courses/add", {
                 department: fileObj["department"],
                 courseNum: fileObj["course_num"],
-                courseName: "Another CS Class",
+                courseName: "(Name Missing)",
                 credits: 3,
                 preReqs: [],
-                courseDescription: "Description",
-                yearTrends: {},
+                courseDescription: "(Description Missing)",
+                yearTrends: [],
                 courseInfo: curCourseInfo,
-                professorNames: {},
+                professorNames: [],
             })
             .then((course) => console.log("Course Added ", course))
             .catch((err) => console.log(err));
@@ -130,13 +128,9 @@ class FileUploadArea extends Component {
 
     updateCourse = async function (curCourse, fileObj) {
         curCourse = curCourse["data"][0];
-        var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var newCourseInfo = curCourse["courseInfo"];
-        if (newCourseInfo[curKey] === undefined) {
-            newCourseInfo[curKey] = [];
-        }
-        newCourseInfo[curKey].push(newSection);
+        newCourseInfo.push(newSection);
         curCourse["courseInfo"] = newCourseInfo;
         await axios
             .put(Config.URL + "/courses/update/classID/" + curCourse["id"], curCourse)
@@ -375,6 +369,21 @@ class FileUploadArea extends Component {
             .catch((err) => console.log("invalid bmi reqs: ", err));
     };
 
+    addCSEdegreeReq = async function (degreeReq) {
+        await axios
+            .put(Config.URL + "/degreeReqs/edit/CSE/" + degreeReq["Version_Year"] + "/" + degreeReq["Version_Semester"], {
+                department: degreeReq["Department"],
+                gpaReq: degreeReq["GPA_Requirement"],
+                reqVersionSem: degreeReq["Version_Semester"],
+                reqVersionYear: degreeReq["Version_Year"],
+                timeLimit: degreeReq["Time_Limit"],
+                minCredits: degreeReq["Minimum_Credits"],
+                tracks: degreeReq["Tracks"],
+            })
+            .then((ret) => console.log("cse post:", ret))
+            .catch((err) => console.log("invalid cse reqs: ", err));
+    };
+
     checkJSONfile(file) {
         var jsonObj;
         var reader = new FileReader();
@@ -395,6 +404,7 @@ class FileUploadArea extends Component {
             } else if (jsonObj["Department"] === "BMI") {
                 self.addBMIdegreeReq(jsonObj);
             } else if (jsonObj["Department"] === "CSE") {
+                self.addCSEdegreeReq(jsonObj);
             }
         };
         reader.onerror = function () {
@@ -568,13 +578,13 @@ class FileUploadArea extends Component {
     setDepartment(e) {
         this.setState({ department: e.target.value });
     }
-    handleCancle() {
-        this.setState({ popFlag: false, semester: "", year: "", department: "", files: [] });
+    handleClose(){ // TODO: handle the cancle case.
+        this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
     }
     handleOpen = () => {
         this.setState({ popFlag: true });
     };
-    handleClose = () => {
+    handleEnter = () =>{
         this.setState({ popFlag: false });
         console.log(this.state);
         this.scrapeCourseInfo(this.state.files);
@@ -582,7 +592,7 @@ class FileUploadArea extends Component {
     render() {
         return (
             <div>
-                <Dialog open={this.state.popFlag} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <Dialog open={this.state.popFlag} onClose={() => this.handleClose()} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
                     <DialogContent>
                         <TextField id="semester" label="Semester" fullWidth onChange={(val) => this.setSem(val)} />
@@ -590,10 +600,10 @@ class FileUploadArea extends Component {
                         <TextField id="department" label="Department" fullWidth onChange={(val) => this.setDepartment(val)} />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleCancle} color="primary">
+                        <Button onClick={() => this.handleClose()} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.handleEnter} color="primary">
                             Enter
                         </Button>
                     </DialogActions>
