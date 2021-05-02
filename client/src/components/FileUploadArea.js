@@ -450,7 +450,6 @@ class FileUploadArea extends Component {
         let department = this.state.department;
         let semester = this.state.semester;
         let year = this.state.year;
-
         // let department = "CSE";
         reader.onload = function () {
             let textFile = reader.result;
