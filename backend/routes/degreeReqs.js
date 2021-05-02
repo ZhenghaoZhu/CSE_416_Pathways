@@ -69,6 +69,16 @@ router.route("/get/ECE/:year/:sem").get((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/CSE/:year/:sem").get((req, res) => {
+    cse.findOne({
+        department: "CSE",
+        reqVersionSem: req.params.sem,
+        reqVersionYear: req.params.year,
+    })
+        .then((cur) => res.json(cur))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
 //updating requests
 router.route("/edit/AMS/:year/:sem").put((req, res) => {
     ams.findOneAndReplace(
@@ -98,6 +108,19 @@ router.route("/edit/ECE/:year/:sem").put((req, res) => {
 
 router.route("/edit/BMI/:year/:sem").put((req, res) => {
     bmi.findOneAndReplace(
+        { reqVersionSem: req.params.sem, reqVersionYear: req.params.year },
+        req.body,
+        {
+            upsert: true,
+            returnNewDocument: true,
+        }
+    )
+        .then((ret) => res.json(ret))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/edit/CSE/:year/:sem").put((req, res) => {
+    cse.findOneAndReplace(
         { reqVersionSem: req.params.sem, reqVersionYear: req.params.year },
         req.body,
         {

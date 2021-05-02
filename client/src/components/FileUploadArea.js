@@ -369,6 +369,21 @@ class FileUploadArea extends Component {
             .catch((err) => console.log("invalid bmi reqs: ", err));
     };
 
+    addCSEdegreeReq = async function (degreeReq) {
+        await axios
+            .put(Config.URL + "/degreeReqs/edit/CSE/" + degreeReq["Version_Year"] + "/" + degreeReq["Version_Semester"], {
+                department: degreeReq["Department"],
+                gpaReq: degreeReq["GPA_Requirement"],
+                reqVersionSem: degreeReq["Version_Semester"],
+                reqVersionYear: degreeReq["Version_Year"],
+                timeLimit: degreeReq["Time_Limit"],
+                minCredits: degreeReq["Minimum_Credits"],
+                tracks: degreeReq["Tracks"],
+            })
+            .then((ret) => console.log("cse post:", ret))
+            .catch((err) => console.log("invalid cse reqs: ", err));
+    };
+
     checkJSONfile(file) {
         var jsonObj;
         var reader = new FileReader();
@@ -389,6 +404,7 @@ class FileUploadArea extends Component {
             } else if (jsonObj["Department"] === "BMI") {
                 self.addBMIdegreeReq(jsonObj);
             } else if (jsonObj["Department"] === "CSE") {
+                self.addCSEdegreeReq(jsonObj);
             }
         };
         reader.onerror = function () {
