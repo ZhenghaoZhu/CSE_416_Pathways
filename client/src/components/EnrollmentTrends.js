@@ -114,6 +114,22 @@ class Selection extends Component {
         this.handleYearChange = this.handleYearChange.bind(this);
         this.handleSemesterChange = this.handleSemesterChange.bind(this);
         this.handleYearAndSemesterSubmit = this.handleYearAndSemesterSubmit.bind(this);
+
+        this.state = {
+            allCourses: [],
+        };
+    }
+
+    componentWillMount() {
+        axios
+            .get(Config.URL + "/courses/")
+            .then((response) => {
+                console.log(response);
+                let courseData = response.data;
+                let allCourseIds = courseData.map((data) => data.id);
+                this.setState({ allCourses: allCourseIds });
+            })
+            .catch((error) => console.log(error));
     }
 
     handleCourseSubmit = (e) => {
@@ -138,6 +154,13 @@ class Selection extends Component {
         e.preventDefault();
     };
 
+    getCourseIds = () => {
+        return axios.get(Config.URL + "/courses/").then((response) => {
+            this.response = response.data;
+            return this.response[0].id;
+        });
+    };
+
     render() {
         const course = this.props.course;
         const year = this.props.year;
@@ -147,6 +170,7 @@ class Selection extends Component {
 
         return (
             <>
+                {console.log(this.state.allCourses)}
                 <Grid container>
                     <Grid item xs={12}>
                         <GPDHeader />
@@ -173,7 +197,7 @@ class Selection extends Component {
                                         label="Select Course"
                                         helperText="Please select a Course"
                                     >
-                                        {allCourses.map((course) => (
+                                        {this.state.allCourses.map((course) => (
                                             <MenuItem key={course} value={course}>
                                                 {course}
                                             </MenuItem>
