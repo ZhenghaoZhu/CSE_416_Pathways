@@ -56,7 +56,7 @@ class GPDPage extends Component {
     };
     render() {
         return (
-            <Box style={{ width: "99.82%" }}>
+            <>
                 <GPDHeader curGPD={this.state.curGPD} />
                 <Grid container spacing={1}>
                     <Grid item xs={8}>
@@ -108,6 +108,7 @@ class GPDPage extends Component {
                                     <Link
                                         to={{
                                             pathname: "/suggestCourse",
+                                            state: { curGPD: this.state.curGPD },
                                         }}
                                         style={{
                                             textDecoration: "none",
@@ -122,7 +123,7 @@ class GPDPage extends Component {
                         </Box>
                     </Grid>
                 </Grid>
-            </Box>
+            </>
         );
     }
 }
