@@ -53,14 +53,13 @@ class StudentTable extends Component {
     filterStudent(e) {
         // courses: CSE530, firstName: john
         // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
-        this.getStudents();
-        var newStudentFilter = this.state.curStudents.filter((student) => student.firstName.toUpperCase().includes(e.toUpperCase(), 0));
+        var newStudentFilter = this.state.curStudents.filter((student) => student.firstName.toUpperCase().indexOf(e.toUpperCase()) !== -1);
+        console.log(newStudentFilter);
         this.setState({ studentFilter: newStudentFilter });
     }
 
     cancelStudentSearch(e) {
-        var allStudents = this.state.curStudents;
-        this.setState({ studentFilter: allStudents });
+        this.setState({ studentFilter: this.state.curStudents });
     }
 
     render() {

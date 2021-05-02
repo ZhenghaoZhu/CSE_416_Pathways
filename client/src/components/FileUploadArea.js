@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Config from "../config.json";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,TextField } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField } from "@material-ui/core";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
@@ -443,10 +443,9 @@ class FileUploadArea extends Component {
             .then((course) => console.debug("Course added", course))
             .catch((err) => console.debug(err));
     }
-    scrapeCourseInfo(files){
+    scrapeCourseInfo(files) {
         let file = files[0].file;
-        let reader = new FileReader();  
-
+        let reader = new FileReader();
         const self = this;
         let department = this.state.department;
         let semester = this.state.semester;
@@ -457,21 +456,22 @@ class FileUploadArea extends Component {
             let textFile = reader.result;
             // parse
             let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
-            course_array = course_array.filter(item => item.substring(0,3) === department); // filter the department
+            course_array = course_array.filter((item) => item.substring(0, 3) === department); // filter the department
             console.log(course_array);
-            
+
             const courses = course_array.map((course) => {
                 let course_fields = course.match(/(.+(\r?\n))+/gm);
                 let courseName = course_fields[0];
-                let description = course_fields[1]; 
+                let description = course_fields[1];
                 let prerequisites = []; // default no prereq
                 let numOfCredits = 3; // Default value = 3
 
                 let matches = course.match(/\d{1}(\-\d+)? credit/);
                 let creditNum = matches === null ? "" : matches[0];
-                if(creditNum === ""){ // if not found, default is 3 credits.
+                if (creditNum === "") {
+                    // if not found, default is 3 credits.
                     numOfCredits = 3;
-                }else if (!creditNum.includes("-")) {
+                } else if (!creditNum.includes("-")) {
                     // single digit credit
                     numOfCredits = creditNum[0];
                 } else {
@@ -508,8 +508,7 @@ class FileUploadArea extends Component {
                     }
                 }
                 let prereq_match = course.match(/Prerequisite.+/);
-                let prereq_text =
-                    prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":"));
+                let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":"));
                 let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
                 let w = preq_corse_match === null ? [] : preq_corse_match;
                 prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
@@ -517,11 +516,11 @@ class FileUploadArea extends Component {
                 // console.log(prerequisites);
                 return {
                     courseName,
-                    description,    
+                    description,
                     numOfCredits,
                     prerequisites,
                     semester,
-                    year
+                    year,
                 };
             });
             console.log(courses);
@@ -555,28 +554,28 @@ class FileUploadArea extends Component {
             }
         }
     }
-    setFile(files){
-        this.setState({files:files});
+    setFile(files) {
+        this.setState({ files: files });
         console.log(this.state);
     }
-    setSem(e){
-        this.setState({semester:e.target.value})
+    setSem(e) {
+        this.setState({ semester: e.target.value });
         console.log(this.state);
     }
-    setYear(e){
-        this.setState({year:e.target.value})
+    setYear(e) {
+        this.setState({ year: e.target.value });
         console.log(this.state);
     }
-    setDepartment(e){
-        this.setState({department:e.target.value})
+    setDepartment(e) {
+        this.setState({ department: e.target.value });
     }
-    handleCancle(){
-        this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
+    handleCancle() {
+        this.setState({ popFlag: false, semester: "", year: "", department: "", files: [] });
     }
     handleOpen = () => {
         this.setState({ popFlag: true });
     };
-    handleClose = () =>{
+    handleClose = () => {
         this.setState({ popFlag: false });
         console.log(this.state);
         this.scrapeCourseInfo(this.state.files);
@@ -587,15 +586,9 @@ class FileUploadArea extends Component {
                 <Dialog open={this.state.popFlag} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
                     <DialogContent>
-                        <TextField id="semester" label="Semester" fullWidth                            
-                            onChange={(val) => this.setSem(val)}
-                        />
-                        <TextField id="year" label="Year" fullWidth
-                            onChange={(val) => this.setYear(val)}
-                        />
-                        <TextField id="department" label="Department" fullWidth 
-                            onChange={(val) => this.setDepartment(val)}
-                        />
+                        <TextField id="semester" label="Semester" fullWidth onChange={(val) => this.setSem(val)} />
+                        <TextField id="year" label="Year" fullWidth onChange={(val) => this.setYear(val)} />
+                        <TextField id="department" label="Department" fullWidth onChange={(val) => this.setDepartment(val)} />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleCancle} color="primary">
@@ -606,13 +599,7 @@ class FileUploadArea extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
-                <DropzoneAreaBase
-                    onAdd={(newFiles) => this.fileParse(newFiles)}
-                    filesLimit={5}
-                    showPreviewsInDropzone={false}
-                    showFileNames={true}
-                />
+                <DropzoneAreaBase onAdd={(newFiles) => this.fileParse(newFiles)} filesLimit={5} showPreviewsInDropzone={false} showFileNames={true} />
             </div>
         );
     }
