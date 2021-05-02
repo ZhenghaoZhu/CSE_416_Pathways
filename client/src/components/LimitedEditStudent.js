@@ -261,19 +261,6 @@ class LimitedEditStudent extends Component {
                         </Grid>
 
                         <Grid container>
-                            <Grid item xs={3}>
-                                <TextField
-                                    style={{
-                                        padding: "10px",
-                                    }}
-                                    id="password"
-                                    label="Password"
-                                    variant="outlined"
-                                    required={true}
-                                    value={this.state.password}
-                                    onChange={(val) => this.setPassword(val)}
-                                />
-                            </Grid>
                             <Grid item xs>
                                 <Button
                                     variant="contained"
