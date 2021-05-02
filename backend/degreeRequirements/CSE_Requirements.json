@@ -6,77 +6,146 @@
     "Time_Limit": 3,
     "Minimum_Credits": 31,
     "Tracks": {
-        "Computational Applied Mathematics": {
-            "Required Courses": [
-                [1, "AMS 501"],
-                [1, "AMS 503"],
-                [1, "AMS 526"],
-                [1, "AMS 527"],
-                [1, "AMS 528"],
-                [1, "AMS 595"]
+        "Thesis": {
+            "Required Courses": [],
+            "Theory Breadth Courses": [
+                [
+                    1,
+                    "CSE 512",
+                    "CSE 526",
+                    "CSE 540",
+                    "CSE 541",
+                    "CSE 547",
+                    "CSE 548",
+                    "CSE 549"
+                ]
             ],
-            "Elective Courses": [[4, "AMS"]],
+            "Systems Breadth Courses": [
+                [
+                    1,
+                    "CSE 502",
+                    "CSE 504",
+                    "CSE 506",
+                    "CSE 508",
+                    "CSE 509",
+                    "CSE 532",
+                    "CSE 534",
+                    "CSE 535"
+                ]
+            ],
+            "IIS Breadth Courses": [
+                [
+                    1,
+                    "CSE 505",
+                    "CSE 519",
+                    "CSE 527",
+                    "CSE 528",
+                    "CSE 537",
+                    "CSE 538",
+                    "CSE 564"
+                ]
+            ],
+            "Ranged Courses": [[6, 9, "CSE 599"]],
+            "Optional Courses": [
+                [2, "CSE 590 - 595"],
+                [2, "CSE 587"]
+            ],
+            "Elective Courses": [[6, "CSE"]],
             "Excluded Courses": []
         },
-        "Computational Biology": {
+        "Advanced Project": {
             "Required Courses": [
-                [1, "AMS 507"],
-                [1, "AMS 510"],
-                [1, "MCB 520", "CHE 541"],
-                [2, "AMS 531"],
-                [2, "AMS 532"],
-                [1, "AMS 533"],
-                [1, "AMS 535"],
-                [1, "AMS 537"],
-                [1, "AMS 539"],
-                [1, "AMS 549"]
+                [1, "CSE 523"],
+                [1, "CSE 524"]
             ],
-            "Elective Courses": [[3, "AMS"]],
-            "Excluded Courses": []
+            "Theory Breadth Courses": [
+                [
+                    1,
+                    "CSE 512",
+                    "CSE 526",
+                    "CSE 540",
+                    "CSE 541",
+                    "CSE 547",
+                    "CSE 548",
+                    "CSE 549"
+                ]
+            ],
+            "Systems Breadth Courses": [
+                [
+                    1,
+                    "CSE 502",
+                    "CSE 504",
+                    "CSE 506",
+                    "CSE 508",
+                    "CSE 509",
+                    "CSE 532",
+                    "CSE 534",
+                    "CSE 535"
+                ]
+            ],
+            "IIS Breadth Courses": [
+                [
+                    1,
+                    "CSE 505",
+                    "CSE 519",
+                    "CSE 527",
+                    "CSE 528",
+                    "CSE 537",
+                    "CSE 538",
+                    "CSE 564"
+                ]
+            ],
+            "Ranged Courses": [],
+            "Optional Courses": [[2, "CSE 587"]],
+            "Elective Courses": [[7, "CSE"]],
+            "Excluded Courses": ["CSE 599"]
         },
-        "Operations Research": {
-            "Required Courses": [
-                [1, "AMS 510"],
-                [1, "AMS 507"],
-                [1, "AMS 540"],
-                [1, "AMS 550"],
-                [1, "AMS 553"],
-                [1, "AMS 570 - 586"],
-                [1, "AMS 595"]
+        "Special Project": {
+            "Required Courses": [[1, "CSE 522"]],
+            "Theory Breadth Courses": [
+                [
+                    1,
+                    "CSE 512",
+                    "CSE 526",
+                    "CSE 540",
+                    "CSE 541",
+                    "CSE 547",
+                    "CSE 548",
+                    "CSE 549"
+                ]
             ],
-            "Elective Courses": [[4, "AMS 542­ - 556"]],
-            "Excluded Courses": []
-        },
-        "Statistics": {
-            "Required Courses": [
-                [1, "AMS 507"],
-                [1, "AMS 510"],
-                [1, "AMS 570"],
-                [1, "AMS 572"],
-                [1, "AMS 573"],
-                [1, "AMS 578"],
-                [1, "AMS 582"],
-                [1, "AMS 597"]
+            "Systems Breadth Courses": [
+                [
+                    1,
+                    "CSE 502",
+                    "CSE 504",
+                    "CSE 506",
+                    "CSE 508",
+                    "CSE 509",
+                    "CSE 532",
+                    "CSE 534",
+                    "CSE 535"
+                ]
             ],
-            "Elective Courses": [[2, "AMS"]],
-            "Excluded Courses": []
-        },
-        "Quantitative Finance": {
-            "Required Courses": [
-                [1, "AMS 507"],
-                [1, "AMS 510"],
-                [1, "AMS 511"],
-                [1, "AMS 512"],
-                [1, "AMS 513"],
-                [1, "AMS 514"],
-                [1, "AMS 516"],
-                [1, "AMS 517"],
-                [1, "AMS 518"],
-                [1, "AMS 572"],
-                [1, "FIN 539"]
+            "IIS Breadth Courses": [
+                [
+                    1,
+                    "CSE 505",
+                    "CSE 519",
+                    "CSE 527",
+                    "CSE 528",
+                    "CSE 537",
+                    "CSE 538",
+                    "CSE 564"
+                ]
             ],
-            "Elective Courses": [[1, "AMS"]],
-            "Excluded Courses": []
+            "Ranged Courses": [],
+            "Optional Courses": [
+                [2, "CSE 590 - 595"],
+                [2, "CSE 587"]
+            ],
+            "Elective Courses": [[8, "CSE"]],
+            "Excluded Courses": ["CSE 523", "CSE 524", "CSE 599"]
         }
     }
 }

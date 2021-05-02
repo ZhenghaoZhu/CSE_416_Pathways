@@ -63,22 +63,32 @@ router.route("/update/classID/:id").put((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/get/course/:id/:semester/:year").get((req, res) => {
+    Courses.find({id: req.params.id, semester: req.params.semester, year: req.params.year})
+    .then((response) => res.json(response))
+    .catch((err) => res.status(400).json("Error: " + err));
+})
+
 router.route("/add").post((req, res) => {
     const id = req.body.department + req.body.courseNum;
     const department = req.body.department || "None";
     const courseNum = req.body.courseNum || "None";
     const courseName = req.body.courseName || "None";
+    const semester = req.body.semester || "None";
+    const year = req.body.year || "None";
     const credits = req.body.credits || 0;
     const preReqs = req.body.preReqs || [];
     const courseDescription = req.body.courseDescription || "None";
-    const yearTrends = req.body.yearTrends || {};
-    const courseInfo = req.body.courseInfo || {};
-    const professorNames = req.body.professorNames || {};
+    const yearTrends = req.body.yearTrends || [];
+    const courseInfo = req.body.courseInfo || [];
+    const professorNames = req.body.professorNames || [];
 
     const newCourse = new Courses({
         id,
         department,
         courseNum,
+        semester,
+        year,
         courseName,
         credits,
         preReqs,
