@@ -570,13 +570,13 @@ class FileUploadArea extends Component {
     setDepartment(e){
         this.setState({department:e.target.value})
     }
-    handleCancle(){
+    handleClose(){ // TODO: handle the cancle case.
         this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
     }
     handleOpen = () => {
         this.setState({ popFlag: true });
     };
-    handleClose = () =>{
+    handleEnter = () =>{
         this.setState({ popFlag: false });
         console.log(this.state);
         this.scrapeCourseInfo(this.state.files);
@@ -584,7 +584,7 @@ class FileUploadArea extends Component {
     render() {
         return (
             <div>
-                <Dialog open={this.state.popFlag} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <Dialog open={this.state.popFlag} onClose={() => this.handleClose()} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
                     <DialogContent>
                         <TextField id="semester" label="Semester" fullWidth                            
@@ -598,10 +598,10 @@ class FileUploadArea extends Component {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleCancle} color="primary">
+                        <Button onClick={() => this.handleClose()} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.handleEnter} color="primary">
                             Enter
                         </Button>
                     </DialogActions>

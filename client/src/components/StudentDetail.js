@@ -10,8 +10,6 @@ class StudentDetail extends Component {
         this.state = {
             curStudent: {},
         };
-        console.log(this.props);
-        console.log(this.state);
     }
 
     static getDerivedStateFromProps(props, state) {

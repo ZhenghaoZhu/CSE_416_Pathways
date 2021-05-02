@@ -30,8 +30,8 @@ class StudentTable extends Component {
         this.getStudents();
     }
 
-    componentDidMount() {
-        return;
+    componentDidUpdate() { // Update the student table after editing
+        this.getStudents(); 
     }
 
     getStudents() {
