@@ -111,6 +111,7 @@ class LimitedEditStudent extends Component {
                                     id="sbu_id"
                                     label="SBU ID"
                                     variant="outlined"
+                                    disabled
                                     value={this.state.id}
                                     onChange={(val) => this.setID(val)}
                                 />

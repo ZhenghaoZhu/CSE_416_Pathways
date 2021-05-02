@@ -25,20 +25,23 @@ class StudentTable extends Component {
             curStudents: [],
             studentFilter: [],
             dataGridLoading: true,
+            department: this.props.curDepartment,
         };
+        this.getStudents();
     }
 
     componentDidMount() {
-        this.getStudents();
+        return;
     }
 
     getStudents() {
         axios
             .get(Config.URL + "/student/")
             .then((response) => {
+                var filteredDepartment = response.data.filter((student) => student.department === this.state.department);
                 this.setState({
-                    curStudents: response.data,
-                    studentFilter: response.data,
+                    curStudents: filteredDepartment,
+                    studentFilter: filteredDepartment,
                     dataGridLoading: false,
                 });
             })
@@ -51,9 +54,7 @@ class StudentTable extends Component {
         // courses: CSE530, firstName: john
         // this.setState({curCourses: this.state.curCourses.filter(course => course.courseName.includes(e))})
         this.getStudents();
-        var newStudentFilter = this.state.curStudents.filter((student) =>
-            student.firstName.toUpperCase().includes(e.toUpperCase(), 0)
-        );
+        var newStudentFilter = this.state.curStudents.filter((student) => student.firstName.toUpperCase().includes(e.toUpperCase(), 0));
         this.setState({ studentFilter: newStudentFilter });
     }
 

@@ -1,25 +1,65 @@
 import React, { Component } from "react";
 import { DropzoneAreaBase } from "material-ui-dropzone";
 import Config from "../config.json";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,TextField } from "@material-ui/core";
 
 const Papa = require("papaparse");
 const axios = require("axios").default;
+const crypto = require("crypto");
 const fs = require("fs");
+
+var SHA256 = require("crypto-js/sha256");
 
 class FileUploadArea extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            popFlag: false,
+            semester : "",
+            year : "",
+            department: "",
+            courseFile:[]
+        };
     }
 
-    addStudents(fileObj) {
+    encryptPassword(password, salt) {
+        var hash = crypto.createHmac("sha512", salt); /** Hashing algorithm sha512 */
+        hash.update(password);
+        var value = hash.digest("hex");
+        return [salt, value];
+    }
+
+    addStudents = async function (fileObj) {
         var curStudent = null;
         for (var i = 0; i < fileObj["data"].length; i++) {
             curStudent = fileObj["data"][i];
-            console.log(curStudent);
+            var curSalt = crypto.randomBytes(16).toString("base64");
+            curStudent["password"] = this.encryptPassword(curStudent["password"], curSalt);
             if (curStudent["track"] === "") {
                 curStudent["track"] = " ";
             }
-            axios
+            var curDegreeReqs = null;
+            var curDegreeReqPath =
+                curStudent["department"] + "/" + curStudent["requirement_version_year"] + "/" + curStudent["requirement_version_semester"];
+            console.info(curStudent);
+            await axios
+                .get(Config.URL + "/degreeReqs/get/" + curDegreeReqPath)
+                .then((degreeReq) => {
+                    curDegreeReqs = degreeReq.data;
+                })
+                .catch((err) => console.log("Error: ", err));
+            if (curDegreeReqs === null || curDegreeReqs === undefined) {
+                await axios
+                    .get(Config.URL + "/degreeReqs/get/" + curStudent["department"])
+                    .then((degreeReq) => {
+                        curDegreeReqs = degreeReq.data[0];
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+            await axios
                 .put(Config.URL + "/student/get/sbuID/" + curStudent["sbu_id"], {
                     firstName: curStudent["first_name"],
                     lastName: curStudent["last_name"],
@@ -38,7 +78,7 @@ class FileUploadArea extends Component {
                     projectOption: " ",
                     facultyAdvisor: " ",
                     proficienyReq: [],
-                    degreeRequirements: {},
+                    degreeRequirements: curDegreeReqs,
                     curSem: "Spring",
                     curYear: "2021",
                     password: curStudent["password"],
@@ -49,7 +89,7 @@ class FileUploadArea extends Component {
                 .then((cur) => console.log("Added student: ", cur))
                 .catch((err) => console.log("Error happened :(", err));
         }
-    }
+    };
 
     updateStudentGrades = async function (curClassObj, student) {
         var curSemester = curClassObj["semester"] + " " + curClassObj["year"];
@@ -67,7 +107,6 @@ class FileUploadArea extends Component {
     };
 
     createCourse = async function (fileObj) {
-        // console.log(fileObj);
         var curKey = fileObj["semester"] + " " + fileObj["year"];
         var newSection = [fileObj["section"], fileObj["timeslot"]];
         var curCourseInfo = {};
@@ -168,7 +207,6 @@ class FileUploadArea extends Component {
                 var curCourseSplit = curCourse.split(" ");
                 var curCourseName = curCourseSplit[0] + " " + curCourseSplit[1];
                 var curCourseDep = curCourseSplit[0];
-                console.info(curCourseCheck[1], curCourseDep, curCourse);
                 if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck[1] === curCourseName)) {
                     curCourseCheck[0] = curCourseCheck[0] - 1;
                     if (curCourseCheck[0] === 0) {
@@ -245,7 +283,6 @@ class FileUploadArea extends Component {
         var curGrade = "";
         var curCourseCredits = 3;
         var totalCredits = 0;
-        console.info(allCourses);
         allCourses.forEach((curCourse) => {
             // TODO  Get credits for each class
             curCourseCredits = 3;
@@ -269,7 +306,6 @@ class FileUploadArea extends Component {
     addCourseGrades = async function (fileObj) {
         var curData = fileObj["data"];
         var curSBUIDs = [];
-        console.log(curData);
         for (let i = 0; i < curData.length; i++) {
             await axios
                 .get(Config.URL + "/student/get/" + curData[i]["sbu_id"])
@@ -390,18 +426,18 @@ class FileUploadArea extends Component {
         course["courseNum"] = depID[1].substring(0, depID[1].length - 1);
         course["name"] = course["courseName"].split(": ")[1];
         course["department"] = depID[0];
-        // console.log(course);
-        //fix course Num to delete colon :
-        //fix course name, ID, courseNum
-        // remove the \r\n
-
         axios
             .post(Config.URL + "/courses/add", {
                 department: course["department"],
                 courseNum: course["courseNum"],
                 courseName: course["name"],
+<<<<<<< HEAD
                 semester: "Spring", //TODO default value for now, change when model is implemented - Anthony
                 year: "2021", //TODO default value for now, change when model is implemented - Anthony
+=======
+                semester: course["semester"], //TODO default value for now, change when model is implemented - Anthony
+                year: course["year"], //TODO default value for now, change when model is implemented - Anthony
+>>>>>>> 96fcb214bbfafd380d43c27ae6159eb9293f32d2
                 credits: course["numOfCredits"],
                 preReqs: [course["prerequisites"]],
                 courseDescription: course["description"],
@@ -412,97 +448,110 @@ class FileUploadArea extends Component {
             .then((course) => console.debug("Course added", course))
             .catch((err) => console.debug(err));
     }
+    scrapeCourseInfo(files){
+        let file = files[0].file;
+        let reader = new FileReader();  
 
+        const self = this;
+        let department = this.state.department;
+        let semester = this.state.semester;
+        let year = this.state.year;
+
+        // let department = "CSE";
+        reader.onload = function () {
+            let textFile = reader.result;
+            // parse
+            let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
+            course_array = course_array.filter(item => item.substring(0,3) === department); // filter the department
+            console.log(course_array);
+            
+            const courses = course_array.map((course) => {
+                let course_fields = course.match(/(.+(\r?\n))+/gm);
+                let courseName = course_fields[0];
+                let description = course_fields[1]; 
+                let prerequisites = []; // default no prereq
+                let numOfCredits = 3; // Default value = 3
+
+                let matches = course.match(/\d{1}(\-\d+)? credit/);
+                let creditNum = matches === null ? "" : matches[0];
+                if(creditNum === ""){ // if not found, default is 3 credits.
+                    numOfCredits = 3;
+                }else if (!creditNum.includes("-")) {
+                    // single digit credit
+                    numOfCredits = creditNum[0];
+                } else {
+                    // if 3 is in the range, take 3. Else, take the minimum
+                    if (creditNum.substring(0, 1) > 3) {
+                        numOfCredits = 3;
+                    } else if (creditNum.substring(0, 1) <= 3) {
+                        numOfCredits = parseInt(creditNum.substring(0, 1));
+                    }
+                    if (creditNum.length === 10) {
+                        //1-9
+                        if (creditNum.substring(0, 1) >= 3) {
+                            //3-x,4-x
+                            numOfCredits = parseInt(creditNum.substring(0, 1));
+                        } else if (creditNum.substring(0, 1) < 3) {
+                            //1-x
+                            if (creditNum.substring(2, 3) > 3) {
+                                //1-4
+                                numOfCredits = 3;
+                            } else {
+                                //1-2
+                                numOfCredits = parseInt(creditNum.substring(0, 1));
+                            }
+                        }
+                    } else if (creditNum.length === 11) {
+                        //1-12
+                        if (creditNum.substring(0, 1) < 3) {
+                            //2-11 = 3
+                            numOfCredits = 3;
+                        } else {
+                            //5-12 = 5
+                            numOfCredits = parseInt(creditNum.substring(0, 1));
+                        }
+                    }
+                }
+                let prereq_match = course.match(/Prerequisite.+/);
+                let prereq_text =
+                    prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":"));
+                let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);
+                let w = preq_corse_match === null ? [] : preq_corse_match;
+                prerequisites = w.filter((preq) => parseInt(preq.substring(4, 5)) > 4);
+                // console.log(prereq_text);
+                // console.log(prerequisites);
+                return {
+                    courseName,
+                    description,    
+                    numOfCredits,
+                    prerequisites,
+                    semester,
+                    year
+                };
+            });
+            console.log(courses);
+
+            var RateLimiter = require("limiter").RateLimiter;
+            var limiter = new RateLimiter(50, 100);
+            courses.map((course) => {
+                limiter.removeTokens(1, function () {
+                    self.addCourse(course);
+                });
+            });
+        };
+        reader.onerror = function () {
+            console.log(reader.error);
+        };
+        reader.readAsText(file);
+    }
     fileParse(files) {
         console.log(files);
-        // if(file)
         for (var i = 0; i < files.length; i++) {
             if (files[i]["file"]["name"].indexOf(".json") !== -1) {
                 this.checkJSONfile(files[i]);
             } else if (files[i].file.type === "text/plain") {
-                // parse the course information
-                let file = files[0].file;
-                let reader = new FileReader();
-
-                const self = this;
-                reader.onload = function () {
-                    let textFile = reader.result;
-                    // parse
-                    let course_array = textFile.match(/^[A-Z]{3} \d{3}: (.+(\r?\n){1,2})+/gm);
-                    const courses = course_array.map((course) => {
-                        let course_fields = course.match(/(.+(\r?\n))+/gm);
-                        let courseName = course_fields[0];
-                        let description = course_fields[1];
-                        let prerequisites = [];
-                        let numOfCredits = null;
-
-                        let matches = course.match(/\d{1}(\-\d+)? credit/);
-                        let creditNum = matches === null ? "" : matches[0];
-                        if (!creditNum.includes("-")) {
-                            // single digit credit
-                            numOfCredits = creditNum[0];
-                        } else {
-                            // if 3 is in the range, take 3. Else, take the minimum
-                            if (creditNum.substring(0, 1) > 3) {
-                                numOfCredits = 3;
-                            } else if (creditNum.substring(0, 1) <= 3) {
-                                numOfCredits = parseInt(creditNum.substring(0, 1));
-                            }
-                            if (creditNum.length === 10) {
-                                //1-9
-                                if (creditNum.substring(0, 1) >= 3) {
-                                    //3-x,4-x
-                                    numOfCredits = parseInt(creditNum.substring(0, 1));
-                                } else if (creditNum.substring(0, 1) < 3) {
-                                    //1-x
-                                    if (creditNum.substring(2, 3) > 3) {
-                                        //1-4
-                                        numOfCredits = 3;
-                                    } else {
-                                        //1-2
-                                        numOfCredits = parseInt(creditNum.substring(0, 1));
-                                    }
-                                }
-                            } else if (creditNum.length === 11) {
-                                //1-12
-                                if (creditNum.substring(0, 1) < 3) {
-                                    //2-11 = 3
-                                    numOfCredits = 3;
-                                } else {
-                                    //5-12 = 5
-                                    numOfCredits = parseInt(creditNum.substring(0, 1));
-                                }
-                            }
-                        }
-                        let prereq_match = course.match(/Prerequisite.+/);
-                        let prereq_text = prereq_match === null ? "" : prereq_match[0].substring(prereq_match[0].indexOf(":")+2);
-                        let preq_corse_match = prereq_text.match(/[A-Z]{3} ?\d{3}/gm);                        
-                        let w = preq_corse_match === null ? [] : preq_corse_match
-                        prerequisites = w.filter(preq => parseInt(preq.substring(4,5)) > 4);
-                        console.log(prereq_text);
-                        if (course.toLowerCase().includes("prerequisite")) {
-                            prerequisites = prereq_text.substring(prereq_text.indexOf(":") + 2).split(",");
-                        }
-                        // console.log(prerequisites);
-                        return {
-                            courseName,
-                            description,
-                            numOfCredits,
-                            prerequisites,
-                        };
-                    });
-                    var RateLimiter = require("limiter").RateLimiter;
-                    var limiter = new RateLimiter(30, 100);
-                    courses.map((course) => {
-                        limiter.removeTokens(1, function () {
-                            self.addCourse(course);
-                        });
-                    });
-                };
-                reader.onerror = function () {
-                    console.log(reader.error);
-                };
-                reader.readAsText(file);
+                this.handleOpen();
+                this.setFile(files);
             } else {
                 Papa.parse(files[i]["file"], {
                     header: true,
@@ -511,15 +560,65 @@ class FileUploadArea extends Component {
             }
         }
     }
-
+    setFile(files){
+        this.setState({files:files});
+        console.log(this.state);
+    }
+    setSem(e){
+        this.setState({semester:e.target.value})
+        console.log(this.state);
+    }
+    setYear(e){
+        this.setState({year:e.target.value})
+        console.log(this.state);
+    }
+    setDepartment(e){
+        this.setState({department:e.target.value})
+    }
+    handleCancle(){
+        this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
+    }
+    handleOpen = () => {
+        this.setState({ popFlag: true });
+    };
+    handleClose = () =>{
+        this.setState({ popFlag: false });
+        console.log(this.state);
+        this.scrapeCourseInfo(this.state.files);
+    };
     render() {
         return (
-            <DropzoneAreaBase
-                onAdd={(newFiles) => this.fileParse(newFiles)}
-                filesLimit={5}
-                showPreviewsInDropzone={false}
-                showFileNames={true}
-            />
+            <div>
+                <Dialog open={this.state.popFlag} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
+                    <DialogContent>
+                        <TextField id="semester" label="Semester" fullWidth                            
+                            onChange={(val) => this.setSem(val)}
+                        />
+                        <TextField id="year" label="Year" fullWidth
+                            onChange={(val) => this.setYear(val)}
+                        />
+                        <TextField id="department" label="Department" fullWidth 
+                            onChange={(val) => this.setDepartment(val)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleCancle} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            Enter
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <DropzoneAreaBase
+                    onAdd={(newFiles) => this.fileParse(newFiles)}
+                    filesLimit={5}
+                    showPreviewsInDropzone={false}
+                    showFileNames={true}
+                />
+            </div>
         );
     }
 }

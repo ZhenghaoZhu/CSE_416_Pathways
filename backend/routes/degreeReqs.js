@@ -4,11 +4,47 @@ const router = require("express").Router();
 let ams = require("../models/AMS_degreeReqs.model");
 let bmi = require("../models/BMI_degreeReqs.model");
 let ece = require("../models/CE_degreeReqs.model");
+let cse = require("../models/CSE_degreeReqs.model");
 const fs = require("fs");
 
 //get requests
+
+router.route("/get/AMS").get((req, res) => {
+    ams.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+    bmi.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+    ece.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/get/BMI").get((req, res) => {
+    bmi.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/get/ECE").get((req, res) => {
+    ece.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/get/CSE").get((req, res) => {
+    cse.find()
+        .then((users) => res.json(users))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/get/AMS/:year/:sem").get((req, res) => {
-    ams.findOne({ department: "AMS", reqVersionSem: req.params.sem, reqVersionYear: req.params.year })
+    ams.findOne({
+        department: "AMS",
+        reqVersionSem: req.params.sem,
+        reqVersionYear: req.params.year,
+    })
         .then((cur) => res.json(cur))
         .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -20,41 +56,61 @@ router.route("/get/AMS/:year/:sem").get((req, res) => {
 // })
 
 router.route("/get/BMI/:year/:sem").get((req, res) => {
-    bmi.findOne({ department: "BMI", reqVersionSem: req.params.sem, reqVersionYear: req.params.year })
+    bmi.findOne({
+        department: "BMI",
+        reqVersionSem: req.params.sem,
+        reqVersionYear: req.params.year,
+    })
         .then((cur) => res.json(cur))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/get/ECE/:year/:sem").get((req, res) => {
-    ece.findOne({ department: "ECE", reqVersionSem: req.params.sem, reqVersionYear: req.params.year })
+    ece.findOne({
+        department: "ECE",
+        reqVersionSem: req.params.sem,
+        reqVersionYear: req.params.year,
+    })
         .then((cur) => res.json(cur))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //updating requests
 router.route("/edit/AMS/:year/:sem").put((req, res) => {
-    ams.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year }, req.body, {
-        upsert: true,
-        returnNewDocument: true,
-    })
+    ams.findOneAndReplace(
+        { reqVersionSem: req.params.sem, reqVersionYear: req.params.year },
+        req.body,
+        {
+            upsert: true,
+            returnNewDocument: true,
+        }
+    )
         .then((ret) => res.json(ret))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/edit/ECE/:year/:sem").put((req, res) => {
-    ece.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year }, req.body, {
-        upsert: true,
-        returnNewDocument: true,
-    })
+    ece.findOneAndReplace(
+        { reqVersionSem: req.params.sem, reqVersionYear: req.params.year },
+        req.body,
+        {
+            upsert: true,
+            returnNewDocument: true,
+        }
+    )
         .then((ret) => res.json(ret))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/edit/BMI/:year/:sem").put((req, res) => {
-    bmi.findOneAndReplace({ reqVersionSem: req.params.sem, reqVersionYear: req.params.year }, req.body, {
-        upsert: true,
-        returnNewDocument: true,
-    })
+    bmi.findOneAndReplace(
+        { reqVersionSem: req.params.sem, reqVersionYear: req.params.year },
+        req.body,
+        {
+            upsert: true,
+            returnNewDocument: true,
+        }
+    )
         .then((ret) => res.json(ret))
         .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -135,14 +191,18 @@ router.route("/add/BMI").post((req, res) => {
 // })
 
 router.route("/file/:file").get((req, res) => {
-    fs.readFile("degreeRequirements/" + req.params.file, "utf8", (err, string) => {
-        if (err) {
-            return err;
+    fs.readFile(
+        "degreeRequirements/" + req.params.file,
+        "utf8",
+        (err, string) => {
+            if (err) {
+                return err;
+            }
+            res.json(string);
+            // var customer = JSON.parse(string);
+            // console.log("degree req: ", customer);
         }
-        res.json(string);
-        // var customer = JSON.parse(string);
-        // console.log("degree req: ", customer);
-    });
+    );
 });
 
 module.exports = router;
