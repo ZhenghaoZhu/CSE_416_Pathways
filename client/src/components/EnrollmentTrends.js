@@ -126,11 +126,11 @@ class Selection extends Component {
             .then((response) => {
                 let courseData = response.data;
                 let allCourseIds = courseData.map((data) => data.id);
-                let uniqueCourseIds = allCourseIds.reduce((a, b) => {
+                var uniqueCoursIds = allCourseIds.reduce(function (a, b) {
                     if (a.indexOf(b) < 0) a.push(b);
                     return a;
                 }, []);
-                this.setState({ allCourses: uniqueCourseIds });
+                this.setState({ allCourses: uniqueCoursIds });
             })
             .catch((error) => console.log(error));
     }
@@ -311,58 +311,33 @@ class EnrollmentTrends extends Component {
 
     colors = ["lightsalmon", "indigo", "green", "aqua", "red", "darkslategray", "darkslategray", "fuchsia", "gold", "blue"];
 
-    createVictoryObject = (elem, selectedCourses) => {
-        let elemArray = [];
-        let x1 = elem[0] + " " + elem[1];
-        let y1 = elem[2];
-        let label1 = elem[3];
+    createVictoryObject = (yearTrends, selectedCourses) => {
+        // let elemArray = [];
+        let x1 = yearTrends[1] + " " + yearTrends[0];
+        let y1 = yearTrends[3];
+        let label1 = yearTrends[2];
         let fill1 = this.colors[selectedCourses.indexOf(label1)];
-        elemArray.push({ x: x1, y: y1, label: label1, fill: fill1 });
-        return elemArray;
+        // elemArray.push({ x: x1, y: y1, label: label1, fill: fill1 });
+        return { x: x1, y: y1, label: label1, fill: fill1 };
     };
 
-    createVictoryObjectArray = (enrollmentTrendsForChart, selectedCourses) => {
+    createVictoryObjectArray = (yearTrendsArray, selectedCourses) => {
         let victoryObjectArray = [];
         // enrollmentTrends is an Object, so iterate through its values.
-        for (let course of enrollmentTrendsForChart.values()) {
-            let currCourseObjs = [];
-            for (let semester of course) {
-                let semesterArray = this.createVictoryObject(semester, selectedCourses);
-                currCourseObjs.push(semesterArray);
+        for (let course of selectedCourses) {
+            console.log(course);
+            let yearTrendsForCourse = [];
+            for (let yearTrends of yearTrendsArray) {
+                if (yearTrends[2] === course) {
+                    let victoryObj = this.createVictoryObject(yearTrends, selectedCourses);
+                    yearTrendsForCourse = yearTrendsForCourse.concat(victoryObj);
+                    // console.log(yearTrendsForCourse);
+                }
             }
-            victoryObjectArray.push(currCourseObjs);
+            victoryObjectArray = victoryObjectArray.concat([yearTrendsForCourse]);
         }
+        console.log(victoryObjectArray);
         return victoryObjectArray;
-    };
-
-    createEnrollmentTrendsForChart = (yearTrends, yearAndSemesterArray, coursesArray) => {
-        let enrollmentTrendsForChart = [];
-        for (let i = 0; i < yearTrends.length; i++) {
-            let elemArray = [];
-            for (let j = 0; j < yearAndSemesterArray.length; j++) {
-                let semester = yearAndSemesterArray[j][0];
-                let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][2];
-                let course = coursesArray[i];
-                elemArray.push([semester, year, enrollment, course]);
-            }
-            enrollmentTrendsForChart.push(elemArray);
-        }
-        return enrollmentTrendsForChart;
-    };
-
-    createEnrollmentTrendsForTable = (yearTrends, yearAndSemesterArray, coursesArray) => {
-        let enrollmentTrendsForTable = [];
-        for (let i = 0; i < yearTrends.length; i++) {
-            for (let j = 0; j < yearAndSemesterArray.length; j++) {
-                let semester = yearAndSemesterArray[j][0];
-                let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][2];
-                let course = coursesArray[i % this.state.selectedCourses.length];
-                enrollmentTrendsForTable.push([semester, year, enrollment, course]);
-            }
-        }
-        return enrollmentTrendsForTable;
     };
 
     handleCourseSubmit = () => {
@@ -449,17 +424,9 @@ class EnrollmentTrends extends Component {
     };
 
     render() {
-        let yearTrends = this.state.yearTrendsArray;
-
         let yearAndSemesterArray = this.state.selectedSemesters.map((sem) => sem.split(" "));
 
-        let coursesArray = this.state.selectedCourses;
-
-        let enrollmentTrendsForTable = this.createEnrollmentTrendsForTable(yearTrends, yearAndSemesterArray, coursesArray);
-
-        const enrollmentTrendsForChart = this.createEnrollmentTrendsForChart(yearTrends, yearAndSemesterArray, coursesArray);
-
-        const victoryObjectArray = this.createVictoryObjectArray(enrollmentTrendsForChart, this.state.selectedCourses);
+        const victoryObjectArray = this.createVictoryObjectArray(this.state.yearTrendsArray, this.state.selectedCourses);
 
         return (
             <>
@@ -486,17 +453,17 @@ class EnrollmentTrends extends Component {
                             onYearAndSemesterSubmit={this.handleYearAndSemesterSubmit}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <EnrollmentChart
                             victoryObjectArray={victoryObjectArray}
                             scaleFactor={this.state.selectedSemesters.length}
                             selectedCourses={this.state.selectedCourses}
                             selectedSemesters={this.state.selectedSemesters}
                         />
-                    </Grid>
-                    <Grid item xs={12}>
+                    </Grid> */}
+                    {/* <Grid item xs={12}>
                         <EnrollmentTable enrollmentTrendsForTable={enrollmentTrendsForTable} />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </>
         );
