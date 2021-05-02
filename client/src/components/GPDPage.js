@@ -30,6 +30,7 @@ class GPDPage extends Component {
         if (this.state.curDepartment === undefined) {
             if (localStorage.getItem("curDepartment") != undefined) {
                 this.state.curDepartment = localStorage.getItem("curDepartment");
+                console.info(this.state);
             } else {
                 this.state.curDepartment = "AMS";
             }
@@ -41,11 +42,11 @@ class GPDPage extends Component {
         // axios.post(
     }
 
-    onSub(e) {
+    deleteAllStudents = (e) => {
         e.preventDefault();
-        axios.delete(Config.URL + "/student/remove");
+        axios.delete(Config.URL + "/student/remove/dep/" + this.state.curDepartment);
         console.log("All Student Data Deleted");
-    }
+    };
 
     sendStudentData = (e) => {
         e.preventDefault();
@@ -59,7 +60,7 @@ class GPDPage extends Component {
 
         let disabled = this.state.focusStudent === undefined?true:false;
         return (
-            <Box style={{ width: "99.82%" }}>
+            <>
                 <GPDHeader curGPD={this.state.curGPD} />
                 <Grid container spacing={1}>
                     <Grid item xs={8}>
@@ -111,6 +112,7 @@ class GPDPage extends Component {
                                     <Link
                                         to={{
                                             pathname: "/suggestCourse",
+                                            state: { curGPD: this.state.curGPD },
                                         }}
                                         style={{
                                             textDecoration: "none",
@@ -120,12 +122,12 @@ class GPDPage extends Component {
                                         Suggest Course Plan
                                     </Link>
                                 </Button>
-                                <Button onClick={this.onSub}>Delete All </Button>
+                                <Button onClick={this.deleteAllStudents}>Delete All </Button>
                             </ButtonGroup>
                         </Box>
                     </Grid>
                 </Grid>
-            </Box>
+            </>
         );
     }
 }
