@@ -446,12 +446,10 @@ class FileUploadArea extends Component {
     scrapeCourseInfo(files) {
         let file = files[0].file;
         let reader = new FileReader();
-
         const self = this;
         let department = this.state.department;
         let semester = this.state.semester;
         let year = this.state.year;
-
         // let department = "CSE";
         reader.onload = function () {
             let textFile = reader.result;
@@ -600,7 +598,6 @@ class FileUploadArea extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
                 <DropzoneAreaBase onAdd={(newFiles) => this.fileParse(newFiles)} filesLimit={5} showPreviewsInDropzone={false} showFileNames={true} />
             </div>
         );
