@@ -111,7 +111,7 @@ class coursePlan extends Component {
 
     //keysSorted = array with indexes from most similar to least similar
     //data = javascript object with other student's data (same dep and same track and graduated)
-    calculateClasses(keysSorted, data, studentMap) {
+    calculateClasses = async function (keysSorted, data, studentMap) {
         var classesMap = new Map();
         //goes through all students and calculates the occurences of each course
         keysSorted.forEach((element) => {
@@ -137,21 +137,26 @@ class coursePlan extends Component {
             yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
         }
         //TODO may need to loop til degree reqs are good
-        
-        for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
-            console.log(key + ' ' + value);
-            var addCourseRet = this.addCourse(key, studentMap);
-            if(addCourseRet === " "){
-                break;
+        var counter = 0
+        while(this.degreeReqsSatisfied() === false && counter !== 6){
+            for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
+                console.log(key + ' ' + value);
+                var addCourseRet = await this.addCourse(key, studentMap);
+                if(addCourseRet === " "){
+                    break;
+                }
             }
+            // var star = this.nextSemester();
+            // if(star === " "){
+            //     return " ";
+            // }
+            counter++;
+            break; //TODO TEMPORARY
         }
-        // var star = this.nextSemester();
-        // if(star === " "){
-        //     return " ";
-        // }
         //TODO after loop, we need to display the plan somehow
         console.log("sorted list of classes by occurrences: ", classesMap);
         console.log("COURSE PLAN: ", this.courseP);
+        console.log("deg reqs after remove ", this.degReqs);
     }
     //key = class name like "AMS 310"
     //studentMap = map to store cur student's courses taken
@@ -187,16 +192,17 @@ class coursePlan extends Component {
             console.log("pre req not met");
             return; 
         }
-        var timeSlot = this.meetTimeReq(courseInfo["data"][0]); //pass in map 
-        //returns the time that works with user
-        if(timeSlot === []){//time contraints not met
-            return;
-        }
+        // var timeSlot = this.meetTimeReq(courseInfo["data"][0]); //pass in map 
+        // //returns the time that works with user
+        // if(timeSlot === []){//time contraints not met
+        //     return;
+        // }
         //now we want to go through the degReqs and remove from it
-        this.removeFromDegReqsList(courseInfo[0]);
+        this.removeFromDegReqsList(courseInfo["data"][0]);
         // //increment the course count
-        // this.coursesAdded += 1;
+        this.coursesAdded += 1;
         // this.courseP.get(this.sem+" "+this.year).push([timeSlot[0], key, timeSlot[1]]);
+        this.courseP[this.sem+" "+this.year].push(["5", key, "5PM"]); //TODO TEMPORARY
         // //after a class is added, check if deg reqs are done
 
         // if (this.degreeReqsSatisfied()) {
@@ -219,17 +225,22 @@ class coursePlan extends Component {
                     continue;
                 }
                 if(reqC[i][j].includes("-")){
-                    var str = reqC[i][j].match("(\d{3})\b\s*-\s*\b(\d{3})");
+                    console.log("HAS - : ", reqC[i][j]);
+                    var str = reqC[i][j].match(/\d{3}/gm);
+                    console.log("MATCHING PATTERN FOR REQCOURSES: ", str);
                     if(str == null){
                         continue;
                     }
-                    var match1 = parseInt(str[1]); //get lower class #
-                    var match2 = parseInt(str[2]); //get higher class #
+                    var match1 = parseInt(str[0]); //get lower class #
+                    console.log("match1 :", match1);
+                    var match2 = parseInt(str[1]); //get higher class #
+                    console.log("match1 :", match2);
                     var courseNum = parseInt(courseInfoMap["courseNum"]);
-                    if(courseNum > match1 && courseNum < match2){
+                    if(courseNum >= match1 && courseNum <= match2){
                         //good
                         if(reqC[i][0] === 1){
                             //take once
+                            console.log("SPLICE OUT REEC");
                             reqC.splice(i, 1);
                         }
                         else if(reqC[i][0] === -3){
@@ -268,14 +279,20 @@ class coursePlan extends Component {
                         continue;
                     }
                     if(electiveC[i][j].includes("-")){
-                        var str = electiveC[i][j].match("(\d{3})\b\s*-\s*\b(\d{3})");
+                        console.log("----- ", electiveC[i][j]);
+                        var regex = /\d{3}/gm;
+                        // var regex = /\w{3}/g;
+                        var str = electiveC[i][j].match(regex);
+                        console.log("MATCHING PATTERN: ", str);
                         if(str == null){
                             continue;
                         }
-                        var match1 = parseInt(str[1]); //get lower class #
-                        var match2 = parseInt(str[2]); //get higher class #
+                        var match1 = parseInt(str[0]); //get lower class #
+                        console.log("match1 :", match1);
+                        var match2 = parseInt(str[1]); //get higher class #
+                        console.log("match2 :", match2);
                         var courseNum = parseInt(courseInfoMap["courseNum"]);
-                        if(courseNum > match1 && courseNum < match2){
+                        if(courseNum >= match1 && courseNum <= match2){
                             //good
                             if(electiveC[i][0] === 1){
                                 //take once
