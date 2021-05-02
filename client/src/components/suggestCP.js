@@ -1,7 +1,7 @@
 import Config from "../config.json";
 import React, { Component } from "react";
 import { Button } from "@material-ui/core";
-import { exists } from "../../../backend/models/courses.model";
+// import { exists } from "../../../backend/models/courses.model";
 // import { useLocation } from "react-router-dom"
 
 const axios = require("axios").default;
@@ -17,15 +17,15 @@ class coursePlan extends Component {
         this.year = 2020 //default year for now
         this.sem = "Spring" //default semes
         //used as globals for suggest course algo when adding classes
-        if(this.student["curSem"] == "Spring"){
+        if(this.student["curSem"] === "Spring"){
             this.sem = "SummerI";
             this.year = this.student["curYear"];
         }
-        else if(this.student["curSem"] == "SummerI"){
+        else if(this.student["curSem"] === "SummerI"){
             this.sem = "SummerII";
             this.year = this.student["curYear"];
         }
-        else if(this.student["curSem"] == "SummerII"){
+        else if(this.student["curSem"] === "SummerII"){
             this.sem = "Fall";
             this.year = this.student["curYear"];
         }
@@ -80,8 +80,8 @@ class coursePlan extends Component {
         for(var i = 0; i < len; i++){
             var score = 0;
             if(jsonT["data"][i]["graduated"] === true){ //if student graduated, proceed
-                for (var key of Object.keys(this.student["coursePlan"])) {
-                    jsonT["data"][i]["coursePlan"][key].forEach(element => {
+                for (var key1 of Object.keys(this.student["coursePlan"])) {
+                    jsonT["data"][i]["coursePlan"][key1].forEach(element => {
                         if(map[element[1]] !== undefined){ //TODO check over
                             score += 1;
                         }
@@ -127,10 +127,10 @@ class coursePlan extends Component {
         //TODO may need to loop til degree reqs are good
         for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
             console.log(key + ' ' + value);
-            var addCourseRet = this.addCourse(key, studentMap);
-            if(addCourseRet == " "){
-                break;
-            }
+            // var addCourseRet = this.addCourse(key, studentMap);
+            // if(addCourseRet === " "){
+            //     break;
+            // }
         }
         console.log("sorted list of classes by occurrences: ", classesMap);
     }
@@ -143,19 +143,19 @@ class coursePlan extends Component {
         }
         //now we attempt to add the course to courseP, which is our coursePlan for the student
         //lets say 4 classess is max per semester //TODO summer courses?
-        if(this.maxCoursesAllowed == this.coursesAdded){//so we've reached max courses in a sem, move to next
+        if(this.maxCoursesAllowed === this.coursesAdded){//so we've reached max courses in a sem, move to next
             var star = this.nextSemester();
-            if(star == " "){
+            if(star === " "){
                 return " ";
             }
             this.coursesAdded = 0;
         }
-        if(this.courseP[this.sem+" "+this.year] == undefined){
+        if(this.courseP[this.sem+" "+this.year] === undefined){
             this.courseP[this.sem+" "+this.year] = []
         }
         //check for prereqs and time constraints here **
         var courseInfo = this.retrieveCourseInfo(studentMap[key]); //gets the course info from db
-        if(courseInfo == null){
+        if(courseInfo === null){
             return;
         }
         //TODO CHeck for no classes returned from courseinfo
@@ -198,16 +198,16 @@ class coursePlan extends Component {
             //break outer loop
         }
         var electiveC = this.degReqs["Elective Courses"];
-        // if(flag == 0){
+        if(flag === 0){
             
-        // }
+        }
     }
 
     //check if degree requirements are met
     //TODO what if the student has a plan already
     degreeReqsSatisfied(){
         //check the degReqs object and see if the req and elective coures is empty
-        if(this.degReqs["Required Courses"] == [] && this.degReqs["Elective Courses"] == []){
+        if(this.degReqs["Required Courses"] === [] && this.degReqs["Elective Courses"] === []){
             return true;
         }
         return false;
@@ -233,7 +233,7 @@ class coursePlan extends Component {
     //studentMap = map with the student's already taken/taking courses
     meetPrereq(info, studentMap){
         console.log("Inside meetPrereq");
-        if(info[0].length == 0){ //if no pre reqs
+        if(info[0].length === 0){ //if no pre reqs
             return true;
         }
         else {
@@ -247,11 +247,11 @@ class coursePlan extends Component {
                 }
             }
             //now we must loop through the courses in the course planner,
-            for(var i = 0; i < req.length; i++){
+            for(var j = 0; j < req.length; j++){
                 for (var key of Object.keys(this.courseP)) {//go through all courses taken by the student already
                     var courses = this.courseP.get(key)
                     for(var k = 0; k < courses.length; k++){
-                        if(courses[k] === req[i]){//if pre-req is taken by the student already
+                        if(courses[k] === req[j]){//if pre-req is taken by the student already
                             return true;
                         }
                     }
@@ -272,7 +272,7 @@ class coursePlan extends Component {
                     flag = 1;
                 }
             }
-            if(flag == 0){
+            if(flag === 0){
                 timeSlot = course["courseInfo"][j];
             }
         }
@@ -281,19 +281,19 @@ class coursePlan extends Component {
 
     //moves globals sem and year to next semester
     nextSemester(){
-        if(this.sem == "Spring"){
+        if(this.sem === "Spring"){
             this.sem = "SummerI";
             this.year = this.student["curYear"];
         }
-        else if(this.sem == "SummerI"){
+        else if(this.sem === "SummerI"){
             this.sem = "SummerII";
             this.year = this.student["curYear"];
         }
-        else if(this.sem == "SummerII"){
+        else if(this.sem === "SummerII"){
             this.sem = "Fall";
             this.year = this.student["curYear"];
         }
-        else if(this.sem == "Fall"){ //curSem = Fall
+        else if(this.sem === "Fall"){ //curSem = Fall
             this.sem = "Spring";
             this.year = String(parseInt(this.student["curYear"]) + 1);
         }
