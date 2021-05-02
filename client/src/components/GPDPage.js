@@ -104,7 +104,7 @@ class GPDPage extends Component {
                                         Edit Student
                                     </Link>
                                 </Button>
-                                <Button>
+                                <Button onClick={this.sendStudentData}>
                                     <Link
                                         to={{
                                             pathname: "/suggestCourse",
