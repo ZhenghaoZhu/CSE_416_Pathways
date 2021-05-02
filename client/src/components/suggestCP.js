@@ -122,7 +122,7 @@ class coursePlan extends Component {
                 val.forEach(function (element) {
                     if (!classesMap.has(element[1])) {
                         //if class has not been added to map yet
-                        classesMap.set(element[1], 0);
+                        classesMap.set(element[1], 1);
                     } else {
                         //if class has been added to map already
                         classesMap.set(element[1], classesMap.get(element[1]) + 1);
@@ -151,10 +151,11 @@ class coursePlan extends Component {
         // }
         //TODO after loop, we need to display the plan somehow
         console.log("sorted list of classes by occurrences: ", classesMap);
+        console.log("COURSE PLAN: ", this.courseP);
     }
     //key = class name like "AMS 310"
     //studentMap = map to store cur student's courses taken
-    addCourse(key, studentMap) {
+    addCourse = async function (key, studentMap) {
         //check pre-reqs and time constraints
         if (studentMap[key] !== undefined) {
             //this means the course in question has already been taken by the student
@@ -174,28 +175,30 @@ class coursePlan extends Component {
         }
         //check for prereqs and time constraints here **
         console.log("key: ", key);
-        var courseInfo = this.retrieveCourseInfo(key); //gets the course info from db
+        var courseInfo = await this.retrieveCourseInfo(key); //gets the course info from db
         if(courseInfo === null || courseInfo["data"] === undefined){
             console.log("No courses found1111");
             return;
         }
         console.log("retrieve course: ", courseInfo["data"]);
         //TODO CHeck for no classes returned from courseinfo
-        // var status = this.meetPrereq(courseInfo["data"][0], studentMap);
-        // if(status){ //if pre req is not met, do not attempt to add course
-        //     return; 
-        // }
-        // var timeTF = this.meetTimeReq(courseInfo[0]); //pass in map 
-        // //returns the time that works with user
-        // if(timeTF === ""){//time contraints not met
-        //     return;
-        // }
-        // //now we want to go through the degReqs and remove from it
-        // this.removeFromDegReqsList(courseInfo[0]);
+        var status = this.meetPrereq(courseInfo["data"][0], studentMap);
+        if(!status){ //if pre req is not met, do not attempt to add course
+            console.log("pre req not met");
+            return; 
+        }
+        var timeSlot = this.meetTimeReq(courseInfo["data"][0]); //pass in map 
+        //returns the time that works with user
+        if(timeSlot === []){//time contraints not met
+            return;
+        }
+        //now we want to go through the degReqs and remove from it
+        this.removeFromDegReqsList(courseInfo[0]);
         // //increment the course count
         // this.coursesAdded += 1;
-        // this.courseP.get(this.sem+" "+this.year).push([1, key, timeTF]);
+        // this.courseP.get(this.sem+" "+this.year).push([timeSlot[0], key, timeSlot[1]]);
         // //after a class is added, check if deg reqs are done
+
         // if (this.degreeReqsSatisfied()) {
         //     //return a course plan ()
         //     return " ";
@@ -225,14 +228,14 @@ class coursePlan extends Component {
                     var courseNum = parseInt(courseInfoMap["courseNum"]);
                     if(courseNum > match1 && courseNum < match2){
                         //good
-                        if(reqC[i][0] == 1){
+                        if(reqC[i][0] === 1){
                             //take once
                             reqC.splice(i, 1);
                         }
-                        else if(reqC[i][0] == -3){
+                        else if(reqC[i][0] === -3){
                             reqC[i][0] = 1 //-3 means can be retaken for credit
                         }
-                        else if(reqC[i][0] == -1){
+                        else if(reqC[i][0] === -1){
                             //do nothing
                         }
                         return;
@@ -241,14 +244,14 @@ class coursePlan extends Component {
                 if(reqC[i][j] === courseInfoMap["department"]+" "+ courseInfoMap["courseNum"]){
                     flag = 1;
                     //delete that degReq
-                    if(reqC[i][0] == 1){
+                    if(reqC[i][0] === 1){
                         //take once
                         reqC.splice(i, 1);
                     }
-                    else if(reqC[i][0] == -3){
+                    else if(reqC[i][0] === -3){
                         reqC[i][0] = 1 //-3 means can be retaken for credit
                     }
-                    else if(reqC[i][0] == -1){
+                    else if(reqC[i][0] === -1){
                         //do nothing
                     }
                     return;
@@ -274,14 +277,14 @@ class coursePlan extends Component {
                         var courseNum = parseInt(courseInfoMap["courseNum"]);
                         if(courseNum > match1 && courseNum < match2){
                             //good
-                            if(electiveC[i][0] == 1){
+                            if(electiveC[i][0] === 1){
                                 //take once
                                 electiveC.splice(i, 1);
                             }
-                            else if(electiveC[i][0] == -3){
+                            else if(electiveC[i][0] === -3){
                                 electiveC[i][0] = 1 //-3 means can be retaken for credit
                             }
-                            else if(electiveC[i][0] == -1){
+                            else if(electiveC[i][0] === -1){
                                 //do nothing
                             }
                             else if(electiveC[i][0] > 1){
@@ -292,14 +295,14 @@ class coursePlan extends Component {
                     }
                     if(electiveC[i][j] === courseInfoMap["department"]+" "+ courseInfoMap["courseNum"]){
                         //delete that degReq
-                        if(electiveC[i][0] == 1){
+                        if(electiveC[i][0] === 1){
                             //take once
                             electiveC.splice(i, 1);
                         }
-                        else if(electiveC[i][0] == -3){
+                        else if(electiveC[i][0] === -3){
                             electiveC[i][0] = 1 //-3 means can be retaken for credit
                         }
-                        else if(electiveC[i][0] == -1){
+                        else if(electiveC[i][0] === -1){
                             //do nothing
                         }
                         else if(electiveC[i][0] > 1){
@@ -308,14 +311,14 @@ class coursePlan extends Component {
                         return;
                     }
                     else if(electiveC[i][j] === courseInfoMap["department"]){
-                        if(electiveC[i][0] == 1){
+                        if(electiveC[i][0] === 1){
                             //take once
                             electiveC.splice(i, 1);
                         }
-                        else if(electiveC[i][0] == -3){
+                        else if(electiveC[i][0] === -3){
                             electiveC[i][0] = 1 //-3 means can be retaken for credit
                         }
-                        else if(electiveC[i][0] == -1){
+                        else if(electiveC[i][0] === -1){
                             //do nothing
                         }
                         else if(electiveC[i][0] > 1){
@@ -349,8 +352,8 @@ class coursePlan extends Component {
             .then((course) => courseInfo = course)
             .catch((err) => console.log("course error: ", err), courseInfo = undefined);
         
-        console.log("retrieveCourseInfo: ", courseInfo["data"]);
-        if(courseInfo === undefined || courseInfo["data"].length === 0){//if undefined or doesn't exist
+        console.log("retrieveCourseInfo: ", courseInfo);
+        if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0){//if undefined or doesn't exist
             console.log("No courses found");
             return null;
         }
@@ -359,9 +362,12 @@ class coursePlan extends Component {
 
     //info = course information from db
     //studentMap = map with the student's already taken/taking courses
+    //TODO need to test with actual pre reqs
     meetPrereq(info, studentMap){
         console.log("Inside meetPrereq");
+        info = info["preReqs"]
         if(info[0].length === 0){ //if no pre reqs
+            console.log("No pre-reqs")
             return true;
         } else {
             //get the pre req
@@ -371,6 +377,7 @@ class coursePlan extends Component {
                     //go through all courses taken by the student already
                     if (key === req[i]) {
                         //if pre-req is taken by the student already
+                        console.log("taken previous");
                         return true;
                     }
                 }
@@ -381,6 +388,7 @@ class coursePlan extends Component {
                     var courses = this.courseP.get(key)
                     for(var k = 0; k < courses.length; k++){
                         if(courses[k] === req[j]){//if pre-req is taken by the student already
+                            console.log("in course plan");
                             return true;
                         }
                     }
@@ -393,19 +401,25 @@ class coursePlan extends Component {
     //course = course object from db
     meetTimeReq(course){
         var arr = this.courseP[this.sem+" "+this.year];
-        var timeSlot = "";
+        var timeSlot = [];
         var flag = 0;
         for(var j = 0; j < course["courseInfo"].size; j++){
             for(var i = 0; i < arr.length; i++){
-                if(course["courseInfo"][j] === arr[i][2]){//if there is a time conflict\
+                if(course["courseInfo"][j] === undefined){
+                    return "";
+                }
+                if(course["courseInfo"][j] === arr[i][2]){
+                    //if there is a time conflict
                     flag = 1;
                 }
             }
             if(flag === 0){
-                timeSlot = course["courseInfo"][j];
+                // assuming sections are in order
+                timeSlot = [j, course["courseInfo"][j]];
+                return timeSlot;
             }
         }
-        return timeSlot;
+        return [];
     }
 
     //moves globals sem and year to next semester
