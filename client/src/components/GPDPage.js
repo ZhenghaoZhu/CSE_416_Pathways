@@ -29,6 +29,7 @@ class GPDPage extends Component {
         if (this.state.curDepartment === undefined) {
             if (localStorage.getItem("curDepartment") != undefined) {
                 this.state.curDepartment = localStorage.getItem("curDepartment");
+                console.info(this.state);
             } else {
                 this.state.curDepartment = "AMS";
             }
@@ -40,11 +41,11 @@ class GPDPage extends Component {
         // axios.post(
     }
 
-    onSub(e) {
+    deleteAllStudents = (e) => {
         e.preventDefault();
-        axios.delete(Config.URL + "/student/remove");
+        axios.delete(Config.URL + "/student/remove/dep/" + this.state.curDepartment);
         console.log("All Student Data Deleted");
-    }
+    };
 
     sendStudentData = (e) => {
         e.preventDefault();
@@ -118,7 +119,7 @@ class GPDPage extends Component {
                                         Suggest Course Plan
                                     </Link>
                                 </Button>
-                                <Button onClick={this.onSub}>Delete All </Button>
+                                <Button onClick={this.deleteAllStudents}>Delete All </Button>
                             </ButtonGroup>
                         </Box>
                     </Grid>
