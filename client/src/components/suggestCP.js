@@ -202,7 +202,6 @@ class coursePlan extends Component {
         }
         var electiveC = this.degReqs["Elective Courses"];
         // if(flag == 0){
-
         // }
     }
 
