@@ -8,6 +8,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import FileUploadArea from "./FileUploadArea";
 import Config from "../config.json";
 import SuggestCourse from "./suggestCP";
+import SuggestCoursePlanView from "./SuggestCoursePlanView";
 
 const Papa = require("papaparse");
 const fs = require("fs");
@@ -21,7 +22,7 @@ class GPDPage extends Component {
         //         pathname: "/login",
         //     });
         // }
-        
+
         this.state = {
             focusStudent: this.props.focusStudent,
             curGPD: this.props.location.loggedInGPD,
@@ -30,9 +31,15 @@ class GPDPage extends Component {
         if (this.state.curDepartment === undefined) {
             if (localStorage.getItem("curDepartment") != undefined) {
                 this.state.curDepartment = localStorage.getItem("curDepartment");
-                console.info(this.state);
             } else {
                 this.state.curDepartment = "AMS";
+            }
+        }
+        if (this.state.curGPD != undefined) {
+            localStorage.setItem("curGPDJSON", JSON.stringify(this.state.curGPD));
+        } else {
+            if (localStorage.getItem("curGPDJSON") != undefined) {
+                this.state.curGPD = JSON.parse(localStorage.getItem("curGPDJSON"));
             }
         }
         localStorage.setItem("curDepartment", this.state.curDepartment);
@@ -48,6 +55,11 @@ class GPDPage extends Component {
         console.log("All Student Data Deleted");
     };
 
+    deleteStudent = () => {
+        axios.delete(Config.URL + "/student/remove/" + this.state.focusStudent.id);
+        console.log("Selected Student Deleted");
+    };
+
     sendStudentData = (e) => {
         e.preventDefault();
         console.log("sendStudentData()");
@@ -57,8 +69,8 @@ class GPDPage extends Component {
         });
     };
     render() {
-
-        let disabled = this.state.focusStudent === undefined?true:false;
+        let buttonDisabled = this.state.focusStudent === undefined ? true : false;
+        console.log(this.state);
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />
@@ -82,7 +94,6 @@ class GPDPage extends Component {
                                     marginTop: 13,
                                 }}
                             >
-                                <Button>Import Student</Button>
                                 <Button>
                                     <Link
                                         to="/addStudent"
@@ -94,7 +105,7 @@ class GPDPage extends Component {
                                         Add Student Form
                                     </Link>
                                 </Button>
-                                <Button  disabled = {disabled}>
+                                <Button disabled={buttonDisabled}>
                                     <Link
                                         to={{
                                             pathname: "/editStudent",
@@ -108,11 +119,12 @@ class GPDPage extends Component {
                                         Edit Student
                                     </Link>
                                 </Button>
-                                <Button onClick={this.sendStudentData}>
+                                <Button disabled={buttonDisabled}>
                                     <Link
                                         to={{
-                                            pathname: "/suggestCourse",
-                                            state: { curGPD: this.state.curGPD },
+                                            pathname: "/suggestCoursePlanView",
+                                            curGPD: this.state.curGPD,
+                                            focusStudent: this.state.focusStudent,
                                         }}
                                         style={{
                                             textDecoration: "none",
@@ -122,7 +134,10 @@ class GPDPage extends Component {
                                         Suggest Course Plan
                                     </Link>
                                 </Button>
-                                <Button onClick={this.deleteAllStudents}>Delete All </Button>
+                                <Button onClick={this.deleteStudent} disabled={buttonDisabled}>
+                                    Delete Student
+                                </Button>
+                                <Button onClick={this.deleteAllStudents}> Delete All </Button>
                             </ButtonGroup>
                         </Box>
                     </Grid>
