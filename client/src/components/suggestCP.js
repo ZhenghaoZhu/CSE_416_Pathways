@@ -176,6 +176,7 @@ class coursePlan extends Component {
                 console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
                 this.coursePl[this.sem+" "+this.year] = []
             }
+            // for classes you need to take every semester
             console.log("Take every semester #: ", this.takeEverySem.length);
             for(var q = 0; q < this.takeEverySem.length; q++){
                 var name = this.takeEverySem[q];
@@ -520,10 +521,10 @@ class coursePlan extends Component {
             console.log("Invalid semester: nextSemester()");
         }
         //TODO rn i break the algo when we go past the student's assigned grad date
-        if(this.sem === this.student["gradSem"] && this.year === this.student["gradYear"]){
-            console.log("max semesters reached");
-            return " ";
-        }
+        // if(this.sem === this.student["gradSem"] && this.year === this.student["gradYear"]){
+        //     console.log("max semesters reached");
+        //     return " ";
+        // }
     }
 
     printStudent = (e) => {
