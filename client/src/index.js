@@ -13,6 +13,7 @@ import EnrollmentTrends from "./components/EnrollmentTrends";
 import LimitedEditStudent from "./components/LimitedEditStudent";
 import SuggestCourse from "./components/suggestCP";
 import SuggestCoursePlanView from "./components/SuggestCoursePlanView";
+import DisplaySuggestCP from "./components/DisplaySuggestCP";
 
 ReactDOM.render(
     <BrowserRouter>
@@ -27,6 +28,7 @@ ReactDOM.render(
             <Route path="/enrollmentTrends" component={EnrollmentTrends} />
             <Route path="/suggestCourse" component={SuggestCourse} />
             <Route path="/suggestCoursePlanView" component={SuggestCoursePlanView} />
+            <Route path="/displaySuggestCP" component={DisplaySuggestCP} />
         </Switch>
     </BrowserRouter>,
     document.getElementById("root")

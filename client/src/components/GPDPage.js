@@ -22,7 +22,6 @@ class GPDPage extends Component {
         //         pathname: "/login",
         //     });
         // }
-
         this.state = {
             focusStudent: this.props.focusStudent,
             curGPD: this.props.location.loggedInGPD,

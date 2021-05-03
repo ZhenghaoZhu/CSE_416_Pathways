@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
-import { Typography, Grid, Button, ButtonGroup, Card, CardContent, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import {Dialog,DialogTitle,DialogContent,DialogActions, Typography, Grid, Button, ButtonGroup, Card, CardContent, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 import emailjs from "emailjs-com";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import GPDHeader from "./GPDHeader";
@@ -14,8 +14,10 @@ class EditStudent extends Component {
         super(props);
         this.state = this.props.location.focusStudent.row;
         this.state.commentInput = "";
-        this.deleteComment = this.deleteComment.bind(this);
-        console.error(this.state);
+        this.state.popFlag = false;
+        this.state.semesterInput = "";
+        this.state.yearInput = "";
+        this.state.courseToAdd = "";
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -153,6 +155,49 @@ class EditStudent extends Component {
         });
         return courses;
     }
+    handleEdit() {
+        this.setState({ popFlag: true });
+    }
+    handleClose(){ // TODO: handle the cancle case.
+        this.setState({ popFlag: false,semesterInput:"",yearInput:"",courseToAdd:""});
+    }
+    handleAdd(){
+        this.setState({ popFlag: true });
+    };
+    handleEnter(){
+        this.setState({ popFlag: false });
+        console.log(this.state);
+        this.addCourse(this.state.editCourse);
+    };
+    editCourse(course){
+        for (const [semester, course_plan] of Object.entries(this.state.coursePlan)) {
+            if(this.state.semesterInput + " " + this.state.yearInput === semester){ // in this semester rn
+                console.log(course_plan);
+                if(course_plan[0][2] !== ""){ //has a grade, can only edit 
+                    console.log("I have no grade");
+                }else{ // 
+                    console.log("i have grade");
+                }
+                    
+            }
+        }
+    }
+    addCourse(course){
+        console.log("Okok");
+    }
+    setCoursePlanInput(e){
+        this.setState({coursePlanInput: e.target.value});
+        console.log(e.target.value);
+    }
+    setSemesterInput(e){
+        this.setState({semesterInput: e.target.value})
+    }
+    setYearInput(e){
+        this.setState({yearInput: e.target.value})
+    }
+    setCourseToAdd(e){
+        this.setState({courseToAdd: e.target.value})
+    }
     render() {
         const courseplanObj = [];
         for (const [semester, course_plan] of Object.entries(this.state.coursePlan)) {
@@ -161,7 +206,6 @@ class EditStudent extends Component {
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                         <Typography>{semester}</Typography>
                     </AccordionSummary>
-
                     <AccordionDetails>{this.makeCards(course_plan)}</AccordionDetails>
                 </Accordion>
             );
@@ -180,7 +224,28 @@ class EditStudent extends Component {
                         Edit Student Information
                     </Typography>
                 </div>
-
+                <Dialog open={this.state.popFlag} onClose={() => this.handleClose()} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
+                    <DialogContent>
+                        <TextField id="semester" label="Semester" fullWidth                            
+                            onChange={(val) => this.setSem(val)}
+                        />
+                        <TextField id="year" label="Year" fullWidth
+                            onChange={(val) => this.setYear(val)}
+                        />
+                        <TextField id="course_plan" label="Course Plan" fullWidth 
+                            onChange={(val) => this.setCourseInput(val)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this.handleClose()} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => this.handleEnter()} color="primary">
+                            Enter
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Grid container>
                     <Grid item sm={6}>
                         <form noValidate autoComplete="off">
@@ -422,6 +487,28 @@ class EditStudent extends Component {
                                 </CardContent>
                             </Card>
                         ))}
+                        <Button
+                        variant="contained"
+                        onClick={() => this.handleAdd()}
+                        style={{
+                            color: "#000000",
+                            margin: 10,
+                            padding: 10,
+                        }}
+                    >
+                        Add course
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.handleEdit()}
+                        style={{
+                            color: "#000000",
+                            margin: 10,
+                            padding: 10,
+                        }}
+                    >
+                        Edit coursePlan
+                    </Button>
                     </Grid>
                     <div style={{ display: "none" }}>
                         <form id="emailForm">
