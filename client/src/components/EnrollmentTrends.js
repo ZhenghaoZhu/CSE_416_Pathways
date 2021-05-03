@@ -8,9 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-// import allCourses from "./allCourses";
-
-import { VictoryBar, VictoryChart, VictoryGroup, VictoryContainer, VictoryTooltip, VictoryStack, VictoryAxis, VictoryTheme } from "victory";
+import { VictoryBar, VictoryChart, VictoryGroup, VictoryTooltip } from "victory";
 import Config from "../config.json";
 import { Grid } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
@@ -35,13 +33,9 @@ class EnrollmentChart extends Component {
                 }}
             />
         ));
-        let flattened = bars.reduce((a, b) => {
-            return a.concat(b);
-        }, []);
 
         return (
             <>
-                {console.log(flattened)}
                 <Container>
                     <VictoryChart height={500} width={800}>
                         <VictoryGroup offset={70 / this.props.scaleFactor} domainPadding={20} labelComponent={<VictoryTooltip />}>
@@ -69,39 +63,37 @@ class EnrollmentTableRow extends Component {
     }
 }
 
-// class EnrollmentTable extends Component {
-//     render() {
-//         const enrollmentTrendsForTable = this.props.enrollmentTrendsForTable;
-
-//         return (
-//             <>
-//                 <Container>
-//                     <Grid container>
-//                         <Grid item xs={12}>
-//                             <TableContainer>
-//                                 <Table>
-//                                     <TableHead>
-//                                         <TableRow>
-//                                             <TableCell align="left">Course Name</TableCell>
-//                                             <TableCell align="left">Semester</TableCell>
-//                                             <TableCell align="left">Year</TableCell>
-//                                             <TableCell align="left">Enrollment</TableCell>
-//                                         </TableRow>
-//                                     </TableHead>
-//                                     <TableBody>
-//                                         {enrollmentTrendsForTable.map((elem, index) => (
-//                                             <EnrollmentTableRow course={elem[3]} semester={elem[0]} year={elem[1]} enrollment={elem[2]} key={index} />
-//                                         ))}
-//                                     </TableBody>
-//                                 </Table>
-//                             </TableContainer>
-//                         </Grid>
-//                     </Grid>
-//                 </Container>
-//             </>
-//         );
-//     }
-// }
+class EnrollmentTable extends Component {
+    render() {
+        return (
+            <>
+                <Container>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="left">Course Name</TableCell>
+                                            <TableCell align="left">Year</TableCell>
+                                            <TableCell align="left">Semester</TableCell>
+                                            <TableCell align="left">Enrollment</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.props.yearTrendsArray.map((elem, index) => (
+                                            <EnrollmentTableRow course={elem[2]} semester={elem[0]} year={elem[1]} enrollment={elem[3]} key={index} />
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </>
+        );
+    }
+}
 
 class Selection extends Component {
     constructor(props) {
@@ -145,7 +137,6 @@ class Selection extends Component {
 
         return (
             <>
-                {/* {console.log(this.state.allCourses)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <GPDHeader />
@@ -209,6 +200,9 @@ class Selection extends Component {
                                         <MenuItem key={"2021"} value={"2021"}>
                                             {"2021"}
                                         </MenuItem>
+                                        <MenuItem key={"2022"} value={"2022"}>
+                                            {"2022"}
+                                        </MenuItem>
                                     </TextField>
                                 </div>
                             </form>
@@ -267,8 +261,6 @@ class Selection extends Component {
 }
 
 class EnrollmentTrends extends Component {
-    // _isMounted = false;
-
     constructor(props) {
         super(props);
 
@@ -283,7 +275,6 @@ class EnrollmentTrends extends Component {
             year: "",
             selectedYear: "",
             semester: "",
-            selectedSemester: "",
             selectedCourses: [],
             selectedSemesters: [],
             yearTrendsArray: [],
@@ -293,10 +284,9 @@ class EnrollmentTrends extends Component {
 
     colors = ["lightsalmon", "indigo", "green", "aqua", "red", "darkslategray", "darkslategray", "fuchsia", "gold", "blue"];
 
-    componentWillMount() {
-        this._isMounted = true;
+    componentDidMount() {
         axios
-            .get("http://localhost:5000" + "/courses/")
+            .get(Config.URL + "/courses/")
             .then((response) => {
                 let courseData = response.data;
                 let allCourseIds = courseData.map((data) => data.id);
@@ -309,23 +299,16 @@ class EnrollmentTrends extends Component {
             .catch((error) => console.log(error));
     }
 
-    // componentWillMount() {
-    //     this._isMounted = false;
-    // }
-
     createVictoryObject = (yearTrends, selectedCourses) => {
-        // let elemArray = [];
         let x1 = yearTrends[1] + " " + yearTrends[0];
         let y1 = yearTrends[3];
         let label1 = yearTrends[2];
         let fill1 = this.colors[selectedCourses.indexOf(label1)];
-        // elemArray.push({ x: x1, y: y1, label: label1, fill: fill1 });
         return { x: x1, y: y1, label: label1, fill: fill1 };
     };
 
     createVictoryObjectArray = (yearTrendsArray, selectedCourses) => {
         let victoryObjectArray = [];
-        // enrollmentTrends is an Object, so iterate through its values.
         for (let course of selectedCourses) {
             console.log(course);
             let yearTrendsForCourse = [];
@@ -333,7 +316,6 @@ class EnrollmentTrends extends Component {
                 if (yearTrends[2] === course) {
                     let victoryObj = this.createVictoryObject(yearTrends, selectedCourses);
                     yearTrendsForCourse = yearTrendsForCourse.concat(victoryObj);
-                    // console.log(yearTrendsForCourse);
                 }
             }
             victoryObjectArray = victoryObjectArray.concat([yearTrendsForCourse]);
@@ -343,7 +325,6 @@ class EnrollmentTrends extends Component {
     };
 
     handleCourseSubmit = () => {
-        // alert(`Course added: ${this.state.course}`);
         if (!this.state.selectedCourses.includes(this.state.course) && this.state.selectedCourses.length <= 2 && this.state.course != "") {
             this.setState((prevState) => ({
                 selectedCourses: [...prevState.selectedCourses, this.state.course],
@@ -352,7 +333,6 @@ class EnrollmentTrends extends Component {
     };
 
     handleYearAndSemesterSubmit = () => {
-        // alert(`Semester added: ${this.state.semester} ${this.state.year}`);
         let yearAndSemStr = this.state.semester + " " + this.state.year;
         if (
             !this.state.selectedSemesters.includes(yearAndSemStr) &&
@@ -363,7 +343,7 @@ class EnrollmentTrends extends Component {
             for (let i = 0; i < this.state.selectedCourses.length; i++) {
                 axios
                     .get(
-                        "http://localhost:5000" +
+                        Config.URL +
                             "/courses/get/course/" +
                             this.state.selectedCourses[i].split(" ").join("") +
                             "/" +
@@ -394,10 +374,6 @@ class EnrollmentTrends extends Component {
         }
     };
 
-    getDescription(course) {
-        return course.data.courseDescription;
-    }
-
     handleCourseChange = (value) => {
         this.setState({
             course: value,
@@ -416,32 +392,11 @@ class EnrollmentTrends extends Component {
         });
     };
 
-    createNewRangeOfSemesters = (rangeOfSemesters) => {
-        let finalArr = [];
-        for (let elem of rangeOfSemesters) {
-            let arr = elem.split(" ");
-            finalArr.push(arr);
-        }
-        return finalArr;
-    };
-
     render() {
-        let yearAndSemesterArray = this.state.selectedSemesters.map((sem) => sem.split(" "));
-
         const victoryObjectArray = this.createVictoryObjectArray(this.state.yearTrendsArray, this.state.selectedCourses);
 
         return (
             <>
-                {/* {console.log(yearAndSemesterArray)} */}
-                {/* {console.log(coursesArray)} */}
-                {/* {console.log(enrollmentTrendsForTable)} */}
-                {/* {console.log(enrollmentTrendsForChart)} */}
-                {/* {console.log(victoryObjectArray)} */}
-                {console.log(this.state.yearTrendsArray)}
-                {/* {console.log(yearTrends2)} */}
-                {/* {console.log(yearAndSemesterArray)} */}
-                {/* {console.log(victoryObjectArray)} */}
-                {/* {console.log(this.state.selectedSemesters)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Selection
@@ -459,16 +414,11 @@ class EnrollmentTrends extends Component {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <EnrollmentChart
-                            victoryObjectArray={victoryObjectArray}
-                            scaleFactor={this.state.selectedSemesters.length}
-                            selectedCourses={this.state.selectedCourses}
-                            selectedSemesters={this.state.selectedSemesters}
-                        />
+                        <EnrollmentChart victoryObjectArray={victoryObjectArray} scaleFactor={this.state.selectedSemesters.length} />
                     </Grid>
-                    {/* <Grid item xs={12}>
-                        <EnrollmentTable enrollmentTrendsForTable={enrollmentTrendsForTable} />
-                    </Grid> */}
+                    <Grid item xs={12}>
+                        <EnrollmentTable yearTrendsArray={this.state.yearTrendsArray} />
+                    </Grid>
                 </Grid>
             </>
         );
