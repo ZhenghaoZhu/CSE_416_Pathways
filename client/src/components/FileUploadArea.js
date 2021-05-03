@@ -601,7 +601,7 @@ class FileUploadArea extends Component {
                         <Button onClick={() => this.handleClose()} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleEnter} color="primary">
+                        <Button onClick={() => this.handleEnter()} color="primary">
                             Enter
                         </Button>
                     </DialogActions>
