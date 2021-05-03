@@ -1,8 +1,6 @@
 import Config from "../config.json";
 import React, { Component } from "react";
 import { Button } from "@material-ui/core";
-// import { exists } from "../../../backend/models/courses.model";
-// import { useLocation } from "react-router-dom"
 
 const axios = require("axios").default;
 
@@ -51,10 +49,6 @@ class coursePlan extends Component {
     smartCoursePlan = () => {
         this.obtainStudentsAndSort();
     };
-
-    coursePlanConstraints() {
-        
-    }
 
     obtainStudentsAndSort = async function () {
         var jsonT;
@@ -168,7 +162,9 @@ class coursePlan extends Component {
         //TODO dups allowed
         //now we attempt to add the course to coursePl, which is our coursePlan for the student
         //lets say 4 classess is max per semester //TODO summer courses?
-        if(this.maxCoursesAllowed === this.coursesAdded){//so we've reached max courses in a sem, move to next
+        let courseInfo = null; //gets the course info from db
+        console.log("this.coursesAdded: ", this.coursesAdded);
+        if(this.maxCoursesAllowed <= this.coursesAdded){//so we've reached max courses in a sem, move to next
             console.log("moved to next sem");
             var star = this.nextSemester();
             if(star === " "){
@@ -176,14 +172,29 @@ class coursePlan extends Component {
             }
             this.cycled = 0;
             this.coursesAdded = 0;
+            if(this.coursePl[this.sem+" "+this.year] === undefined){
+                console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
+                this.coursePl[this.sem+" "+this.year] = []
+            }
+            console.log("Take every semester #: ", this.takeEverySem.length);
+            for(var q = 0; q < this.takeEverySem.length; q++){
+                var name = this.takeEverySem[q];
+                name = name.replace(" ", "");
+                courseInfo = await axios
+                    .get("http://localhost:5000"+ "/courses/get/course/"+name+"/"+this.sem+"/"+this.year)
+                    .then((course) => {return course})
+                    .catch((err) => console.log("course error: ", err), courseInfo = undefined);
+                this.nextSteps(courseInfo, studentMap, key);
+            }
         }
+
         if(this.coursePl[this.sem+" "+this.year] === undefined){
             console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
             this.coursePl[this.sem+" "+this.year] = []
         }
         //check for prereqs and time constraints here **
 
-        let courseInfo = null; //gets the course info from db
+        
         var className = key;
         className = className.replace(" ", "");
         courseInfo = await axios
@@ -194,6 +205,7 @@ class coursePlan extends Component {
         console.log("retrieveCourseInfo: ", courseInfo);
         if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0 || courseInfo === null){//if undefined or doesn't exist
             console.log("No courses found");
+            return;
         }
         // await this.retrieveCourseInfo(key)
         //     .then((rep) => courseInfo = rep);
@@ -222,10 +234,11 @@ class coursePlan extends Component {
         //now we want to go through the degReqs and remove from it
         if(timeSlot[0] !== undefined && timeSlot[1] !== undefined){
             this.removeFromDegReqsList(courseInfo["data"][0]);
-            // // //increment the course count
+            //increment the course count
+            console.log("adding to courseAdded");
             this.coursesAdded += 1;
             
-            this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];               
+            this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1], courseInfo['data'][0]["credits"]];               
         }
     }
 
@@ -440,38 +453,49 @@ class coursePlan extends Component {
         console.log("Inside meetTimeReq, ",arr);
         console.log("Class: ", course, " : ", course["courseInfo"].length);
         var timeSlot = [];
+        var counter = 0;
         if(course["courseInfo"].length === 0){
             console.log("No valid times");
             return [];
         }
         for(var j = 0; j < course["courseInfo"].length; j++){
-            console.log("timeslot4: ", timeSlot);
+            if(course["courseInfo"][j] === undefined){
+                return [];
+            }
             if(arr.length === 0){
                 timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
-                console.log("timeslot1: ", timeSlot);
-                // this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];
+                console.log("NO TIMES IN SEMESTER YET: ", timeSlot);
                 return timeSlot;
-                // return []
             }
             else {
+                
                 for(var i = 0; i < arr.length; i++){
-                    if(course["courseInfo"][j] === undefined){
-                        return [];
-                    }
-                    console.log("arr["+i+"], ",arr[i]);
-                    if(course["courseInfo"][j][1] !== arr[i][2]){
+
+                    if(course["courseInfo"][j][1] === arr[i][2]){
                         //if there is a time conflict
-                        // assuming sections are in order
-                        timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
-                        console.log("timeslot1: ", timeSlot);
-                        // this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];
-                        return timeSlot;
-                        // return [];
+                        console.log("TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
+                        return [];
+                        
+                        // return timeSlot;
+                    }
+                    else if(course["courseInfo"][j][1] !== arr[i][2]) {
+                        
+                        console.log("NO TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
                     }
                 }
+                console.log("Returning timeslot!");
+                timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
+                return timeSlot;
             }
         }
-        
+        // if(counter == 0){
+        //     console.log("NO TIME CONFLICT: ", course["courseInfo"][j][1], arr[i][2]);
+        //     timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
+        //                 console.log("NO TIME CONFLICT: ", course["courseInfo"][j][1], arr[i][2]);
+        //                 counter += 1;
+        //     return timeSlot;
+        // }
+        console.log("NO SUITABLE TIMES FOR: ", course["id"]);
         return [];
     }
 
@@ -479,15 +503,15 @@ class coursePlan extends Component {
     nextSemester(){
         if(this.sem === "Spring"){
             this.sem = "SummerI";
-            this.year = this.student["curYear"];
+            
         }
         else if(this.sem === "SummerI"){
             this.sem = "SummerII";
-            this.year = this.student["curYear"];
+            
         }
         else if(this.sem === "SummerII"){
             this.sem = "Fall";
-            this.year = this.student["curYear"];
+            
         }
         else if(this.sem === "Fall"){ //curSem = Fall
             this.sem = "Spring";
@@ -497,6 +521,7 @@ class coursePlan extends Component {
         }
         //TODO rn i break the algo when we go past the student's assigned grad date
         if(this.sem === this.student["gradSem"] && this.year === this.student["gradYear"]){
+            console.log("max semesters reached");
             return " ";
         }
     }
@@ -509,9 +534,9 @@ class coursePlan extends Component {
     render() {
         return (
             <div>
-                <Button onClick={this.printStudent}> Hello World</Button>
-                <Button onClick={this.smartCoursePlan}> Smart Mode</Button>
-                <Button onClick={this.coursePlanConstraints}> Manual Mode</Button>
+                <Button onClick={this.smartCoursePlan} >
+                    Smart Suggestion Mode
+                </Button>
             </div>
         );
     }
