@@ -115,14 +115,16 @@ export default class SuggestCoursePlanView extends Component {
         this.setState({ curAvoidedCourses: newAvoidedCourseArr });
     };
 
-    createCoursePlanWithSCP = () => {
+    createCoursePlanWithSCP = async () => {
         console.log(this.state);
-        scpFunc.createAllSemesters(
-            this.state.focusStudent,
-            this.state.curPreferredCourses,
-            this.state.curAvoidedCourses,
-            this.state.curTimeConstraints,
-            this.state.curMaxCourses
+        console.log(
+            await scpFunc.createAllSemesters(
+                this.state.focusStudent,
+                this.state.curPreferredCourses,
+                this.state.curAvoidedCourses,
+                this.state.curTimeConstraints,
+                this.state.curMaxCourses
+            )
         );
     };
 

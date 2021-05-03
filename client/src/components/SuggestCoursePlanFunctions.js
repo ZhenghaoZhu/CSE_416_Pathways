@@ -17,13 +17,14 @@ const semMap = { Fall: 0, Spring: 1, SummerI: 2, SummerII: 3 };
 const allSemester = ["Fall", "Spring", "SummerI", "SummerII"];
 
 function fillInAllSemesters() {
-    console.log(curStudent);
+    if (curDegreeTrack === undefined) {
+        curDegreeTrack = curStudent["degreeRequirements"]["tracks"][curStudent["track"]];
+    }
     prohibitedSemesters();
     // TODO  Fill in project options
-    fillPreferredCourses();
-    console.log(newCoursePlan);
-    fillNeutralCourses();
-    fillAvoidedCourses();
+    fillCoursesFromArray(curPref);
+    fillCoursesFromArray(getRemainingRequiredCourses());
+    degreeReqsFulfilled = fulfillsDegreeRequirements();
     return;
 }
 
@@ -59,7 +60,6 @@ function inExcludedCourses(excludedList, courseID) {
 
 function checkSelectedCourses(curCourseArray, curCourse) {
     var curCourseCheck = null;
-    console.info(curCourseArray, curCourse);
     for (var i = 0; i < curCourseArray.length; i++) {
         curCourseCheck = curCourseArray[i];
         if (curCourseCheck !== undefined && curCourseCheck[1].indexOf("-") > -1) {
@@ -105,12 +105,6 @@ async function satisfiesDegreeRequirements(courseID) {
     // Iterate through previous course plan taking out from specific track
     // Iterate through new course plan doing the same thing
     // If track empty return true else false
-    if (curDegreeTrack === undefined) {
-        curDegreeTrack = curStudent["degreeRequirements"]["tracks"][curStudent["track"]];
-        console.info(curDegreeTrack);
-    }
-    var allCourses = addedCourses;
-    console.info(allCourses);
     var seenBool = false;
     if (!inExcludedCourses(curDegreeTrack["Excluded Courses"], courseID)) {
         seenBool = checkSelectedCourses(curDegreeTrack["Required Courses"], courseID);
@@ -119,68 +113,74 @@ async function satisfiesDegreeRequirements(courseID) {
         }
         seenBool = false;
     }
-    console.info(curDegreeTrack);
 
     curStudent["degreeRequirements"]["tracks"][curStudent["track"]] = curDegreeTrack;
     return fulfillsDegreeRequirements();
 }
 
-function fillPreferredCourses() {
+function fillCoursesFromArray(curCourseArray) {
     var curSemSplit = undefined;
     for (const [curSem, curSemCourses] of Object.entries(newCoursePlan)) {
-        if (!prohibitedSems.includes(curSem)) {
-            curSemSplit = curSem.split(" ");
-            curPref.forEach(async (curCourse) => {
-                var foundIt = false;
-                if (!foundIt) {
-                    await axios
-                        .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
-                        .then(async (course) => {
-                            console.info("FOUND IT");
-                            var courseData = course.data[0];
-                            if (courseData != undefined) {
-                                var courseName = courseData["department"] + " " + courseData["courseNum"];
-                                var buildCourse = ["", courseName, ""];
-                                if (!addedCourses.includes(courseName) && canAddCourse(courseData) && !maxCoursesReached(curSem)) {
-                                    curSemCourses.push(buildCourse);
-                                    addedCourses.push(courseName);
-                                    console.info("Added IT", addedCourses);
-                                    foundIt = true;
-                                }
+        curSemSplit = curSem.split(" ");
+        curCourseArray.forEach(async (curCourse) => {
+            var foundIt = false;
+            await axios
+                .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
+                .then(async (course) => {
+                    var courseData = course.data[0];
+                    if (courseData != undefined) {
+                        var courseName = courseData["department"] + " " + courseData["courseNum"];
+                        var canAddRet = canAddCourse(courseData);
+                        if (!addedCourses.includes(courseName) && canAddRet[0] && !maxCoursesReached(curSem)) {
+                            var buildCourse = undefined;
+                            if (courseData["courseInfo"].length == 0) {
+                                buildCourse = ["", courseName, "", courseData["credits"]];
+                            } else {
+                                buildCourse = [canAddRet[1][0], courseName, canAddRet[1][1], courseData["credits"]];
                             }
-                        })
-                        .catch((err) => console.log(err));
-                } else {
-                    var courseSplit = curCourse.split(" ");
-                    var courseName = courseSplit[0] + " " + courseSplit[1];
-                    if (satisfiesDegreeRequirements(courseName)) {
-                        console.info("HUHUHHUHU");
+                            curSemCourses.push(buildCourse);
+                            addedCourses.push(courseName);
+                            console.info("Added IT", addedCourses);
+                            degreeReqsFulfilled = satisfiesDegreeRequirements(courseName);
+                        }
+                    } else {
+                        console.info(
+                            "DIDNT FIND IT",
+                            curCourse,
+                            Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1]
+                        );
                     }
-                }
-            });
-        }
+                })
+                .catch((err) => console.log(err));
+        });
     }
 }
 
-function fillNeutralCourses() {}
-
-function fillAvoidedCourses() {}
+function getRemainingRequiredCourses() {
+    var retArr = [];
+    curDegreeTrack["Required Courses"].forEach((curCourse) => {
+        var buildCoursename = curCourse[1].replace(/\s/g, "");
+        retArr.push(buildCoursename);
+    });
+    return retArr;
+}
 
 function canAddCourse(curCourse) {
     if (curCourse["courseInfo"].length === 0) {
-        return true;
+        return [true, ["", ""]];
     }
+    var retTime = ["", ""];
     var retVal = false;
     curCourse["courseInfo"].forEach((curTimeSlot) => {
         if (!timeArr.includes(curTimeSlot)) {
             retVal = true;
+            retTime = curTimeSlot;
         }
     });
-    return retVal;
+    return [retVal, retTime];
 }
 
 function maxCoursesReached(curSemester) {
-    console.info(newCoursePlan[curSemester]);
     return newCoursePlan[curSemester].length >= maxCourses;
 }
 
@@ -215,10 +215,5 @@ export function createAllSemesters(student, preferredCourses, avoidedCourses, ti
         }
     }
     fillInAllSemesters();
-}
-
-function endAlgo() {
-    // Push to new view displaying new course plan table
-    console.info("SOMEWHAT WORKS?");
     return newCoursePlan;
 }
