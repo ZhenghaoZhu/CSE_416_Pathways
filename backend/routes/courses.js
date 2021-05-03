@@ -15,12 +15,17 @@ router.route("/get/:id").get((req, res) => {
 });
 
 router.route("/update/:id").put((req, res) => {
-    Courses.findByIdAndUpdate(req.params.id, req.body, { new: true }, (err, docs) => {
-        // Handle any possible database errors
-        if (err) {
-            return res.status(404).send(err);
+    Courses.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true },
+        (err, docs) => {
+            // Handle any possible database errors
+            if (err) {
+                return res.status(404).send(err);
+            }
         }
-    })
+    )
         .then((student) => res.json(student))
         .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -44,30 +49,63 @@ router.route("/remove").delete(function (req, res) {
 });
 
 router.route("/update/classID/:id").put((req, res) => {
-    Courses.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, docs) => {
-        if (err) {
-            return res.status(400).send(err);
+    Courses.findOneAndUpdate(
+        { id: req.params.id },
+        req.body,
+        { new: true },
+        (err, docs) => {
+            if (err) {
+                return res.status(400).send(err);
+            }
         }
-    })
+    )
         .then((course) => res.json(course))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/update/classID/:id").put((req, res) => {
-    Courses.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, docs) => {
-        if (err) {
-            return res.status(400).send(err);
+    Courses.findOneAndUpdate(
+        { id: req.params.id },
+        req.body,
+        { new: true },
+        (err, docs) => {
+            if (err) {
+                return res.status(400).send(err);
+            }
         }
-    })
+    )
+        .then((course) => res.json(course))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/update/course/:id/:semester/:year").put((req, res) => {
+    Courses.findOneAndUpdate(
+        {
+            id: req.params.id,
+            semester: req.params.semester,
+            year: req.params.year,
+        },
+        req.body,
+        { new: true },
+        (err, docs) => {
+            if (err) {
+                return res.status(400).send(err);
+            }
+        }
+    )
         .then((course) => res.json(course))
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/get/course/:id/:semester/:year").get((req, res) => {
-    Courses.find({id: req.params.id, semester: req.params.semester, year: req.params.year})
-    .then((response) => res.json(response))
-    .catch((err) => res.status(400).json("Error: " + err));
-})
+    Courses.find({
+        id: req.params.id,
+        semester: req.params.semester,
+        year: req.params.year,
+    })
+        .then((response) => res.json(response))
+        .catch((err) => res.status(400).json("Error: " + err));
+});
 
 router.route("/add").post((req, res) => {
     const id = req.body.department + req.body.courseNum;
