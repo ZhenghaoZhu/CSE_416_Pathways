@@ -593,6 +593,7 @@ class FileUploadArea extends Component {
     handleOpen = () => {
         this.setState({ popFlag: true });
     };
+
     handleEnter = () => {
         this.setState({ popFlag: false });
         console.log(this.state);
@@ -612,7 +613,7 @@ class FileUploadArea extends Component {
                         <Button onClick={() => this.handleClose()} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleEnter} color="primary">
+                        <Button onClick={() => this.handleEnter()} color="primary">
                             Enter
                         </Button>
                     </DialogActions>

@@ -30,10 +30,6 @@ class StudentTable extends Component {
         this.getStudents();
     }
 
-    componentDidUpdate() {
-        // Update the student table after editing
-    }
-
     getStudents() {
         axios
             .get(Config.URL + "/student/")
