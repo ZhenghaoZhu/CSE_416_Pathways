@@ -11,7 +11,7 @@ class coursePlan extends Component {
         super(props);
 
         this.student = this.props.location.student["row"];
-        this.courseP = new Map(); //course plans
+        this.coursePl = {}; //course plans
         // {"Spring 2021": [[1,"AMS 310", "MW 10"],[1,"CSE 320", "MW 12"]]}
         this.year = 2020 //default year for now
         this.sem = "Spring" //default semes
@@ -39,16 +39,16 @@ class coursePlan extends Component {
         //var to hold courses student need to take every sem
         this.takeEverySem = [];
         for(var i = 0; i < this.degReqs["Required Courses"].size; i++){
-            if(this.degReqs["Required Courses"][i][0] == -2){
+            if(this.degReqs["Required Courses"][i][0] === -2){
                 this.takeEverySem.push(this.degReqs["Required Courses"][i][1]);//add the class we need
                 //to take every semester to this.takeEverySem
             }
         }
         console.log("takeEverySem: ", this.takeEverySem);
+        this.cycled = 0;
     }
 
     smartCoursePlan = () => {
-        
         this.obtainStudentsAndSort();
     };
 
@@ -138,7 +138,7 @@ class coursePlan extends Component {
         }
         //TODO may need to loop til degree reqs are good
         var counter = 0
-        while(this.degreeReqsSatisfied() === false && counter !== 6){
+        while(this.degreeReqsSatisfied() === false && counter !== 4){
             for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
                 console.log(key + ' ' + value);
                 var addCourseRet = await this.addCourse(key, studentMap);
@@ -146,70 +146,89 @@ class coursePlan extends Component {
                     break;
                 }
             }
-            // var star = this.nextSemester();
-            // if(star === " "){
-            //     return " ";
-            // }
+            if(this.cycled === classesMap.length){
+                var star = this.nextSemester();
+                if(star === " "){
+                    return " ";
+                }
+                this.cycled = 0;
+            }
             counter++;
-            break; //TODO TEMPORARY
+            // break; //TODO TEMPORARY
         }
         //TODO after loop, we need to display the plan somehow
         console.log("sorted list of classes by occurrences: ", classesMap);
-        console.log("COURSE PLAN: ", this.courseP);
+        console.log("COURSE PLAN: ", this.coursePl);
         console.log("deg reqs after remove ", this.degReqs);
     }
     //key = class name like "AMS 310"
     //studentMap = map to store cur student's courses taken
-    addCourse = async function (key, studentMap) {
+    addCourse = async function (key, studentMap){
         //check pre-reqs and time constraints
-        if (studentMap[key] !== undefined) {
-            //this means the course in question has already been taken by the student
-            return;
-        }
-        //now we attempt to add the course to courseP, which is our coursePlan for the student
+        //TODO dups allowed
+        //now we attempt to add the course to coursePl, which is our coursePlan for the student
         //lets say 4 classess is max per semester //TODO summer courses?
         if(this.maxCoursesAllowed === this.coursesAdded){//so we've reached max courses in a sem, move to next
+            console.log("moved to next sem");
             var star = this.nextSemester();
             if(star === " "){
                 return " ";
             }
+            this.cycled = 0;
             this.coursesAdded = 0;
         }
-        if(this.courseP[this.sem+" "+this.year] === undefined){
-            this.courseP[this.sem+" "+this.year] = []
+        if(this.coursePl[this.sem+" "+this.year] === undefined){
+            console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
+            this.coursePl[this.sem+" "+this.year] = []
         }
         //check for prereqs and time constraints here **
-        console.log("key: ", key);
-        var courseInfo = await this.retrieveCourseInfo(key); //gets the course info from db
+
+        let courseInfo = null; //gets the course info from db
+        var className = key;
+        className = className.replace(" ", "");
+        courseInfo = await axios
+            .get("http://localhost:5000"+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
+            .then((course) => {return course})
+            .catch((err) => console.log("course error: ", err), courseInfo = undefined);
+        
+        console.log("retrieveCourseInfo: ", courseInfo);
+        if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0 || courseInfo === null){//if undefined or doesn't exist
+            console.log("No courses found");
+        }
+        // await this.retrieveCourseInfo(key)
+        //     .then((rep) => courseInfo = rep);
+        // console.log("courseInfo data: ", courseInfo);
+        this.cycled += 1;
         if(courseInfo === null || courseInfo["data"] === undefined){
             console.log("No courses found1111");
             return;
         }
+        this.nextSteps(courseInfo, studentMap, key);
+    }
+
+    nextSteps(courseInfo, studentMap, key){
         console.log("retrieve course: ", courseInfo["data"]);
         //TODO CHeck for no classes returned from courseinfo
-        var status = this.meetPrereq(courseInfo["data"][0], studentMap);
+        var status =  this.meetPrereq(courseInfo["data"][0], studentMap);
         if(!status){ //if pre req is not met, do not attempt to add course
             console.log("pre req not met");
-            return; 
+            return;
         }
-        // var timeSlot = this.meetTimeReq(courseInfo["data"][0]); //pass in map 
-        // //returns the time that works with user
-        // if(timeSlot === []){//time contraints not met
-        //     return;
-        // }
+        var timeSlot = this.meetTimeReq(courseInfo["data"][0], key); //pass in map 
+        //returns the time that works with user
+        if(timeSlot === []){//time contraints not met
+            return;
+        }
         //now we want to go through the degReqs and remove from it
-        this.removeFromDegReqsList(courseInfo["data"][0]);
-        // //increment the course count
-        this.coursesAdded += 1;
-        // this.courseP.get(this.sem+" "+this.year).push([timeSlot[0], key, timeSlot[1]]);
-        this.courseP[this.sem+" "+this.year].push(["5", key, "5PM"]); //TODO TEMPORARY
-        // //after a class is added, check if deg reqs are done
-
-        // if (this.degreeReqsSatisfied()) {
-        //     //return a course plan ()
-        //     return " ";
-        // }
+        if(timeSlot[0] !== undefined && timeSlot[1] !== undefined){
+            this.removeFromDegReqsList(courseInfo["data"][0]);
+            // // //increment the course count
+            this.coursesAdded += 1;
+            
+            this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];               
+        }
     }
+
     //look at the deg req list and remove from it
     //courseInfoMap = course object
     removeFromDegReqsList(courseInfoMap){
@@ -361,21 +380,21 @@ class coursePlan extends Component {
         return false;
     }
 
-    retrieveCourseInfo = async function (className) {
-        var courseInfo = null;
-        className = className.replace(" ", "");
-        await axios
-            .get("http://localhost:5000"+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
-            .then((course) => courseInfo = course)
-            .catch((err) => console.log("course error: ", err), courseInfo = undefined);
+    // retrieveCourseInfo = async function (className) {
+    //     var courseInfo = null;
+    //     className = className.replace(" ", "");
+    //     await axios
+    //         .get("http://localhost:5000"+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
+    //         .then((course) => (courseInfo = course))
+    //         .catch((err) => console.log("course error: ", err), courseInfo = undefined);
         
-        console.log("retrieveCourseInfo: ", courseInfo);
-        if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0){//if undefined or doesn't exist
-            console.log("No courses found");
-            return null;
-        }
-        return courseInfo;
-    }
+    //     console.log("retrieveCourseInfo: ", courseInfo);
+    //     if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0){//if undefined or doesn't exist
+    //         console.log("No courses found");
+    //         return null;
+    //     }
+    //     return courseInfo;
+    // }
 
     //info = course information from db
     //studentMap = map with the student's already taken/taking courses
@@ -401,8 +420,8 @@ class coursePlan extends Component {
             }
             //now we must loop through the courses in the course planner,
             for(var j = 0; j < req.length; j++){
-                for (var key of Object.keys(this.courseP)) {//go through all courses taken by the student already
-                    var courses = this.courseP.get(key)
+                for (var key of Object.keys(this.coursePl)) {//go through all courses taken by the student already
+                    var courses = this.coursePl.get(key)
                     for(var k = 0; k < courses.length; k++){
                         if(courses[k] === req[j]){//if pre-req is taken by the student already
                             console.log("in course plan");
@@ -416,26 +435,43 @@ class coursePlan extends Component {
         return false;
     }
     //course = course object from db
-    meetTimeReq(course){
-        var arr = this.courseP[this.sem+" "+this.year];
+    meetTimeReq(course, key){ 
+        var arr = this.coursePl[this.sem+" "+this.year];
+        console.log("Inside meetTimeReq, ",arr);
+        console.log("Class: ", course, " : ", course["courseInfo"].length);
         var timeSlot = [];
-        var flag = 0;
-        for(var j = 0; j < course["courseInfo"].size; j++){
-            for(var i = 0; i < arr.length; i++){
-                if(course["courseInfo"][j] === undefined){
-                    return "";
-                }
-                if(course["courseInfo"][j] === arr[i][2]){
-                    //if there is a time conflict
-                    flag = 1;
-                }
-            }
-            if(flag === 0){
-                // assuming sections are in order
-                timeSlot = [j, course["courseInfo"][j]];
+        if(course["courseInfo"].length === 0){
+            console.log("No valid times");
+            return [];
+        }
+        for(var j = 0; j < course["courseInfo"].length; j++){
+            console.log("timeslot4: ", timeSlot);
+            if(arr.length === 0){
+                timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
+                console.log("timeslot1: ", timeSlot);
+                // this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];
                 return timeSlot;
+                // return []
+            }
+            else {
+                for(var i = 0; i < arr.length; i++){
+                    if(course["courseInfo"][j] === undefined){
+                        return [];
+                    }
+                    console.log("arr["+i+"], ",arr[i]);
+                    if(course["courseInfo"][j][1] !== arr[i][2]){
+                        //if there is a time conflict
+                        // assuming sections are in order
+                        timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
+                        console.log("timeslot1: ", timeSlot);
+                        // this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1]];
+                        return timeSlot;
+                        // return [];
+                    }
+                }
             }
         }
+        
         return [];
     }
 
