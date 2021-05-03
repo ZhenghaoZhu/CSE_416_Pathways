@@ -21,35 +21,33 @@ import { Container } from "@material-ui/core";
 
 class EnrollmentChart extends Component {
     render() {
-        let bars = this.props.victoryObjectArray.map((elem) =>
-            elem.map((subElem, index) => (
-                <VictoryBar
-                    barWidth={10}
-                    padding={{ left: 10, right: 10 }}
-                    key={index}
-                    data={subElem}
-                    alignment="start"
-                    style={{
-                        data: {
-                            fill: ({ datum }) => datum.fill,
-                        },
-                    }}
-                />
-            ))
-        );
+        let bars = this.props.victoryObjectArray.map((elem, index) => (
+            <VictoryBar
+                barWidth={10}
+                padding={{ left: 10, right: 10 }}
+                key={index}
+                data={elem}
+                alignment="start"
+                style={{
+                    data: {
+                        fill: ({ datum }) => datum.fill,
+                    },
+                }}
+            />
+        ));
+        let flattened = bars.reduce((a, b) => {
+            return a.concat(b);
+        }, []);
 
         return (
             <>
+                {console.log(flattened)}
                 <Container>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <VictoryChart height={500} width={800} containerComponent={<VictoryContainer responsive={false} />}>
-                                <VictoryGroup offset={20 / this.props.scaleFactor} domainPadding={20} labelComponent={<VictoryTooltip />}>
-                                    {bars}
-                                </VictoryGroup>
-                            </VictoryChart>
-                        </Grid>
-                    </Grid>
+                    <VictoryChart height={500} width={800}>
+                        <VictoryGroup offset={70 / this.props.scaleFactor} domainPadding={20} labelComponent={<VictoryTooltip />}>
+                            {bars}
+                        </VictoryGroup>
+                    </VictoryChart>
                 </Container>
             </>
         );
@@ -71,39 +69,39 @@ class EnrollmentTableRow extends Component {
     }
 }
 
-class EnrollmentTable extends Component {
-    render() {
-        const enrollmentTrendsForTable = this.props.enrollmentTrendsForTable;
+// class EnrollmentTable extends Component {
+//     render() {
+//         const enrollmentTrendsForTable = this.props.enrollmentTrendsForTable;
 
-        return (
-            <>
-                <Container>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="left">Course Name</TableCell>
-                                            <TableCell align="left">Semester</TableCell>
-                                            <TableCell align="left">Year</TableCell>
-                                            <TableCell align="left">Enrollment</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {enrollmentTrendsForTable.map((elem, index) => (
-                                            <EnrollmentTableRow course={elem[3]} semester={elem[0]} year={elem[1]} enrollment={elem[2]} key={index} />
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </>
-        );
-    }
-}
+//         return (
+//             <>
+//                 <Container>
+//                     <Grid container>
+//                         <Grid item xs={12}>
+//                             <TableContainer>
+//                                 <Table>
+//                                     <TableHead>
+//                                         <TableRow>
+//                                             <TableCell align="left">Course Name</TableCell>
+//                                             <TableCell align="left">Semester</TableCell>
+//                                             <TableCell align="left">Year</TableCell>
+//                                             <TableCell align="left">Enrollment</TableCell>
+//                                         </TableRow>
+//                                     </TableHead>
+//                                     <TableBody>
+//                                         {enrollmentTrendsForTable.map((elem, index) => (
+//                                             <EnrollmentTableRow course={elem[3]} semester={elem[0]} year={elem[1]} enrollment={elem[2]} key={index} />
+//                                         ))}
+//                                     </TableBody>
+//                                 </Table>
+//                             </TableContainer>
+//                         </Grid>
+//                     </Grid>
+//                 </Container>
+//             </>
+//         );
+//     }
+// }
 
 class Selection extends Component {
     constructor(props) {
@@ -114,25 +112,6 @@ class Selection extends Component {
         this.handleYearChange = this.handleYearChange.bind(this);
         this.handleSemesterChange = this.handleSemesterChange.bind(this);
         this.handleYearAndSemesterSubmit = this.handleYearAndSemesterSubmit.bind(this);
-
-        this.state = {
-            allCourses: [],
-        };
-    }
-
-    componentWillMount() {
-        axios
-            .get("http://localhost:5000" + "/courses/")
-            .then((response) => {
-                let courseData = response.data;
-                let allCourseIds = courseData.map((data) => data.id);
-                var uniqueCoursIds = allCourseIds.reduce(function (a, b) {
-                    if (a.indexOf(b) < 0) a.push(b);
-                    return a;
-                }, []);
-                this.setState({ allCourses: uniqueCoursIds });
-            })
-            .catch((error) => console.log(error));
     }
 
     handleCourseSubmit = (e) => {
@@ -193,7 +172,7 @@ class Selection extends Component {
                                         label="Select Course"
                                         helperText="Please select a Course"
                                     >
-                                        {this.state.allCourses.map((course, index) => (
+                                        {this.props.allCourses.map((course, index) => (
                                             <MenuItem key={index} value={course}>
                                                 {course}
                                             </MenuItem>
@@ -288,6 +267,8 @@ class Selection extends Component {
 }
 
 class EnrollmentTrends extends Component {
+    // _isMounted = false;
+
     constructor(props) {
         super(props);
 
@@ -306,10 +287,31 @@ class EnrollmentTrends extends Component {
             selectedCourses: [],
             selectedSemesters: [],
             yearTrendsArray: [],
+            allCourses: [],
         };
     }
 
     colors = ["lightsalmon", "indigo", "green", "aqua", "red", "darkslategray", "darkslategray", "fuchsia", "gold", "blue"];
+
+    componentWillMount() {
+        this._isMounted = true;
+        axios
+            .get("http://localhost:5000" + "/courses/")
+            .then((response) => {
+                let courseData = response.data;
+                let allCourseIds = courseData.map((data) => data.id);
+                var uniqueCoursIds = allCourseIds.reduce(function (a, b) {
+                    if (a.indexOf(b) < 0) a.push(b);
+                    return a;
+                }, []);
+                this.setState({ allCourses: uniqueCoursIds });
+            })
+            .catch((error) => console.log(error));
+    }
+
+    // componentWillMount() {
+    //     this._isMounted = false;
+    // }
 
     createVictoryObject = (yearTrends, selectedCourses) => {
         // let elemArray = [];
@@ -385,10 +387,10 @@ class EnrollmentTrends extends Component {
                         }));
                     })
                     .catch((err) => console.log(err));
-                this.setState((prevState) => ({
-                    selectedSemesters: [...prevState.selectedSemesters, yearAndSemStr],
-                }));
             }
+            this.setState((prevState) => ({
+                selectedSemesters: [...prevState.selectedSemesters, yearAndSemStr],
+            }));
         }
     };
 
@@ -438,6 +440,8 @@ class EnrollmentTrends extends Component {
                 {console.log(this.state.yearTrendsArray)}
                 {/* {console.log(yearTrends2)} */}
                 {/* {console.log(yearAndSemesterArray)} */}
+                {/* {console.log(victoryObjectArray)} */}
+                {/* {console.log(this.state.selectedSemesters)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Selection
@@ -446,6 +450,7 @@ class EnrollmentTrends extends Component {
                             semester={this.state.semester}
                             selectedCourses={this.state.selectedCourses}
                             selectedSemesters={this.state.selectedSemesters}
+                            allCourses={this.state.allCourses}
                             onCourseSubmit={this.handleCourseSubmit}
                             onCourseChange={this.handleCourseChange}
                             onYearChange={this.handleYearChange}
@@ -453,14 +458,14 @@ class EnrollmentTrends extends Component {
                             onYearAndSemesterSubmit={this.handleYearAndSemesterSubmit}
                         />
                     </Grid>
-                    {/* <Grid item xs={12}>
+                    <Grid item xs={12}>
                         <EnrollmentChart
                             victoryObjectArray={victoryObjectArray}
                             scaleFactor={this.state.selectedSemesters.length}
                             selectedCourses={this.state.selectedCourses}
                             selectedSemesters={this.state.selectedSemesters}
                         />
-                    </Grid> */}
+                    </Grid>
                     {/* <Grid item xs={12}>
                         <EnrollmentTable enrollmentTrendsForTable={enrollmentTrendsForTable} />
                     </Grid> */}
