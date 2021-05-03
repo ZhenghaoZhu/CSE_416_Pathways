@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import {Dialog,DialogTitle,DialogContent,DialogActions, Typography, Grid, Button, ButtonGroup, Card, CardContent, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import emailjs from "emailjs-com";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import GPDHeader from "./GPDHeader";
 import Config from "../config.json";
 import { Link } from "react-router-dom";
 const axios = require("axios").default;
 
+var addedComments = 0;
 class EditStudent extends Component {
     constructor(props) {
         super(props);
@@ -16,9 +18,18 @@ class EditStudent extends Component {
         this.state.semesterInput = "";
         this.state.yearInput = "";
         this.state.courseToAdd = "";
-
-        // console.error(this.state);
     }
+
+    static getDerivedStateFromProps(props, state) {
+        console.log(props);
+        axios
+            .get(Config.URL + "/student/get/" + props.location.focusStudent.row.id)
+            .then((student) => {
+                this.state = student.data;
+            })
+            .catch((err) => console.log("Error: ", err));
+    }
+
     setID(e) {
         this.setState({ id: e.target.value });
     }
@@ -67,6 +78,7 @@ class EditStudent extends Component {
             this.setState((prevState) => ({
                 comments: [...prevState.comments, input],
             }));
+            addedComments += 1;
             this.setState({ commentInput: "" }); // empty out the commentInput
         } else {
             console.log("enter comments");
@@ -74,8 +86,32 @@ class EditStudent extends Component {
     }
     deleteComment(index) {
         this.setState((prevState) => ({ comments: prevState.comments.filter((_, commentIdx) => index != commentIdx) }));
+        addedComments -= 1;
     }
+
+    // emailForm() {
+    //     return (
+    //         <form id="form">
+    //             <label for="to_name">to_name</label>
+    //             <input type="text" name="to_name" id="to_name" value="Wow"></input>
+    //             <label for="send_to">send_to</label>
+    //             <input type="text" name="send_to" id="send_to" value="zhenghao.zhu@stonybrook.edu"></input>
+    //         </form>
+    //     );
+    // }
+
     onSubmit(e) {
+        if (addedComments > 0) {
+            emailjs.sendForm("service_z5t1hrh", "template_710dj0e", "#emailForm", "user_XR4shcXcbLVGILIizXhQ4").then(
+                (result) => {
+                    console.log(result.text);
+                },
+                (error) => {
+                    console.log(error.text);
+                }
+            );
+        }
+        console.log(this.state);
         axios
             .post(Config.URL + "/student/update/" + this.state.id, {
                 firstName: this.state.firstName,
@@ -439,7 +475,6 @@ class EditStudent extends Component {
 
                     <Grid item sm={6}>
                         {courseplanObj}
-
                         {this.state.comments.map((comment, index) => (
                             <Card key={index} id={index} style={{ marginTop: "30px" }}>
                                 <CardContent>
@@ -475,6 +510,14 @@ class EditStudent extends Component {
                         Edit coursePlan
                     </Button>
                     </Grid>
+                    <div style={{ display: "none" }}>
+                        <form id="emailForm">
+                            <label for="to_name">to_name</label>
+                            <input type="text" name="to_name" id="to_name" value={this.state.firstName + " " + this.state.lastName}></input>
+                            <label for="send_to">send_to</label>
+                            <input type="text" name="send_to" id="send_to" value={this.state.email}></input>
+                        </form>
+                    </div>
                 </Grid>
             </>
         );
