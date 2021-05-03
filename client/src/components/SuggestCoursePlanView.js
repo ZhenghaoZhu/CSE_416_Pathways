@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Grid, MenuItem, FormControl, Button, Select, InputLabel, TextField, Typography, Input } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import GPDHeader from "./GPDHeader";
+import * as scpFunc from "./SuggestCoursePlanFunctions";
 import Config from "../config.json";
 
 const axios = require("axios").default;
@@ -36,6 +37,7 @@ export default class SuggestCoursePlanView extends Component {
         super(props);
         this.state = {
             curGPD: this.props.curGPD,
+            focusStudent: this.props.focusStudent,
             allCourses: [],
             curMaxCourses: 4,
             curTimeConstraints: [],
@@ -48,17 +50,30 @@ export default class SuggestCoursePlanView extends Component {
         this.getAllCourses();
     }
 
+    static getDerivedStateFromProps(props, state) {
+        var realProps = props.location;
+        if (realProps !== undefined && realProps.focusStudent !== undefined) {
+            return { curGPD: realProps.curGPD, focusStudent: realProps.focusStudent.row };
+        }
+    }
+
     getAllCourses = async function () {
+        var coursesAdded = new Map();
         await axios
             .get(Config.URL + "/courses")
             .then((response) => {
                 var coursesArr = [];
                 var curCourse = undefined;
+                var shortName = "";
                 var curName = "";
                 response.data.forEach((course) => {
-                    curName = course["department"] + " " + course["courseNum"] + " " + course["courseName"];
+                    shortName = course["department"] + " " + course["courseNum"];
+                    curName = shortName + " " + course["courseName"];
                     curCourse = { title: curName };
-                    coursesArr.push(curCourse);
+                    if (!coursesAdded.has(shortName)) {
+                        coursesArr.push(curCourse);
+                        coursesAdded.set(shortName, 1);
+                    }
                 });
                 this.setState({ allCourses: coursesArr });
             })
@@ -99,8 +114,18 @@ export default class SuggestCoursePlanView extends Component {
         this.setState({ curAvoidedCourses: newAvoidedCourseArr });
     };
 
+    createCoursePlanWithSCP = () => {
+        console.log(this.state);
+        scpFunc.createAllSemesters(
+            this.state.focusStudent,
+            this.state.curPreferredCourses,
+            this.state.curAvoidedCourses,
+            this.state.curTimeConstraints,
+            this.state.curMaxCourses
+        );
+    };
+
     render() {
-        console.info(this.state);
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />
@@ -118,8 +143,13 @@ export default class SuggestCoursePlanView extends Component {
                             </Select>
                         </FormControl>
                         <FormControl variant="outlined" style={{ width: "36%", marginRight: "28px" }}>
-                            <InputLabel>Time Constraints</InputLabel>
-                            <Select multiple value={this.state.curTimeConstraints} label="Time Constraints" onChange={this.handleTimeChange}>
+                            <InputLabel>Time You Don't Want Classes In</InputLabel>
+                            <Select
+                                multiple
+                                value={this.state.curTimeConstraints}
+                                label="Time You Don't Want Classes In"
+                                onChange={this.handleTimeChange}
+                            >
                                 {timeConstraintsList.map((timeConstraints) => (
                                     <MenuItem value={timeConstraints}>{timeConstraints}</MenuItem>
                                 ))}
@@ -156,7 +186,12 @@ export default class SuggestCoursePlanView extends Component {
                     </Grid>
 
                     <Grid item xs={12} style={{ marginLeft: "35%" }}>
-                        <Button type="button" variant="contained" style={{ fontSize: "20px", marginRight: "20px", width: "50%" }}>
+                        <Button
+                            type="button"
+                            variant="contained"
+                            style={{ fontSize: "20px", marginRight: "20px", width: "50%" }}
+                            onClick={this.createCoursePlanWithSCP}
+                        >
                             Suggest Course Plan Mode
                         </Button>
                         <br></br>

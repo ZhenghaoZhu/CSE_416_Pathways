@@ -127,27 +127,34 @@ class FileUploadArea extends Component {
     };
 
     updateCourse = async function (curCourse, fileObj) {
-        curCourse = curCourse["data"][0];
+        console.log([curCourse, fileObj]);
         var newSection = [fileObj["section"], fileObj["timeslot"]];
+        var curClassID = fileObj["department"] + fileObj["course_num"] + "/" + fileObj["semester"] + "/" + fileObj["year"];
         var newCourseInfo = curCourse["courseInfo"];
         newCourseInfo.push(newSection);
         curCourse["courseInfo"] = newCourseInfo;
         await axios
-            .put(Config.URL + "/courses/update/classID/" + curCourse["id"], curCourse)
+            .put(Config.URL + "/courses/update/course/" + curClassID, curCourse)
             .then((cur) => console.log("Update course: ", cur))
             .catch((err) => console.log("Error happened :(", err));
     };
 
-    checkCourses = async function (fileObj) {
+    addCourseTimeSlots = async function (fileObj) {
         // Find the course, if it exists then update it with new section and time slot
         // If the course doesn't exist then create it with an array of courseInfo
         fileObj["data"].map((curCourse) => {
             var curClassID = null;
             if (Object.keys(curCourse).length === 6) {
-                curClassID = curCourse["department"] + curCourse["course_num"];
+                curClassID = curCourse["department"] + curCourse["course_num"] + "/" + curCourse["semester"] + "/" + curCourse["year"];
                 axios
-                    .get(Config.URL + "/courses/get/classID/" + curClassID)
-                    .then((res) => (res["data"].length === 0 ? this.createCourse(curCourse) : this.updateCourse(res, curCourse)))
+                    .get(Config.URL + "/courses/get/course/" + curClassID)
+                    .then((res) => {
+                        if (res.data.length === 0) {
+                            this.createCourse(res.data[0]);
+                        } else {
+                            this.updateCourse(res.data[0], curCourse);
+                        }
+                    })
                     .catch((err) => console.log("Course not added, ", err));
             }
             return 1;
@@ -418,7 +425,7 @@ class FileUploadArea extends Component {
         var firstHeaderLen = Object.keys(results["data"][0]).length;
         switch (firstHeaderLen) {
             case 6: // Courses CSV
-                this.checkCourses(results);
+                this.addCourseTimeSlots(results);
                 break;
             case 7: // Course Grades CSV
                 this.addCourseGrades(results);
@@ -453,12 +460,16 @@ class FileUploadArea extends Component {
             .then((course) => console.debug("Course added", course))
             .catch((err) => console.debug(err));
     }
+
+    capitalizeString(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
     scrapeCourseInfo(files) {
         let file = files[0].file;
         let reader = new FileReader();
         const self = this;
         let department = this.state.department;
-        let semester = this.state.semester;
+        let semester = this.capitalizeString(this.state.semester);
         let year = this.state.year;
         // let department = "CSE";
         reader.onload = function () {
@@ -565,26 +576,24 @@ class FileUploadArea extends Component {
     }
     setFile(files) {
         this.setState({ files: files });
-        console.log(this.state);
     }
     setSem(e) {
         this.setState({ semester: e.target.value });
-        console.log(this.state);
     }
     setYear(e) {
         this.setState({ year: e.target.value });
-        console.log(this.state);
     }
     setDepartment(e) {
         this.setState({ department: e.target.value });
     }
-    handleClose(){ // TODO: handle the cancle case.
-        this.setState({ popFlag: false,semester:"",year:"",department:"",files:[]});
+    handleClose() {
+        // TODO: handle the cancle case.
+        this.setState({ popFlag: false, semester: "", year: "", department: "", files: [] });
     }
     handleOpen = () => {
         this.setState({ popFlag: true });
     };
-    handleEnter = () =>{
+    handleEnter = () => {
         this.setState({ popFlag: false });
         console.log(this.state);
         this.scrapeCourseInfo(this.state.files);
