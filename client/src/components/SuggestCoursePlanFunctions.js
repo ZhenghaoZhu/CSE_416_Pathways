@@ -123,7 +123,6 @@ function fillCoursesFromArray(curCourseArray) {
     for (const [curSem, curSemCourses] of Object.entries(newCoursePlan)) {
         curSemSplit = curSem.split(" ");
         curCourseArray.forEach(async (curCourse) => {
-            var foundIt = false;
             await axios
                 .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
                 .then(async (course) => {

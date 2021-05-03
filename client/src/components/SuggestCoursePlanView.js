@@ -133,6 +133,7 @@ export default class SuggestCoursePlanView extends Component {
     };
 
     render() {
+        var disabledButton = this.state;
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />
