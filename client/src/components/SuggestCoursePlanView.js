@@ -4,6 +4,7 @@ import { Autocomplete } from "@material-ui/lab";
 import GPDHeader from "./GPDHeader";
 import * as scpFunc from "./SuggestCoursePlanFunctions";
 import Config from "../config.json";
+import SuggestCP from "./suggestCP";
 
 const axios = require("axios").default;
 const maxClassesList = [...Array(10).keys()];
@@ -195,9 +196,7 @@ export default class SuggestCoursePlanView extends Component {
                             Suggest Course Plan Mode
                         </Button>
                         <br></br>
-                        <Button type="button" variant="contained" color="primary" style={{ fontSize: "20px", marginTop: "15px", width: "50%" }}>
-                            Smart Suggestion Mode
-                        </Button>
+                        <SuggestCP focusStudent={this.state["focusStudent"]} />
                     </Grid>
                 </Grid>
             </>

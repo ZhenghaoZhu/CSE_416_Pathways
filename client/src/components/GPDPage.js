@@ -60,14 +60,14 @@ class GPDPage extends Component {
         console.log("Selected Student Deleted");
     };
 
-    sendStudentData = (e) => {
-        e.preventDefault();
-        console.log("sendStudentData()");
-        this.props.history.push({
-            pathname: "/suggestCourse",
-            student: this.state["focusStudent"],
-        });
-    };
+    // sendStudentData = (e) => {
+    //     e.preventDefault();
+    //     console.log("sendStudentData()");
+    //     this.props.history.push({
+    //         pathname: "/suggestCoursePlanView",
+    //         student: this.state["focusStudent"],
+    //     });
+    // };
     render() {
         let buttonDisabled = this.state.focusStudent === undefined ? true : false;
         console.log(this.state);

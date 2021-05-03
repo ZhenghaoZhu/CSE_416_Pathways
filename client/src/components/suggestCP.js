@@ -8,7 +8,7 @@ class coursePlan extends Component {
     constructor(props) {
         super(props);
 
-        this.student = this.props.location.student["row"];
+        this.student = this.props.focusStudent;
         this.coursePl = {}; //course plans
         // {"Spring 2021": [[1,"AMS 310", "MW 10"],[1,"CSE 320", "MW 12"]]}
         this.year = 2020 //default year for now
@@ -48,15 +48,46 @@ class coursePlan extends Component {
 
     smartCoursePlan = () => {
         this.obtainStudentsAndSort();
+        //do something with data //TODO
+        // this.resetEverything();
     };
 
+    resetEverything =() => {
+        console.log("reset time!")
+        this.times = new Map(); //{"Fall 2020": [["MW 10:30..."],["F 10:30"]]}
+        this.degReqs = this.student["degreeRequirements"]["tracks"][this.student["track"]];
+        this.coursePl = {};
+        if(this.student["curSem"] === "Spring"){
+            this.sem = "SummerI";
+            this.year = this.student["curYear"];
+        }
+        else if(this.student["curSem"] === "SummerI"){
+            this.sem = "SummerII";
+            this.year = this.student["curYear"];
+        }
+        else if(this.student["curSem"] === "SummerII"){
+            this.sem = "Fall";
+            this.year = this.student["curYear"];
+        } else {
+            //curSem = Fall
+            this.sem = "Spring";
+            this.year = String(parseInt(this.student["curYear"]) + 1);
+        }
+        this.coursesAdded = 0;
+        this.maxCoursesAllowed = 4; //default is 4
+    }
+    //SHOULD WORK PROPERLY
     obtainStudentsAndSort = async function () {
-        var jsonT;
+        var jsonT = null;
         //retrieve students that match department and track criteria
         await axios
-            .get("http://localhost:5000" + "/student/get/" + this.student["department"] + "/" + this.student["track"])
+            .get(Config.URL + "/student/get/" + this.student["department"] + "/" + this.student["track"])
             .then((ret) => (jsonT = ret))
             .catch((err) => console.log(err));
+        if(jsonT === null){
+            console.log("cannot retrieve students");
+            return;
+        }
         console.log("jsonT:", jsonT["data"]);
         var len = Object.keys(jsonT["data"]).length; //find length of this json object
         console.log("len: ", len);
@@ -105,6 +136,7 @@ class coursePlan extends Component {
 
     //keysSorted = array with indexes from most similar to least similar
     //data = javascript object with other student's data (same dep and same track and graduated)
+    //studentMap = map with courses student has taken
     calculateClasses = async function (keysSorted, data, studentMap) {
         var classesMap = new Map();
         //goes through all students and calculates the occurences of each course
@@ -130,8 +162,9 @@ class coursePlan extends Component {
             //sorts the courses so highest occurrence at top
             yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
         }
-        //TODO may need to loop til degree reqs are good
+
         var counter = 0
+        //update the courseplan with class in the list
         while(this.degreeReqsSatisfied() === false && counter !== 4){
             for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
                 console.log(key + ' ' + value);
@@ -182,7 +215,7 @@ class coursePlan extends Component {
                 var name = this.takeEverySem[q];
                 name = name.replace(" ", "");
                 courseInfo = await axios
-                    .get("http://localhost:5000"+ "/courses/get/course/"+name+"/"+this.sem+"/"+this.year)
+                    .get(Config.URL+ "/courses/get/course/"+name+"/"+this.sem+"/"+this.year)
                     .then((course) => {return course})
                     .catch((err) => console.log("course error: ", err), courseInfo = undefined);
                 this.nextSteps(courseInfo, studentMap, key);
@@ -199,7 +232,7 @@ class coursePlan extends Component {
         var className = key;
         className = className.replace(" ", "");
         courseInfo = await axios
-            .get("http://localhost:5000"+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
+            .get(Config.URL+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
             .then((course) => {return course})
             .catch((err) => console.log("course error: ", err), courseInfo = undefined);
         
@@ -216,7 +249,12 @@ class coursePlan extends Component {
             console.log("No courses found1111");
             return;
         }
-        this.nextSteps(courseInfo, studentMap, key);
+        if(this.nextSteps(courseInfo, studentMap, key) === " "){
+            return " ";
+        }
+        else {
+            return ""
+        }
     }
 
     nextSteps(courseInfo, studentMap, key){
@@ -234,12 +272,18 @@ class coursePlan extends Component {
         }
         //now we want to go through the degReqs and remove from it
         if(timeSlot[0] !== undefined && timeSlot[1] !== undefined){
-            this.removeFromDegReqsList(courseInfo["data"][0]);
+            var removed = this.removeFromDegReqsList(courseInfo["data"][0]);
+            if(removed === "b"){
+                return; //means the course doesn't satisfy any degree reqs //TODO unsure
+            }
             //increment the course count
             console.log("adding to courseAdded");
             this.coursesAdded += 1;
             
             this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1], courseInfo['data'][0]["credits"]];               
+            if(this.degreeReqsSatisfied()){
+                return " ";
+            } //check if fulfilled
         }
     }
 
@@ -247,7 +291,12 @@ class coursePlan extends Component {
     //courseInfoMap = course object
     removeFromDegReqsList(courseInfoMap){
         //TODO might need to handle checking for excluded courses
-
+        var excluded = this.degReqs["Excluded Courses"];
+        for(var u = 0; u < excluded.length; u++){
+            if(excluded[u] === courseInfoMap["department"]+" "+courseInfoMap["courseNum"]){
+                return "b"; //this class is cannot be counted
+            }
+        }
         var flag = 0; //flag to see if course is in required courses
         //if not, check elective courses
         var reqC = this.degReqs["Required Courses"];
@@ -277,10 +326,16 @@ class coursePlan extends Component {
                             reqC.splice(i, 1);
                         }
                         else if(reqC[i][0] === -3){
-                            reqC[i][0] = 1 //-3 means can be retaken for credit
+                            reqC[i][0] = -4 //-3 means can be retaken for credit
                         }
                         else if(reqC[i][0] === -1){
                             //do nothing
+                        }
+                        else if(reqC[i][0] === -4){
+                            reqC.splice(i, 1);
+                        }
+                        else if(reqC[i][0] > 1){
+                            reqC[i][0] -= 1; //[4, "AMS 542­ - 556"]
                         }
                         return;
                     }
@@ -293,10 +348,16 @@ class coursePlan extends Component {
                         reqC.splice(i, 1);
                     }
                     else if(reqC[i][0] === -3){
-                        reqC[i][0] = 1 //-3 means can be retaken for credit
+                        reqC[i][0] = -4 //-3 means can be retaken for credit
                     }
                     else if(reqC[i][0] === -1){
                         //do nothing
+                    }
+                    else if(reqC[i][0] === -4){
+                        reqC.splice(i, 1);
+                    }
+                    else if(reqC[i][0] > 1){
+                        reqC[i][0] -= 1; //[4, "AMS 542­ - 556"]
                     }
                     return;
                 }
@@ -332,10 +393,13 @@ class coursePlan extends Component {
                                 electiveC.splice(i, 1);
                             }
                             else if(electiveC[i][0] === -3){
-                                electiveC[i][0] = 1 //-3 means can be retaken for credit
+                                electiveC[i][0] = -4 //-3 means can be retaken for credit
                             }
                             else if(electiveC[i][0] === -1){
                                 //do nothing
+                            }
+                            else if(electiveC[i][0] === -4){
+                                electiveC.splice(i, 1);
                             }
                             else if(electiveC[i][0] > 1){
                                 electiveC[i][0] -= 1; //[4, "AMS 542­ - 556"]
@@ -350,10 +414,13 @@ class coursePlan extends Component {
                             electiveC.splice(i, 1);
                         }
                         else if(electiveC[i][0] === -3){
-                            electiveC[i][0] = 1 //-3 means can be retaken for credit
+                            electiveC[i][0] = -4 //-3 means can be retaken for credit
                         }
                         else if(electiveC[i][0] === -1){
                             //do nothing
+                        }
+                        else if(electiveC[i][0] === -4){
+                            electiveC.splice(i, 1);
                         }
                         else if(electiveC[i][0] > 1){
                             electiveC[i][0] -= 1; //[4, "AMS 530"]
@@ -366,10 +433,13 @@ class coursePlan extends Component {
                             electiveC.splice(i, 1);
                         }
                         else if(electiveC[i][0] === -3){
-                            electiveC[i][0] = 1 //-3 means can be retaken for credit
+                            electiveC[i][0] = -4 //-3 means can be retaken for credit
                         }
                         else if(electiveC[i][0] === -1){
                             //do nothing
+                        }
+                        else if(electiveC[i][0] === -4){
+                            electiveC.splice(i, 1);
                         }
                         else if(electiveC[i][0] > 1){
                             electiveC[i][0] -= 1; //[4, "AMS"]
@@ -379,6 +449,7 @@ class coursePlan extends Component {
                 }
             }
         }
+        return "b";
     }
 
 
@@ -489,13 +560,6 @@ class coursePlan extends Component {
                 return timeSlot;
             }
         }
-        // if(counter == 0){
-        //     console.log("NO TIME CONFLICT: ", course["courseInfo"][j][1], arr[i][2]);
-        //     timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
-        //                 console.log("NO TIME CONFLICT: ", course["courseInfo"][j][1], arr[i][2]);
-        //                 counter += 1;
-        //     return timeSlot;
-        // }
         console.log("NO SUITABLE TIMES FOR: ", course["id"]);
         return [];
     }
@@ -520,11 +584,6 @@ class coursePlan extends Component {
         } else {
             console.log("Invalid semester: nextSemester()");
         }
-        //TODO rn i break the algo when we go past the student's assigned grad date
-        // if(this.sem === this.student["gradSem"] && this.year === this.student["gradYear"]){
-        //     console.log("max semesters reached");
-        //     return " ";
-        // }
     }
 
     printStudent = (e) => {
@@ -535,7 +594,7 @@ class coursePlan extends Component {
     render() {
         return (
             <div>
-                <Button onClick={this.smartCoursePlan} >
+                <Button onClick={this.smartCoursePlan} type="button" variant="contained" color="primary" style={{ fontSize: "20px", marginTop: "15px", width: "50%" }}>
                     Smart Suggestion Mode
                 </Button>
             </div>
