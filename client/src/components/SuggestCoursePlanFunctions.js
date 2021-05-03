@@ -11,6 +11,8 @@ var semArr = [];
 var maxCourses = 5;
 var prohibitedSems = [];
 var addedCourses = [];
+var curDegreeTrack = undefined;
+var degreeReqsFulfilled = false;
 const semMap = { Fall: 0, Spring: 1, SummerI: 2, SummerII: 3 };
 const allSemester = ["Fall", "Spring", "SummerI", "SummerII"];
 
@@ -21,9 +23,7 @@ function fillInAllSemesters() {
     fillPreferredCourses();
     console.log(newCoursePlan);
     fillNeutralCourses();
-    console.log(newCoursePlan);
     fillAvoidedCourses();
-    console.log(newCoursePlan);
     return;
 }
 
@@ -41,12 +41,88 @@ function prohibitedSemesters() {
             prohibitedSems.push(key); // Semesters with grades cannot have more courses added to them
         }
     }
-    console.info(curCourses);
     semArr.forEach((curSem) => {
         if (!prohibitedSems.includes(curSem)) {
             newCoursePlan[curSem] = [];
         }
     });
+}
+
+function inExcludedCourses(excludedList, courseID) {
+    excludedList.forEach((curCourse) => {
+        if (curCourse[1] === courseID) {
+            return true;
+        }
+    });
+    return false;
+}
+
+function checkSelectedCourses(curCourseArray, curCourse) {
+    var curCourseCheck = null;
+    console.info(curCourseArray, curCourse);
+    for (var i = 0; i < curCourseArray.length; i++) {
+        curCourseCheck = curCourseArray[i];
+        if (curCourseCheck !== undefined && curCourseCheck[1].indexOf("-") > -1) {
+            // NOTE  Has Range
+            var curCourseSplit = curCourse.split(" ");
+            var curCourseDep = curCourseSplit[0];
+            var curCourseNum = curCourseSplit[1];
+            var curCourseCheckNums = curCourseCheck[1].split(" ");
+            if (
+                curCourseDep === curCourseCheckNums[0] &&
+                curCourseNum >= parseInt(curCourseCheckNums[1]) &&
+                curCourseNum <= parseInt(curCourseCheckNums[3])
+            ) {
+                curCourseCheck[0] = curCourseCheck[0] - 1;
+                if (curCourseCheck[0] === 0) {
+                    curCourseArray.splice(i, 1);
+                }
+                return true;
+            }
+        } else {
+            var curCourseSplit = curCourse.split(" ");
+            var curCourseDep = curCourseSplit[0];
+            if (curCourseCheck !== undefined && (curCourseCheck[1] === curCourseDep || curCourseCheck.includes(curCourse))) {
+                curCourseCheck[0] = curCourseCheck[0] - 1;
+                if (curCourseCheck[0] === 0) {
+                    curCourseArray.splice(i, 1);
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function fulfillsDegreeRequirements() {
+    var reqArrLen = curDegreeTrack["Required Courses"].length;
+    var elecArrLen = curDegreeTrack["Elective Courses"].length;
+    return reqArrLen == 0 && elecArrLen == 0;
+}
+
+async function satisfiesDegreeRequirements(courseID) {
+    // Get current degree requirement and track
+    // Iterate through previous course plan taking out from specific track
+    // Iterate through new course plan doing the same thing
+    // If track empty return true else false
+    if (curDegreeTrack === undefined) {
+        curDegreeTrack = curStudent["degreeRequirements"]["tracks"][curStudent["track"]];
+        console.info(curDegreeTrack);
+    }
+    var allCourses = addedCourses;
+    console.info(allCourses);
+    var seenBool = false;
+    if (!inExcludedCourses(curDegreeTrack["Excluded Courses"], courseID)) {
+        seenBool = checkSelectedCourses(curDegreeTrack["Required Courses"], courseID);
+        if (!seenBool) {
+            checkSelectedCourses(curDegreeTrack["Elective Courses"], courseID);
+        }
+        seenBool = false;
+    }
+    console.info(curDegreeTrack);
+
+    curStudent["degreeRequirements"]["tracks"][curStudent["track"]] = curDegreeTrack;
+    return fulfillsDegreeRequirements();
 }
 
 function fillPreferredCourses() {
@@ -55,21 +131,32 @@ function fillPreferredCourses() {
         if (!prohibitedSems.includes(curSem)) {
             curSemSplit = curSem.split(" ");
             curPref.forEach(async (curCourse) => {
-                await axios
-                    .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
-                    .then((course) => {
-                        var courseData = course.data[0];
-                        if (courseData != undefined) {
-                            var courseName = courseData["department"] + " " + courseData["courseNum"];
-                            var buildCourse = ["", courseName, ""];
-                            console.log(courseData);
-                            if (!addedCourses.includes(courseName) && canAddCourse(courseData)) {
-                                curSemCourses.push(buildCourse);
-                                addedCourses.push(courseName);
+                var foundIt = false;
+                if (!foundIt) {
+                    await axios
+                        .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
+                        .then(async (course) => {
+                            console.info("FOUND IT");
+                            var courseData = course.data[0];
+                            if (courseData != undefined) {
+                                var courseName = courseData["department"] + " " + courseData["courseNum"];
+                                var buildCourse = ["", courseName, ""];
+                                if (!addedCourses.includes(courseName) && canAddCourse(courseData) && !maxCoursesReached(curSem)) {
+                                    curSemCourses.push(buildCourse);
+                                    addedCourses.push(courseName);
+                                    console.info("Added IT", addedCourses);
+                                    foundIt = true;
+                                }
                             }
-                        }
-                    })
-                    .catch((err) => console.log(err));
+                        })
+                        .catch((err) => console.log(err));
+                } else {
+                    var courseSplit = curCourse.split(" ");
+                    var courseName = courseSplit[0] + " " + courseSplit[1];
+                    if (satisfiesDegreeRequirements(courseName)) {
+                        console.info("HUHUHHUHU");
+                    }
+                }
             });
         }
     }
@@ -93,8 +180,11 @@ function canAddCourse(curCourse) {
 }
 
 function maxCoursesReached(curSemester) {
-    return newCoursePlan[curSemester].length() >= maxCourses;
+    console.info(newCoursePlan[curSemester]);
+    return newCoursePlan[curSemester].length >= maxCourses;
 }
+
+async function getStudentTrack() {}
 
 export function createAllSemesters(student, preferredCourses, avoidedCourses, timeConstraints, semMaxCourses) {
     curStudent = student;
@@ -125,4 +215,10 @@ export function createAllSemesters(student, preferredCourses, avoidedCourses, ti
         }
     }
     fillInAllSemesters();
+}
+
+function endAlgo() {
+    // Push to new view displaying new course plan table
+    console.info("SOMEWHAT WORKS?");
+    return newCoursePlan;
 }

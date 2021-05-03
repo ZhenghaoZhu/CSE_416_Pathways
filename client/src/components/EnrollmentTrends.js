@@ -8,9 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-import allCourses from "./allCourses";
-
-import { VictoryBar, VictoryChart, VictoryGroup, VictoryContainer, VictoryTooltip, VictoryStack, VictoryAxis, VictoryTheme } from "victory";
+import { VictoryBar, VictoryChart, VictoryGroup, VictoryTooltip } from "victory";
 import Config from "../config.json";
 import { Grid } from "@material-ui/core";
 import GPDHeader from "./GPDHeader";
@@ -21,35 +19,29 @@ import { Container } from "@material-ui/core";
 
 class EnrollmentChart extends Component {
     render() {
-        let bars = this.props.victoryObjectArray.map((elem) =>
-            elem.map((subElem, index) => (
-                <VictoryBar
-                    barWidth={10}
-                    padding={{ left: 10, right: 10 }}
-                    key={index}
-                    data={subElem}
-                    alignment="start"
-                    style={{
-                        data: {
-                            fill: ({ datum }) => datum.fill,
-                        },
-                    }}
-                />
-            ))
-        );
+        let bars = this.props.victoryObjectArray.map((elem, index) => (
+            <VictoryBar
+                barWidth={10}
+                padding={{ left: 10, right: 10 }}
+                key={index}
+                data={elem}
+                alignment="start"
+                style={{
+                    data: {
+                        fill: ({ datum }) => datum.fill,
+                    },
+                }}
+            />
+        ));
 
         return (
             <>
                 <Container>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <VictoryChart height={500} width={800} containerComponent={<VictoryContainer responsive={false} />}>
-                                <VictoryGroup offset={20 / this.props.scaleFactor} domainPadding={20} labelComponent={<VictoryTooltip />}>
-                                    {bars}
-                                </VictoryGroup>
-                            </VictoryChart>
-                        </Grid>
-                    </Grid>
+                    <VictoryChart height={500} width={800}>
+                        <VictoryGroup offset={70 / this.props.scaleFactor} domainPadding={20} labelComponent={<VictoryTooltip />}>
+                            {bars}
+                        </VictoryGroup>
+                    </VictoryChart>
                 </Container>
             </>
         );
@@ -73,8 +65,6 @@ class EnrollmentTableRow extends Component {
 
 class EnrollmentTable extends Component {
     render() {
-        const enrollmentTrendsForTable = this.props.enrollmentTrendsForTable;
-
         return (
             <>
                 <Container>
@@ -85,14 +75,14 @@ class EnrollmentTable extends Component {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell align="left">Course Name</TableCell>
-                                            <TableCell align="left">Semester</TableCell>
                                             <TableCell align="left">Year</TableCell>
+                                            <TableCell align="left">Semester</TableCell>
                                             <TableCell align="left">Enrollment</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {enrollmentTrendsForTable.map((elem, index) => (
-                                            <EnrollmentTableRow course={elem[3]} semester={elem[0]} year={elem[1]} enrollment={elem[2]} key={index} />
+                                        {this.props.yearTrendsArray.map((elem, index) => (
+                                            <EnrollmentTableRow course={elem[2]} semester={elem[0]} year={elem[1]} enrollment={elem[3]} key={index} />
                                         ))}
                                     </TableBody>
                                 </Table>
@@ -173,8 +163,8 @@ class Selection extends Component {
                                         label="Select Course"
                                         helperText="Please select a Course"
                                     >
-                                        {allCourses.map((course) => (
-                                            <MenuItem key={course} value={course}>
+                                        {this.props.allCourses.map((course, index) => (
+                                            <MenuItem key={index} value={course}>
                                                 {course}
                                             </MenuItem>
                                         ))}
@@ -210,6 +200,9 @@ class Selection extends Component {
                                         <MenuItem key={"2021"} value={"2021"}>
                                             {"2021"}
                                         </MenuItem>
+                                        <MenuItem key={"2022"} value={"2022"}>
+                                            {"2022"}
+                                        </MenuItem>
                                     </TextField>
                                 </div>
                             </form>
@@ -227,14 +220,20 @@ class Selection extends Component {
                                         <MenuItem key={"Spring"} value={"Spring"}>
                                             {"Spring"}
                                         </MenuItem>
-                                        <MenuItem key={"Summer"} value={"Summer"}>
-                                            {"Summer"}
+                                        <MenuItem key={"SummerI"} value={"SummerI"}>
+                                            {"SummerI"}
+                                        </MenuItem>
+                                        <MenuItem key={"SummerII"} value={"SummerII"}>
+                                            {"SummerII"}
                                         </MenuItem>
                                         <MenuItem key={"Fall"} value={"Fall"}>
                                             {"Fall"}
                                         </MenuItem>
-                                        <MenuItem key={"Winter"} value={"Winter"}>
-                                            {"Winter"}
+                                        <MenuItem key={"WinterI"} value={"WinterI"}>
+                                            {"WinterI"}
+                                        </MenuItem>
+                                        <MenuItem key={"WinterII"} value={"WinterII"}>
+                                            {"WinterII"}
                                         </MenuItem>
                                     </TextField>
                                 </div>
@@ -276,91 +275,104 @@ class EnrollmentTrends extends Component {
             year: "",
             selectedYear: "",
             semester: "",
-            selectedSemester: "",
             selectedCourses: [],
             selectedSemesters: [],
             yearTrendsArray: [],
+            allCourses: [],
         };
     }
 
     colors = ["lightsalmon", "indigo", "green", "aqua", "red", "darkslategray", "darkslategray", "fuchsia", "gold", "blue"];
 
-    createVictoryObject = (elem, selectedCourses) => {
-        let elemArray = [];
-        let x1 = elem[0] + " " + elem[1];
-        let y1 = elem[2];
-        let label1 = elem[3];
+    componentDidMount() {
+        axios
+            .get(Config.URL + "/courses/")
+            .then((response) => {
+                let courseData = response.data;
+                let allCourseIds = courseData.map((data) => data.id);
+                var uniqueCoursIds = allCourseIds.reduce(function (a, b) {
+                    if (a.indexOf(b) < 0) a.push(b);
+                    return a;
+                }, []);
+                this.setState({ allCourses: uniqueCoursIds });
+            })
+            .catch((error) => console.log(error));
+    }
+
+    createVictoryObject = (yearTrends, selectedCourses) => {
+        let x1 = yearTrends[1] + " " + yearTrends[0];
+        let y1 = yearTrends[3];
+        let label1 = yearTrends[2];
         let fill1 = this.colors[selectedCourses.indexOf(label1)];
-        elemArray.push({ x: x1, y: y1, label: label1, fill: fill1 });
-        return elemArray;
+        return { x: x1, y: y1, label: label1, fill: fill1 };
     };
 
-    createVictoryObjectArray = (enrollmentTrendsForChart, selectedCourses) => {
+    createVictoryObjectArray = (yearTrendsArray, selectedCourses) => {
         let victoryObjectArray = [];
-        // enrollmentTrends is an Object, so iterate through its values.
-        for (let course of enrollmentTrendsForChart.values()) {
-            let currCourseObjs = [];
-            for (let semester of course) {
-                let semesterArray = this.createVictoryObject(semester, selectedCourses);
-                currCourseObjs.push(semesterArray);
+        for (let course of selectedCourses) {
+            console.log(course);
+            let yearTrendsForCourse = [];
+            for (let yearTrends of yearTrendsArray) {
+                if (yearTrends[2] === course) {
+                    let victoryObj = this.createVictoryObject(yearTrends, selectedCourses);
+                    yearTrendsForCourse = yearTrendsForCourse.concat(victoryObj);
+                }
             }
-            victoryObjectArray.push(currCourseObjs);
+            victoryObjectArray = victoryObjectArray.concat([yearTrendsForCourse]);
         }
+        console.log(victoryObjectArray);
         return victoryObjectArray;
     };
 
-    createEnrollmentTrendsForChart = (yearTrends, yearAndSemesterArray, coursesArray) => {
-        let enrollmentTrendsForChart = [];
-        for (let i = 0; i < yearTrends.length; i++) {
-            let elemArray = [];
-            for (let j = 0; j < yearAndSemesterArray.length; j++) {
-                let semester = yearAndSemesterArray[j][0];
-                let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][year][semester];
-                let course = coursesArray[i];
-                elemArray.push([semester, year, enrollment, course]);
-            }
-            enrollmentTrendsForChart.push(elemArray);
-        }
-        return enrollmentTrendsForChart;
-    };
-
-    createEnrollmentTrendsForTable = (yearTrends, yearAndSemesterArray, coursesArray) => {
-        let enrollmentTrendsForTable = [];
-        for (let i = 0; i < yearTrends.length; i++) {
-            for (let j = 0; j < yearAndSemesterArray.length; j++) {
-                let semester = yearAndSemesterArray[j][0];
-                let year = yearAndSemesterArray[j][1];
-                let enrollment = yearTrends[i][year][semester];
-                let course = coursesArray[i];
-                enrollmentTrendsForTable.push([semester, year, enrollment, course]);
-            }
-        }
-        return enrollmentTrendsForTable;
-    };
-
     handleCourseSubmit = () => {
-        // alert(`Course added: ${this.state.course}`);
         if (!this.state.selectedCourses.includes(this.state.course) && this.state.selectedCourses.length <= 2 && this.state.course != "") {
             this.setState((prevState) => ({
                 selectedCourses: [...prevState.selectedCourses, this.state.course],
             }));
-            axios
-                .get(Config.URL + "/courses/get/classID/" + this.state.course.split(" ").join(""))
-                .then((response) => {
-                    this.setState((prevState) => ({
-                        yearTrendsArray: [...prevState.yearTrendsArray, response.data[0].yearTrends[0]],
-                    }));
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
         }
     };
 
-    getDescription(course) {
-        return course.data.courseDescription;
-    }
+    handleYearAndSemesterSubmit = () => {
+        let yearAndSemStr = this.state.semester + " " + this.state.year;
+        if (
+            !this.state.selectedSemesters.includes(yearAndSemStr) &&
+            this.state.selectedSemesters.length <= 6 &&
+            this.state.year != "" &&
+            this.state.semester != ""
+        ) {
+            for (let i = 0; i < this.state.selectedCourses.length; i++) {
+                axios
+                    .get(
+                        Config.URL +
+                            "/courses/get/course/" +
+                            this.state.selectedCourses[i].split(" ").join("") +
+                            "/" +
+                            this.state.semester +
+                            "/" +
+                            this.state.year
+                    )
+                    .then((response) => {
+                        console.log(response.data);
+                        let courseYearTrends = response.data[0].yearTrends;
+
+                        console.log(courseYearTrends);
+                        let courseEnrollment = courseYearTrends.reduce((a, b) => a + b, 0);
+                        console.log(courseEnrollment);
+
+                        this.setState((prevState) => ({
+                            yearTrendsArray: [
+                                ...prevState.yearTrendsArray,
+                                [this.state.year, this.state.semester, this.state.selectedCourses[i], courseEnrollment],
+                            ],
+                        }));
+                    })
+                    .catch((err) => console.log(err));
+            }
+            this.setState((prevState) => ({
+                selectedSemesters: [...prevState.selectedSemesters, yearAndSemStr],
+            }));
+        }
+    };
 
     handleCourseChange = (value) => {
         this.setState({
@@ -380,57 +392,11 @@ class EnrollmentTrends extends Component {
         });
     };
 
-    handleYearAndSemesterSubmit = () => {
-        // alert(`Semester added: ${this.state.semester} ${this.state.year}`);
-        let yearAndSemStr = this.state.semester + " " + this.state.year;
-        let yearAndSemArr;
-        if (
-            !this.state.selectedSemesters.includes(yearAndSemStr) &&
-            this.state.selectedSemesters.length <= 6 &&
-            this.state.year != "" &&
-            this.state.semester != ""
-        ) {
-            yearAndSemArr = this.state.selectedSemesters.concat(yearAndSemStr);
-        } else {
-            yearAndSemArr = this.state.selectedSemesters;
-        }
-
-        this.setState({
-            selectedSemesters: yearAndSemArr,
-        });
-    };
-
-    createNewRangeOfSemesters = (rangeOfSemesters) => {
-        let finalArr = [];
-        for (let elem of rangeOfSemesters) {
-            let arr = elem.split(" ");
-            finalArr.push(arr);
-        }
-        return finalArr;
-    };
-
     render() {
-        let yearTrends = this.state.yearTrendsArray;
-
-        let yearAndSemesterArray = this.state.selectedSemesters.map((sem) => sem.split(" "));
-
-        let coursesArray = this.state.selectedCourses;
-
-        let enrollmentTrendsForTable = this.createEnrollmentTrendsForTable(yearTrends, yearAndSemesterArray, coursesArray);
-
-        const enrollmentTrendsForChart = this.createEnrollmentTrendsForChart(yearTrends, yearAndSemesterArray, coursesArray);
-
-        const victoryObjectArray = this.createVictoryObjectArray(enrollmentTrendsForChart, this.state.selectedCourses);
+        const victoryObjectArray = this.createVictoryObjectArray(this.state.yearTrendsArray, this.state.selectedCourses);
 
         return (
             <>
-                {/* {console.log(yearAndSemesterArray)} */}
-                {/* {console.log(coursesArray)} */}
-                {/* {console.log(enrollmentTrendsForTable)} */}
-                {/* {console.log(enrollmentTrendsForChart)} */}
-                {/* {console.log(victoryObjectArray)} */}
-                {/* {console.log(this.state.yearTrendsArray)} */}
-                {/* {console.log(yearTrends2)} */}
                 <Grid container>
                     <Grid item xs={12}>
                         <Selection
@@ -439,6 +405,7 @@ class EnrollmentTrends extends Component {
                             semester={this.state.semester}
                             selectedCourses={this.state.selectedCourses}
                             selectedSemesters={this.state.selectedSemesters}
+                            allCourses={this.state.allCourses}
                             onCourseSubmit={this.handleCourseSubmit}
                             onCourseChange={this.handleCourseChange}
                             onYearChange={this.handleYearChange}
@@ -447,15 +414,10 @@ class EnrollmentTrends extends Component {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <EnrollmentChart
-                            victoryObjectArray={victoryObjectArray}
-                            scaleFactor={this.state.selectedSemesters.length}
-                            selectedCourses={this.state.selectedCourses}
-                            selectedSemesters={this.state.selectedSemesters}
-                        />
+                        <EnrollmentChart victoryObjectArray={victoryObjectArray} scaleFactor={this.state.selectedSemesters.length} />
                     </Grid>
                     <Grid item xs={12}>
-                        <EnrollmentTable enrollmentTrendsForTable={enrollmentTrendsForTable} />
+                        <EnrollmentTable yearTrendsArray={this.state.yearTrendsArray} />
                     </Grid>
                 </Grid>
             </>

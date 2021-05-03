@@ -3,6 +3,7 @@ import { Grid, MenuItem, FormControl, Button, Select, InputLabel, TextField, Typ
 import { Autocomplete } from "@material-ui/lab";
 import GPDHeader from "./GPDHeader";
 import * as scpFunc from "./SuggestCoursePlanFunctions";
+import * as smartFunc from "./suggestCP";
 import Config from "../config.json";
 
 const axios = require("axios").default;
@@ -125,6 +126,10 @@ export default class SuggestCoursePlanView extends Component {
         );
     };
 
+    createCoursePlanWithSmart = () => {
+        smartFunc.smartTest();
+    };
+
     render() {
         return (
             <>
@@ -195,7 +200,13 @@ export default class SuggestCoursePlanView extends Component {
                             Suggest Course Plan Mode
                         </Button>
                         <br></br>
-                        <Button type="button" variant="contained" color="primary" style={{ fontSize: "20px", marginTop: "15px", width: "50%" }}>
+                        <Button
+                            type="button"
+                            variant="contained"
+                            color="primary"
+                            style={{ fontSize: "20px", marginTop: "15px", width: "50%" }}
+                            onClick={this.createCoursePlanWithSmart}
+                        >
                             Smart Suggestion Mode
                         </Button>
                     </Grid>
