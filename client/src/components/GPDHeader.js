@@ -30,61 +30,63 @@ class GPDHeader extends Component {
             gpdName = localStorage.getItem("curGPD");
         }
         return (
-            <AppBar position="static" style={{ background: "#e35a5a" }}>
-                <Toolbar>
-                    <img src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png" width="38px" alt="" />
-                    <Typography variant="h6" style={{ marginLeft: "45px" }}>
-                        <Link
-                            to="/"
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Home
-                        </Link>
-                    </Typography>
-                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
-                        <Link
-                            to="/login"
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Login
-                        </Link>
-                    </Typography>
-                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
-                        <Link
-                            to="/enrollmentTrends"
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Enrollment Trends
-                        </Link>
-                    </Typography>
-                    <Typography variant="h6" style={{ marginLeft: "35px" }}>
-                        <Link
-                            to="/suggestCoursePlanView"
-                            style={{
-                                textDecoration: "none",
-                                color: "inherit",
-                            }}
-                        >
-                            Suggest Course Plan View
-                        </Link>
-                    </Typography>
-                    <Typography variant="h5" style={{ marginLeft: "auto" }}>
-                        {gpdName}
-                    </Typography>
-                    <IconButton color="inherit">
-                        <AccountBoxIcon />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
+            <>
+                <AppBar position="static" style={{ background: "#e35a5a" }}>
+                    <Toolbar>
+                        <img src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png" width="38px" alt="" />
+                        <Typography variant="h6" style={{ marginLeft: "45px" }}>
+                            <Link
+                                to="/"
+                                style={{
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                            >
+                                Home
+                            </Link>
+                        </Typography>
+                        <Typography variant="h6" style={{ marginLeft: "35px" }}>
+                            <Link
+                                to="/login"
+                                style={{
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                            >
+                                Login
+                            </Link>
+                        </Typography>
+                        <Typography variant="h6" style={{ marginLeft: "35px" }}>
+                            <Link
+                                to="/enrollmentTrends"
+                                style={{
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                            >
+                                Enrollment Trends
+                            </Link>
+                        </Typography>
+                        <Typography variant="h6" style={{ marginLeft: "35px" }}>
+                            <Link
+                                to="/suggestCoursePlanView"
+                                style={{
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                            >
+                                Suggest Course Plan View
+                            </Link>
+                        </Typography>
+                        <Typography variant="h5" style={{ marginLeft: "auto" }}>
+                            {gpdName}
+                        </Typography>
+                        <IconButton color="inherit">
+                            <AccountBoxIcon />
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+            </>
         );
     }
 }

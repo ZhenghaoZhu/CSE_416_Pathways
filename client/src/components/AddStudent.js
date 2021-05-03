@@ -104,9 +104,27 @@ class AddStudent extends Component {
         return value;
     }
 
-    onSubmit(e) {
+    onSubmit = async function (e) {
         var curSalt = crypto.randomBytes(16).toString("base64");
         this.setState({ password: this.encryptPassword(this.state.password, curSalt) });
+        var curDegreeReqs = null;
+        var curDegreeReqPath = this.state.department + "/" + this.state.reqVersionYear + "/" + this.state.reqVersionSem;
+        await axios
+            .get(Config.URL + "/degreeReqs/get/" + curDegreeReqPath)
+            .then((degreeReq) => {
+                curDegreeReqs = degreeReq.data;
+            })
+            .catch((err) => console.log("Error: ", err));
+        if (curDegreeReqs === null || curDegreeReqs === undefined) {
+            await axios
+                .get(Config.URL + "/degreeReqs/get/" + this.state.department)
+                .then((degreeReq) => {
+                    curDegreeReqs = degreeReq.data[0];
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
         axios
             .post(Config.URL + "/student/add", {
                 firstName: this.state.firstName,
@@ -126,7 +144,7 @@ class AddStudent extends Component {
                 projectOption: this.state.projectOption,
                 facultyAdvisor: this.state.facultyAdvisor,
                 proficienyReq: this.state.proficiencyReq,
-                degreeRequirements: {},
+                degreeRequirements: curDegreeReqs,
                 curSem: this.state.curSem,
                 curYear: this.state.curYear,
                 password: this.state.password,
@@ -136,7 +154,7 @@ class AddStudent extends Component {
             })
             .then((cur) => console.log("Added student: ", cur))
             .catch((err) => console.log("Error happened :(", err));
-    }
+    };
 
     render() {
         return (

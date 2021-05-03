@@ -11,7 +11,9 @@
 /client/coverage
 
 # production
-/client/build
+/client/build/static
+client/build/asset-manifest.json
+/client/build/index.html
 
 # misc
 .DS_Store
