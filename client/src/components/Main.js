@@ -10,6 +10,7 @@ import GPDPage from "./GPDPage";
 import GPDHeader from "./GPDHeader";
 import App from "./App";
 import EditStudentInfo from "./EditStudentInfo";
+import DisplaySuggestCP from "./DisplaySuggestCP";
 
 const Main = () => (
 	<main>
@@ -21,6 +22,8 @@ const Main = () => (
 			<Route path="/addStudent" component={AddStudent} />
 			<Route path="/register" component={RegisterForm} />
 			<Route path="/editStudent" component={EditStudentInfo} />
+			<Route path="/displaySuggestCP" component={DisplaySuggestCP} />
+
 		</Switch>
 	</main>
 );
