@@ -133,14 +133,6 @@ export default class SuggestCoursePlanView extends Component {
         });
     };
 
-    createCoursePlanWithSmart = () => {
-        smartFunc.smartTest();
-    };
-
-    createCoursePlanWithSmart = () => {
-        smartFunc.smartTest();
-    };
-
     render() {
         var disabledButton = this.state;
         return (
