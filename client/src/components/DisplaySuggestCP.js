@@ -8,6 +8,8 @@ import * as helper from "./SuggestCoursePlanFunctions";
 
 const axios = require("axios").default;
 
+const axios = require("axios").default;
+
 var columns = [
     { field: "department", headerName: "Department", width: 130 },
     { field: "courseNum", headerName: "Course Number", width: 160 },
@@ -18,7 +20,6 @@ var columns = [
 ];
 
 var refresh = 0;
-
 class DisplaySuggestCP extends Component {
     constructor(props) {
         super(props);
@@ -68,7 +69,6 @@ class DisplaySuggestCP extends Component {
             .catch(function (error) {
                 console.log(error);
             })
-            // .finally(console.log(this.state));
     }
 
 
