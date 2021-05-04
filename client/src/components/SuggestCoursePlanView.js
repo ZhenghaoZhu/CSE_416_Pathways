@@ -117,15 +117,18 @@ export default class SuggestCoursePlanView extends Component {
 
     createCoursePlanWithSCP = async () => {
         console.log(this.state);
-        console.log(
-            await scpFunc.createAllSemesters(
-                this.state.focusStudent,
-                this.state.curPreferredCourses,
-                this.state.curAvoidedCourses,
-                this.state.curTimeConstraints,
-                this.state.curMaxCourses
-            )
+        var coursePlanRet = await scpFunc.createAllSemesters(
+            this.state.focusStudent,
+            this.state.curPreferredCourses,
+            this.state.curAvoidedCourses,
+            this.state.curTimeConstraints,
+            this.state.curMaxCourses
         );
+        console.log(coursePlanRet);
+        this.props.history.push({
+            pathname: "/displaySuggestCP",
+            newCoursePlan: coursePlanRet,
+        });
     };
 
     createCoursePlanWithSmart = () => {

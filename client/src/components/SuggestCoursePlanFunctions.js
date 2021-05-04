@@ -122,10 +122,10 @@ function fillCoursesFromArray(curCourseArray) {
     var curSemSplit = undefined;
     for (const [curSem, curSemCourses] of Object.entries(newCoursePlan)) {
         curSemSplit = curSem.split(" ");
-        curCourseArray.forEach(async (curCourse) => {
-            await axios
+        curCourseArray.forEach((curCourse) => {
+            axios
                 .get(Config.URL + "/courses/get/course/" + curCourse + "/" + curSemSplit[0] + "/" + curSemSplit[1])
-                .then(async (course) => {
+                .then((course) => {
                     var courseData = course.data[0];
                     if (courseData != undefined) {
                         var courseName = courseData["department"] + " " + courseData["courseNum"];
@@ -139,7 +139,6 @@ function fillCoursesFromArray(curCourseArray) {
                             }
                             curSemCourses.push(buildCourse);
                             addedCourses.push(courseName);
-                            console.info("Added IT", addedCourses);
                             degreeReqsFulfilled = satisfiesDegreeRequirements(courseName);
                         }
                     } else {
