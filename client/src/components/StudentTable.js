@@ -47,15 +47,90 @@ class StudentTable extends Component {
     }
 
     filterStudent(e) {
-        var newStudentFilter = this.state.curStudents.filter((student) => student.firstName.toUpperCase().indexOf(e.toUpperCase()) !== -1);
-        console.log(newStudentFilter);
+        let searchQueryArray = e.split(", ");
+        // console.log(searchQueryArray);
+
+        let categories = [];
+        let queries = [];
+        for (let searchQuery of searchQueryArray) {
+            categories.push(searchQuery.split(": ")[0]);
+            queries.push(searchQuery.split(": ")[1]);
+        }
+
+        let objArr = [];
+        for (let i = 0; i < categories.length; i++) {
+            let obj = {};
+            obj[categories[i]] = queries[i];
+            objArr.push(obj);
+        }
+
+        // console.log(categories);
+        // console.log(queries);
+        // console.log(filters);
+        // console.log(objArr);
+        // console.log(this.state.curStudents);
+
+        let searchMap = objArr.reduce((result, current) => {
+            return Object.assign(result, current);
+        }, {});
+
+        console.log(searchMap);
+
+        // Search query must be in top to bottom order. E.g: lastName can't go after firstName
+        // E.g.: firstName: peppermint, track: statistics
+        // e.g.: track: operations research, gpa: 3
+
+        let newStudentFilter = this.state.curStudents;
+        if ("firstName" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.firstName.toUpperCase().indexOf(searchMap["firstName"].toUpperCase()) !== -1
+            );
+        }
+        if ("lastName" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.lastName.toUpperCase().indexOf(searchMap["lastName"].toUpperCase()) !== -1
+            );
+        }
+        if ("department" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.department.toUpperCase().indexOf(searchMap["department"].toUpperCase()) !== -1
+            );
+        }
+        if ("track" in searchMap) {
+            newStudentFilter = newStudentFilter.filter((student) => student.track.toUpperCase().indexOf(searchMap["track"].toUpperCase()) !== -1);
+        }
+        if ("gpa" in searchMap) {
+            newStudentFilter = newStudentFilter.filter((student) => student.gpa >= searchMap["gpa"] - 0.1);
+        }
+        if ("projectOption" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.projectOption.toUpperCase().indexOf(searchMap["projectOption"].toUpperCase()) !== -1
+            );
+        }
+        if ("entryYear" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.entryYear.toUpperCase().indexOf(searchMap["entryYear"].toUpperCase()) !== -1
+            );
+        }
+        if ("gradYear" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.gradYear.toUpperCase().indexOf(searchMap["gradYear"].toUpperCase()) !== -1
+            );
+        }
+        if ("graduated" in searchMap) {
+            newStudentFilter = newStudentFilter.filter(
+                (student) => student.graduated.toUpperCase().indexOf(searchMap["graduated"].toUpperCase()) !== -1
+            );
+        }
+
+        // console.log(newStudentFilter);
         this.setState({ studentFilter: newStudentFilter });
     }
 
     cancelStudentSearch(e) {
         this.setState({ studentFilter: this.state.curStudents });
     }
-
+    // lastName: Ren
     render() {
         return (
             <div
