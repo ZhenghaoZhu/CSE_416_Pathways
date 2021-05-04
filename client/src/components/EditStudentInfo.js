@@ -1,6 +1,20 @@
 import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
-import {Dialog,DialogTitle,DialogContent,DialogActions, Typography, Grid, Button, ButtonGroup, Card, CardContent, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Typography,
+    Grid,
+    Button,
+    ButtonGroup,
+    Card,
+    CardContent,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from "@material-ui/core";
 import emailjs from "emailjs-com";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import GPDHeader from "./GPDHeader";
@@ -158,45 +172,48 @@ class EditStudent extends Component {
     handleEdit() {
         this.setState({ popFlag: true });
     }
-    handleClose(){ // TODO: handle the cancle case.
-        this.setState({ popFlag: false,semesterInput:"",yearInput:"",courseToAdd:""});
+    handleClose() {
+        // TODO: handle the cancle case.
+        this.setState({ popFlag: false, semesterInput: "", yearInput: "", courseToAdd: "" });
     }
-    handleAdd(){
+    handleAdd() {
         this.setState({ popFlag: true });
-    };
-    handleEnter(){
+    }
+    handleEnter() {
         this.setState({ popFlag: false });
         console.log(this.state);
         this.addCourse(this.state.editCourse);
-    };
-    editCourse(course){
+    }
+    editCourse(course) {
         for (const [semester, course_plan] of Object.entries(this.state.coursePlan)) {
-            if(this.state.semesterInput + " " + this.state.yearInput === semester){ // in this semester rn
+            if (this.state.semesterInput + " " + this.state.yearInput === semester) {
+                // in this semester rn
                 console.log(course_plan);
-                if(course_plan[0][2] !== ""){ //has a grade, can only edit 
+                if (course_plan[0][2] !== "") {
+                    //has a grade, can only edit
                     console.log("I have no grade");
-                }else{ // 
+                } else {
+                    //
                     console.log("i have grade");
                 }
-                    
             }
         }
     }
-    addCourse(course){
+    addCourse(course) {
         console.log("Okok");
     }
-    setCoursePlanInput(e){
-        this.setState({coursePlanInput: e.target.value});
+    setCoursePlanInput(e) {
+        this.setState({ coursePlanInput: e.target.value });
         console.log(e.target.value);
     }
-    setSemesterInput(e){
-        this.setState({semesterInput: e.target.value})
+    setSemesterInput(e) {
+        this.setState({ semesterInput: e.target.value });
     }
-    setYearInput(e){
-        this.setState({yearInput: e.target.value})
+    setYearInput(e) {
+        this.setState({ yearInput: e.target.value });
     }
-    setCourseToAdd(e){
-        this.setState({courseToAdd: e.target.value})
+    setCourseToAdd(e) {
+        this.setState({ courseToAdd: e.target.value });
     }
     render() {
         const courseplanObj = [];
@@ -227,15 +244,9 @@ class EditStudent extends Component {
                 <Dialog open={this.state.popFlag} onClose={() => this.handleClose()} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Enter Following Information</DialogTitle>
                     <DialogContent>
-                        <TextField id="semester" label="Semester" fullWidth                            
-                            onChange={(val) => this.setSem(val)}
-                        />
-                        <TextField id="year" label="Year" fullWidth
-                            onChange={(val) => this.setYear(val)}
-                        />
-                        <TextField id="course_plan" label="Course Plan" fullWidth 
-                            onChange={(val) => this.setCourseInput(val)}
-                        />
+                        <TextField id="semester" label="Semester" fullWidth onChange={(val) => this.setSem(val)} />
+                        <TextField id="year" label="Year" fullWidth onChange={(val) => this.setYear(val)} />
+                        <TextField id="course_plan" label="Course Plan" fullWidth onChange={(val) => this.setCourseInput(val)} />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => this.handleClose()} color="primary">
@@ -437,7 +448,7 @@ class EditStudent extends Component {
                                     >
                                         <Link
                                             to={{
-                                                pathname: "/",
+                                                pathname: "/gpd",
                                                 focusStudent: this.state,
                                             }}
                                             style={{
@@ -488,27 +499,27 @@ class EditStudent extends Component {
                             </Card>
                         ))}
                         <Button
-                        variant="contained"
-                        onClick={() => this.handleAdd()}
-                        style={{
-                            color: "#000000",
-                            margin: 10,
-                            padding: 10,
-                        }}
-                    >
-                        Add course
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={() => this.handleEdit()}
-                        style={{
-                            color: "#000000",
-                            margin: 10,
-                            padding: 10,
-                        }}
-                    >
-                        Edit coursePlan
-                    </Button>
+                            variant="contained"
+                            onClick={() => this.handleAdd()}
+                            style={{
+                                color: "#000000",
+                                margin: 10,
+                                padding: 10,
+                            }}
+                        >
+                            Add course
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => this.handleEdit()}
+                            style={{
+                                color: "#000000",
+                                margin: 10,
+                                padding: 10,
+                            }}
+                        >
+                            Edit coursePlan
+                        </Button>
                     </Grid>
                     <div style={{ display: "none" }}>
                         <form id="emailForm">

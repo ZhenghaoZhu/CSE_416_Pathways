@@ -272,7 +272,7 @@ class LimitedEditStudent extends Component {
                                     <Link
                                         to={{
                                             pathname: "/student",
-                                            loggedInStudent: this.state
+                                            loggedInStudent: this.state,
                                         }}
                                         style={{
                                             textDecoration: "none",
