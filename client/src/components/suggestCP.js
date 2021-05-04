@@ -1,6 +1,7 @@
 import Config from "../config.json";
 import React, { Component } from "react";
 import { Button } from "@material-ui/core";
+import {Link, withRouter} from "react-router-dom"; // You will need these imports.
 
 const axios = require("axios").default;
 
@@ -46,11 +47,21 @@ class coursePlan extends Component {
         this.cycled = 0;
     }
 
-    smartCoursePlan = () => {
-        this.obtainStudentsAndSort();
-        //do something with data //TODO
+    smartCoursePlan = (e) => {
+        e.preventDefault();
+        
+        this.intermediate();
+        console.log("this.props", this.props);
+        this.props.history.push({
+            pathname: "/displaySuggestCP",
+            newCoursePlan: this.coursePl,
+        });
         // this.resetEverything();
     };
+
+    intermediate = async function(){
+        await this.obtainStudentsAndSort();
+    }
 
     resetEverything =() => {
         console.log("reset time!")
@@ -88,9 +99,7 @@ class coursePlan extends Component {
             console.log("cannot retrieve students");
             return;
         }
-        console.log("jsonT:", jsonT["data"]);
         var len = Object.keys(jsonT["data"]).length; //find length of this json object
-        console.log("len: ", len);
         var similarlityScores = new Map(); //store similarity scores
         var map = new Map(); //map to store cur student's courses taken
 
@@ -602,4 +611,4 @@ class coursePlan extends Component {
     }
 }
 
-export default coursePlan;
+export default withRouter(coursePlan);
