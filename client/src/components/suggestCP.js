@@ -458,6 +458,7 @@ class coursePlan extends Component {
                         return;
                     }
                 }
+            }
         }
         return "b";
     }
