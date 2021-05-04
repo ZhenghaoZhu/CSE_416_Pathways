@@ -18,7 +18,6 @@ var columns = [
 ];
 
 var refresh = 0;
-
 class DisplaySuggestCP extends Component {
     constructor(props) {
         super(props);
@@ -27,11 +26,10 @@ class DisplaySuggestCP extends Component {
             courseList: [],
             coursePlanObj: this.props.history.location.newCoursePlan,
             student: this.props.history.location.focusStudent,
-
         };
         this.curDegreeTrack = this.state.student["degreeRequirements"]["tracks"][this.state.student["track"]];
         this.addSelectedCourses = [];
-        this.coursesWithSems = []
+        this.coursesWithSems = [];
         this.constructCourseList();
         console.log("STUDENT: ", this.state["student"]);
     }
@@ -67,54 +65,48 @@ class DisplaySuggestCP extends Component {
             })
             .catch(function (error) {
                 console.log(error);
-            })
-            // .finally(console.log(this.state));
+            });
     }
-
-
 
     setSelectionModel(selection) {
-        this.addSelectedCourses = []
-        this.coursesWithSems = selection
+        this.addSelectedCourses = [];
+        this.coursesWithSems = selection;
         console.log("student: ", this.state["student"]);
-        for(var i = 0; i < selection.length; i++){
-            this.addSelectedCourses.push(selection[i].substring(0, 7))
+        for (var i = 0; i < selection.length; i++) {
+            this.addSelectedCourses.push(selection[i].substring(0, 7));
             console.log(selection[i]);
-
         }
-        console.log(this.addSelectedCourses)
-        console.log(selection)
+        console.log(this.addSelectedCourses);
+        console.log(selection);
     }
 
-    addCourses = () =>{
-        var curDegreeReq = this.state.student["degreeRequirements"]
-        var currentTrack = this.state.student["track"]
-        var curTrackMap = curDegreeReq["tracks"][currentTrack]
+    addCourses = () => {
+        var curDegreeReq = this.state.student["degreeRequirements"];
+        var currentTrack = this.state.student["track"];
+        var curTrackMap = curDegreeReq["tracks"][currentTrack];
         console.log("before: ", curDegreeReq["tracks"][currentTrack]);
-        var degTrack = helper.returnNewTrack(this.addSelectedCourses, curTrackMap)
+        var degTrack = helper.returnNewTrack(this.addSelectedCourses, curTrackMap);
         curDegreeReq["tracks"][currentTrack] = degTrack;
         console.log("after: ", curDegreeReq["tracks"][currentTrack]);
 
-        var newCoursePlan = this.state.student["coursePlan"]
+        var newCoursePlan = this.state.student["coursePlan"];
         this.coursesWithSems.forEach((curCourse) => {
-            var curClass = curCourse.substring(0, 7)
-            var curSem = curCourse.substring(8)
-            if(newCoursePlan[curSem] === undefined){
-                newCoursePlan[curSem] = []
+            var curClass = curCourse.substring(0, 7);
+            var curSem = curCourse.substring(8);
+            if (newCoursePlan[curSem] === undefined) {
+                newCoursePlan[curSem] = [];
             }
-            newCoursePlan[curSem].push(["", curClass, ""])
-        })
-        this.state.student["coursePlan"] = newCoursePlan
-        this.state.student["graduated"] = curTrackMap["Elective Courses"].length === 0 && curTrackMap["Required Courses"].length === 0
-        axios.
-            post(Config.URL+"/student/update/"+this.state.student["id"], this.state.student)
+            newCoursePlan[curSem].push(["", curClass, ""]);
+        });
+        this.state.student["coursePlan"] = newCoursePlan;
+        this.state.student["graduated"] = curTrackMap["Elective Courses"].length === 0 && curTrackMap["Required Courses"].length === 0;
+        axios
+            .post(Config.URL + "/student/update/" + this.state.student["id"], this.state.student)
             .catch((err) => console.log("Unable to update student deg reqs"));
-            
-
-    }
+    };
     render() {
         // console.log(this.state);
-        if(refresh < 30){
+        if (refresh < 30) {
             this.constructCourseList();
             refresh += 1;
         }
