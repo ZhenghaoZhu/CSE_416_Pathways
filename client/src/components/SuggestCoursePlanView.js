@@ -5,6 +5,7 @@ import GPDHeader from "./GPDHeader";
 import * as scpFunc from "./SuggestCoursePlanFunctions";
 import * as smartFunc from "./suggestCP";
 import Config from "../config.json";
+import SuggestCP from "./suggestCP";
 
 const axios = require("axios").default;
 const maxClassesList = [...Array(10).keys()];
@@ -115,15 +116,25 @@ export default class SuggestCoursePlanView extends Component {
         this.setState({ curAvoidedCourses: newAvoidedCourseArr });
     };
 
-    createCoursePlanWithSCP = () => {
+    createCoursePlanWithSCP = async () => {
         console.log(this.state);
-        scpFunc.createAllSemesters(
+        var coursePlanRet = await scpFunc.createAllSemesters(
             this.state.focusStudent,
             this.state.curPreferredCourses,
             this.state.curAvoidedCourses,
             this.state.curTimeConstraints,
             this.state.curMaxCourses
         );
+        console.log(coursePlanRet);
+        this.props.history.push({
+            pathname: "/displaySuggestCP",
+            newCoursePlan: coursePlanRet,
+            focusStudent: this.state.focusStudent,
+        });
+    };
+
+    createCoursePlanWithSmart = () => {
+        smartFunc.smartTest();
     };
 
     createCoursePlanWithSmart = () => {
@@ -131,6 +142,7 @@ export default class SuggestCoursePlanView extends Component {
     };
 
     render() {
+        var disabledButton = this.state;
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />
@@ -200,15 +212,7 @@ export default class SuggestCoursePlanView extends Component {
                             Suggest Course Plan Mode
                         </Button>
                         <br></br>
-                        <Button
-                            type="button"
-                            variant="contained"
-                            color="primary"
-                            style={{ fontSize: "20px", marginTop: "15px", width: "50%" }}
-                            onClick={this.createCoursePlanWithSmart}
-                        >
-                            Smart Suggestion Mode
-                        </Button>
+                        <SuggestCP focusStudent={this.state["focusStudent"]} />
                     </Grid>
                 </Grid>
             </>
