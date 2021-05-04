@@ -18,8 +18,8 @@ import DisplaySuggestCP from "./components/DisplaySuggestCP";
 ReactDOM.render(
     <BrowserRouter>
         <Switch>
-            <Route exact path={["/", "/gpd"]} component={GPDPage} />
-            <Route path="/login" component={LoginForm} />
+            <Route exact path="/" component={LoginForm} />
+            <Route path="/gpd" component={GPDPage} />
             <Route path="/studentDetail" component={StudentDetail} />
             <Route path="/addStudent" component={AddStudent} />
             <Route path="/editStudent" component={EditStudentInfo} />

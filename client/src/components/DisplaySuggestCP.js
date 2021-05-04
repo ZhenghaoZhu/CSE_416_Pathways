@@ -156,3 +156,4 @@ class DisplaySuggestCP extends Component {
 }
 
 export default DisplaySuggestCP;
+
