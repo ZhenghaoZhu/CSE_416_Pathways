@@ -165,14 +165,3 @@ class DisplaySuggestCP extends Component {
 
 export default DisplaySuggestCP;
 
-        // let result = [];
-        // for (var i = 0; i < selection.length; i++) {
-        //     for (var j = 0; j < suggestCourses.length; j++) {
-        //         if (suggestCourses[j].id === selection[i]) {
-        //             var arr = [selection[i], suggestCourses[j].semester, suggestCourses[j].year];
-        //             result.push(arr);
-        //         }
-        //     }
-        // }
-        // this.setState({ selectionModel: selection });
-        // this.setState({ courseList: result });

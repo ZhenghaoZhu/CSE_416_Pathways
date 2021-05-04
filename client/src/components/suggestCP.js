@@ -70,12 +70,10 @@ class coursePlan extends Component {
         if(this.student["curSem"] === "Spring"){
             this.sem = "SummerI";
             this.year = this.student["curYear"];
-        }
-        else if(this.student["curSem"] === "SummerI"){
+        } else if (this.student["curSem"] === "SummerI") {
             this.sem = "SummerII";
             this.year = this.student["curYear"];
-        }
-        else if(this.student["curSem"] === "SummerII"){
+        } else if (this.student["curSem"] === "SummerII") {
             this.sem = "Fall";
             this.year = this.student["curYear"];
         } else {
@@ -234,7 +232,7 @@ class coursePlan extends Component {
                 this.nextSteps(courseInfo, studentMap, key);
             }
         }
-
+      
         if(this.coursePl[this.sem+" "+this.year] === undefined){
             //console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
             this.coursePl[this.sem+" "+this.year] = []
@@ -460,7 +458,6 @@ class coursePlan extends Component {
                         return;
                     }
                 }
-            }
         }
         return "b";
     }
@@ -580,8 +577,7 @@ class coursePlan extends Component {
     //moves globals sem and year to next semester
     nextSemester() {
         if (this.sem === "Spring") {
-            this.sem = "SummerI";
-            
+            this.sem = "SummerI";            
         }
         else if(this.sem === "SummerI"){
             this.sem = "SummerII";
