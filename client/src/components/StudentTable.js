@@ -15,7 +15,7 @@ var columns = [
     { field: "projectOption", headerName: "Project Option", width: 190 },
     { field: "entryYear", headerName: "Entry Year", width: 130 },
     { field: "gradYear", headerName: "Graduating Year", width: 160 },
-    { field: "graduated", headerName: "Graduated", width: 120 },
+    { field: "graduated", headerName: "Satisfies Requirements", width: 120 },
 ];
 
 class StudentTable extends Component {

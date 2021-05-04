@@ -129,6 +129,7 @@ export default class SuggestCoursePlanView extends Component {
         this.props.history.push({
             pathname: "/displaySuggestCP",
             newCoursePlan: coursePlanRet,
+            focusStudent: this.state.focusStudent,
         });
     };
 

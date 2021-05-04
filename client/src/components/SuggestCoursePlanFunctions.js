@@ -12,6 +12,7 @@ var maxCourses = 5;
 var prohibitedSems = [];
 var addedCourses = [];
 var curDegreeTrack = undefined;
+var displayBool = false
 var degreeReqsFulfilled = false;
 const semMap = { Fall: 0, Spring: 1, SummerI: 2, SummerII: 3 };
 const allSemester = ["Fall", "Spring", "SummerI", "SummerII"];
@@ -113,8 +114,9 @@ async function satisfiesDegreeRequirements(courseID) {
         }
         seenBool = false;
     }
-
-    curStudent["degreeRequirements"]["tracks"][curStudent["track"]] = curDegreeTrack;
+    if(!displayBool){
+        curStudent["degreeRequirements"]["tracks"][curStudent["track"]] = curDegreeTrack;
+    }
     return fulfillsDegreeRequirements();
 }
 
@@ -214,4 +216,15 @@ export function createAllSemesters(student, preferredCourses, avoidedCourses, ti
     }
     fillInAllSemesters();
     return newCoursePlan;
+}
+
+export function returnNewTrack(coursesToAdd, studentTrack){
+    console.log("first: ",coursesToAdd, studentTrack)
+    displayBool = true
+    curDegreeTrack = studentTrack
+    coursesToAdd.forEach((curCourse) => {
+        satisfiesDegreeRequirements(curCourse)
+    })
+    console.log("returnNewTrack",curDegreeTrack)
+    return curDegreeTrack;
 }

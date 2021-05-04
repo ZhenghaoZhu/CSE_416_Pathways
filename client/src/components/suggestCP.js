@@ -45,28 +45,25 @@ class coursePlan extends Component {
                 //to take every semester to this.takeEverySem
             }
         }
-        console.log("takeEverySem: ", this.takeEverySem);
+        //console.log("takeEverySem: ", this.takeEverySem);
         this.cycled = 0;
     }
 
-    smartCoursePlan = (e) => {
+    smartCoursePlan = async (e) => {
         e.preventDefault();
-        
-        this.intermediate();
-        console.log("this.props", this.props);
+        var tempo = null;
+        tempo = await this.obtainStudentsAndSort();
+        //console.log("this.props", this.props);
         this.props.history.push({
             pathname: "/displaySuggestCP",
-            newCoursePlan: this.coursePl,
+            newCoursePlan: tempo,
+            focusStudent : this.student,
         });
         // this.resetEverything();
     };
 
-    intermediate = async function(){
-        await this.obtainStudentsAndSort();
-    }
-
     resetEverything =() => {
-        console.log("reset time!")
+        //console.log("reset time!")
         this.times = new Map(); //{"Fall 2020": [["MW 10:30..."],["F 10:30"]]}
         this.degReqs = this.student["degreeRequirements"]["tracks"][this.student["track"]];
         this.coursePl = {};
@@ -97,8 +94,9 @@ class coursePlan extends Component {
             .get(Config.URL + "/student/get/" + this.student["department"] + "/" + this.student["track"])
             .then((ret) => (jsonT = ret))
             .catch((err) => console.log(err));
+
         if(jsonT === null){
-            console.log("cannot retrieve students");
+            //console.log("cannot retrieve students");
             return;
         }
         var len = Object.keys(jsonT["data"]).length; //find length of this json object
@@ -107,7 +105,7 @@ class coursePlan extends Component {
 
         // adds each course the student took to this list
         for (var key of Object.keys(this.student["coursePlan"])) {
-            // console.log(key + " -> " + this.student["coursePlan"][key])
+            // //console.log(key + " -> " + this.student["coursePlan"][key])
             this.student["coursePlan"][key].forEach((element) => {
                 if (map[element[1]] === undefined) {
                     map[element[1]] = 1; //default value of 1 for now
@@ -118,7 +116,7 @@ class coursePlan extends Component {
             });
         }
 
-        console.log("map: ", map); //TODO good up to here
+        //console.log("map: ", map); //TODO good up to here
 
         //calculate similarity scores based on map
         for (var i = 0; i < len; i++) {
@@ -138,13 +136,14 @@ class coursePlan extends Component {
             similarlityScores[i] = score; //add each score to a map
         }
 
-        console.log("sim scores: ", similarlityScores);
+        //console.log("sim scores: ", similarlityScores);
 
         var keysSorted = Object.keys(similarlityScores).sort(function (a, b) {
             return similarlityScores[b] - similarlityScores[a];
         });
-        console.log(keysSorted); //sorts with most similar in front
+        //console.log(keysSorted); //sorts with most similar in front
         this.calculateClasses(keysSorted, jsonT["data"], map);
+        return this.coursePl;
     };
 
     //keysSorted = array with indexes from most similar to least similar
@@ -155,7 +154,7 @@ class coursePlan extends Component {
         //goes through all students and calculates the occurences of each course
         keysSorted.forEach((element) => {
             //TODO change to only first 100
-            console.log("each element: ", data[element]); //TODO works
+            //console.log("each element: ", data[element]); //TODO works
 
             for (var val of Object.values(data[element]["coursePlan"])) {
                 val.forEach(function (element) {
@@ -168,9 +167,9 @@ class coursePlan extends Component {
                     }
                 });
             }
-            console.log("classesMap: ", classesMap);
+            //console.log("classesMap: ", classesMap);
         });
-        console.log("classesMap: ", classesMap);
+        //console.log("classesMap: ", classesMap);
         classesMap[Symbol.iterator] = function* () {
             //sorts the courses so highest occurrence at top
             yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
@@ -180,7 +179,7 @@ class coursePlan extends Component {
         //update the courseplan with class in the list
         while(this.degreeReqsSatisfied() === false && counter !== 4){
             for (let [key, value] of classesMap) {     // get data in descending (large -> small) sorted
-                console.log(key + ' ' + value);
+                //console.log(key + ' ' + value);
                 var addCourseRet = await this.addCourse(key, studentMap);
                 if(addCourseRet === " "){
                     break;
@@ -197,9 +196,10 @@ class coursePlan extends Component {
             // break; //TODO TEMPORARY
         }
         //TODO after loop, we need to display the plan somehow
-        console.log("sorted list of classes by occurrences: ", classesMap);
-        console.log("COURSE PLAN: ", this.coursePl);
-        console.log("deg reqs after remove ", this.degReqs);
+        //console.log("sorted list of classes by occurrences: ", classesMap);
+        //console.log("COURSE PLAN: ", this.coursePl);
+        //console.log("deg reqs after remove ", this.degReqs);
+        return this.coursePl;
     }
     //key = class name like "AMS 310"
     //studentMap = map to store cur student's courses taken
@@ -209,9 +209,9 @@ class coursePlan extends Component {
         //now we attempt to add the course to coursePl, which is our coursePlan for the student
         //lets say 4 classess is max per semester //TODO summer courses?
         let courseInfo = null; //gets the course info from db
-        console.log("this.coursesAdded: ", this.coursesAdded);
+        //console.log("this.coursesAdded: ", this.coursesAdded);
         if(this.maxCoursesAllowed <= this.coursesAdded){//so we've reached max courses in a sem, move to next
-            console.log("moved to next sem");
+            //console.log("moved to next sem");
             var star = this.nextSemester();
             if (star === " ") {
                 return " ";
@@ -219,11 +219,11 @@ class coursePlan extends Component {
             this.cycled = 0;
             this.coursesAdded = 0;
             if(this.coursePl[this.sem+" "+this.year] === undefined){
-                console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
+                //console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
                 this.coursePl[this.sem+" "+this.year] = []
             }
             // for classes you need to take every semester
-            console.log("Take every semester #: ", this.takeEverySem.length);
+            //console.log("Take every semester #: ", this.takeEverySem.length);
             for(var q = 0; q < this.takeEverySem.length; q++){
                 var name = this.takeEverySem[q];
                 name = name.replace(" ", "");
@@ -236,7 +236,7 @@ class coursePlan extends Component {
         }
 
         if(this.coursePl[this.sem+" "+this.year] === undefined){
-            console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
+            //console.log("new semester [ [ [[ [[]]]]]]: ",this.sem + this.year);
             this.coursePl[this.sem+" "+this.year] = []
         }
         //check for prereqs and time constraints here **
@@ -249,17 +249,17 @@ class coursePlan extends Component {
             .then((course) => {return course})
             .catch((err) => console.log("course error: ", err), courseInfo = undefined);
         
-        console.log("retrieveCourseInfo: ", courseInfo);
+        //console.log("retrieveCourseInfo: ", courseInfo);
         if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0 || courseInfo === null){//if undefined or doesn't exist
-            console.log("No courses found");
+            //console.log("No courses found");
             return;
         }
         // await this.retrieveCourseInfo(key)
         //     .then((rep) => courseInfo = rep);
-        // console.log("courseInfo data: ", courseInfo);
+        // //console.log("courseInfo data: ", courseInfo);
         this.cycled += 1;
         if(courseInfo === null || courseInfo["data"] === undefined){
-            console.log("No courses found1111");
+            //console.log("No courses found1111");
             return;
         }
         if(this.nextSteps(courseInfo, studentMap, key) === " "){
@@ -271,11 +271,11 @@ class coursePlan extends Component {
     }
 
     nextSteps(courseInfo, studentMap, key){
-        console.log("retrieve course: ", courseInfo["data"]);
+        //console.log("retrieve course: ", courseInfo["data"]);
         //TODO CHeck for no classes returned from courseinfo
         var status =  this.meetPrereq(courseInfo["data"][0], studentMap);
         if(!status){ //if pre req is not met, do not attempt to add course
-            console.log("pre req not met");
+            //console.log("pre req not met");
             return;
         }
         var timeSlot = this.meetTimeReq(courseInfo["data"][0], key); //pass in map 
@@ -290,7 +290,7 @@ class coursePlan extends Component {
                 return; //means the course doesn't satisfy any degree reqs //TODO unsure
             }
             //increment the course count
-            console.log("adding to courseAdded");
+            //console.log("adding to courseAdded");
             this.coursesAdded += 1;
             
             this.coursePl[this.sem+" "+this.year][this.coursePl[this.sem+" "+this.year].length] = [timeSlot[0], key, timeSlot[1], courseInfo['data'][0]["credits"]];               
@@ -320,22 +320,22 @@ class coursePlan extends Component {
                     continue;
                 }
                 if(reqC[i][j].includes("-")){
-                    console.log("HAS - : ", reqC[i][j]);
+                    //console.log("HAS - : ", reqC[i][j]);
                     var str = reqC[i][j].match(/\d{3}/gm);
-                    console.log("MATCHING PATTERN FOR REQCOURSES: ", str);
+                    //console.log("MATCHING PATTERN FOR REQCOURSES: ", str);
                     if(str == null){
                         continue;
                     }
                     var match1 = parseInt(str[0]); //get lower class #
-                    console.log("match1 :", match1);
+                    //console.log("match1 :", match1);
                     var match2 = parseInt(str[1]); //get higher class #
-                    console.log("match1 :", match2);
+                    //console.log("match1 :", match2);
                     var courseNum = parseInt(courseInfoMap["courseNum"]);
                     if(courseNum >= match1 && courseNum <= match2){
                         //good
                         if(reqC[i][0] === 1){
                             //take once
-                            console.log("SPLICE OUT REEC");
+                            //console.log("SPLICE OUT REEC");
                             reqC.splice(i, 1);
                         }
                         else if(reqC[i][0] === -3){
@@ -386,18 +386,18 @@ class coursePlan extends Component {
                         continue;
                     }
                     if(electiveC[i][j].includes("-")){
-                        console.log("----- ", electiveC[i][j]);
+                        //console.log("----- ", electiveC[i][j]);
                         var regex = /\d{3}/gm;
                         // var regex = /\w{3}/g;
                         var str = electiveC[i][j].match(regex);
-                        console.log("MATCHING PATTERN: ", str);
+                        //console.log("MATCHING PATTERN: ", str);
                         if(str == null){
                             continue;
                         }
                         var match1 = parseInt(str[0]); //get lower class #
-                        console.log("match1 :", match1);
+                        //console.log("match1 :", match1);
                         var match2 = parseInt(str[1]); //get higher class #
-                        console.log("match2 :", match2);
+                        //console.log("match2 :", match2);
                         var courseNum = parseInt(courseInfoMap["courseNum"]);
                         if(courseNum >= match1 && courseNum <= match2){
                             //good
@@ -484,11 +484,11 @@ class coursePlan extends Component {
     //     await axios
     //         .get("http://localhost:5000"+ "/courses/get/course/"+className+"/"+this.sem+"/"+this.year)
     //         .then((course) => (courseInfo = course))
-    //         .catch((err) => console.log("course error: ", err), courseInfo = undefined);
+    //         .catch((err) => //console.log("course error: ", err), courseInfo = undefined);
         
-    //     console.log("retrieveCourseInfo: ", courseInfo);
+    //     //console.log("retrieveCourseInfo: ", courseInfo);
     //     if(courseInfo === undefined || courseInfo["data"] === undefined  || courseInfo["data"].length === 0){//if undefined or doesn't exist
-    //         console.log("No courses found");
+    //         //console.log("No courses found");
     //         return null;
     //     }
     //     return courseInfo;
@@ -498,10 +498,10 @@ class coursePlan extends Component {
     //studentMap = map with the student's already taken/taking courses
     //TODO need to test with actual pre reqs
     meetPrereq(info, studentMap){
-        console.log("Inside meetPrereq");
+        //console.log("Inside meetPrereq");
         info = info["preReqs"]
         if(info[0].length === 0){ //if no pre reqs
-            console.log("No pre-reqs")
+            //console.log("No pre-reqs")
             return true;
         } else {
             //get the pre req
@@ -511,7 +511,7 @@ class coursePlan extends Component {
                     //go through all courses taken by the student already
                     if (key === req[i]) {
                         //if pre-req is taken by the student already
-                        console.log("taken previous");
+                        //console.log("taken previous");
                         return true;
                     }
                 }
@@ -522,7 +522,7 @@ class coursePlan extends Component {
                     var courses = this.coursePl.get(key)
                     for(var k = 0; k < courses.length; k++){
                         if(courses[k] === req[j]){//if pre-req is taken by the student already
-                            console.log("in course plan");
+                            //console.log("in course plan");
                             return true;
                         }
                     }
@@ -535,12 +535,12 @@ class coursePlan extends Component {
     //course = course object from db
     meetTimeReq(course, key){ 
         var arr = this.coursePl[this.sem+" "+this.year];
-        console.log("Inside meetTimeReq, ",arr);
-        console.log("Class: ", course, " : ", course["courseInfo"].length);
+        //console.log("Inside meetTimeReq, ",arr);
+        //console.log("Class: ", course, " : ", course["courseInfo"].length);
         var timeSlot = [];
         var counter = 0;
         if(course["courseInfo"].length === 0){
-            console.log("No valid times");
+            //console.log("No valid times");
             return [];
         }
         for(var j = 0; j < course["courseInfo"].length; j++){
@@ -549,7 +549,7 @@ class coursePlan extends Component {
             }
             if(arr.length === 0){
                 timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
-                console.log("NO TIMES IN SEMESTER YET: ", timeSlot);
+                //console.log("NO TIMES IN SEMESTER YET: ", timeSlot);
                 return timeSlot;
             }
             else {
@@ -558,22 +558,22 @@ class coursePlan extends Component {
 
                     if(course["courseInfo"][j][1] === arr[i][2]){
                         //if there is a time conflict
-                        console.log("TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
+                        //console.log("TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
                         return [];
                         
                         // return timeSlot;
                     }
                     else if(course["courseInfo"][j][1] !== arr[i][2]) {
                         
-                        console.log("NO TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
+                        //console.log("NO TIME CONFLICT FOUND! ", arr[i][2], " AND ", course["courseInfo"][j][1], this.sem, this.year);
                     }
                 }
-                console.log("Returning timeslot!");
+                //console.log("Returning timeslot!");
                 timeSlot = [course["courseInfo"][j][0], course["courseInfo"][j][1]];
                 return timeSlot;
             }
         }
-        console.log("NO SUITABLE TIMES FOR: ", course["id"]);
+        //console.log("NO SUITABLE TIMES FOR: ", course["id"]);
         return [];
     }
 
@@ -595,13 +595,13 @@ class coursePlan extends Component {
             this.sem = "Spring";
             this.year = String(parseInt(this.student["curYear"]) + 1);
         } else {
-            console.log("Invalid semester: nextSemester()");
+            //console.log("Invalid semester: nextSemester()");
         }
     }
 
     printStudent = (e) => {
         e.preventDefault();
-        console.log(this.student);
+        //console.log(this.student);
     };
 
     render() {
