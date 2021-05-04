@@ -3,6 +3,7 @@ import { Grid, MenuItem, FormControl, Button, Select, InputLabel, TextField, Typ
 import { Autocomplete } from "@material-ui/lab";
 import GPDHeader from "./GPDHeader";
 import * as scpFunc from "./SuggestCoursePlanFunctions";
+import * as smartFunc from "./suggestCP";
 import Config from "../config.json";
 import SuggestCP from "./suggestCP";
 
@@ -115,18 +116,28 @@ export default class SuggestCoursePlanView extends Component {
         this.setState({ curAvoidedCourses: newAvoidedCourseArr });
     };
 
-    createCoursePlanWithSCP = () => {
+    createCoursePlanWithSCP = async () => {
         console.log(this.state);
-        scpFunc.createAllSemesters(
+        var coursePlanRet = await scpFunc.createAllSemesters(
             this.state.focusStudent,
             this.state.curPreferredCourses,
             this.state.curAvoidedCourses,
             this.state.curTimeConstraints,
             this.state.curMaxCourses
         );
+        console.log(coursePlanRet);
+        this.props.history.push({
+            pathname: "/displaySuggestCP",
+            newCoursePlan: coursePlanRet,
+        });
+    };
+
+    createCoursePlanWithSmart = () => {
+        smartFunc.smartTest();
     };
 
     render() {
+        var disabledButton = this.state;
         return (
             <>
                 <GPDHeader curGPD={this.state.curGPD} />

@@ -5,6 +5,10 @@ import {Link, withRouter} from "react-router-dom"; // You will need these import
 
 const axios = require("axios").default;
 
+export function smartTest() {
+    console.info("IT WORKS!");
+}
+
 class coursePlan extends Component {
     constructor(props) {
         super(props);
@@ -12,18 +16,16 @@ class coursePlan extends Component {
         this.student = this.props.focusStudent;
         this.coursePl = {}; //course plans
         // {"Spring 2021": [[1,"AMS 310", "MW 10"],[1,"CSE 320", "MW 12"]]}
-        this.year = 2020 //default year for now
-        this.sem = "Spring" //default semes
+        this.year = 2020; //default year for now
+        this.sem = "Spring"; //default semes
         //used as globals for suggest course algo when adding classes
-        if(this.student["curSem"] === "Spring"){
+        if (this.student["curSem"] === "Spring") {
             this.sem = "SummerI";
             this.year = this.student["curYear"];
-        }
-        else if(this.student["curSem"] === "SummerI"){
+        } else if (this.student["curSem"] === "SummerI") {
             this.sem = "SummerII";
             this.year = this.student["curYear"];
-        }
-        else if(this.student["curSem"] === "SummerII"){
+        } else if (this.student["curSem"] === "SummerII") {
             this.sem = "Fall";
             this.year = this.student["curYear"];
         } else {
@@ -121,10 +123,12 @@ class coursePlan extends Component {
         //calculate similarity scores based on map
         for (var i = 0; i < len; i++) {
             var score = 0;
-            if(jsonT["data"][i]["graduated"] === true){ //if student graduated, proceed
+            if (jsonT["data"][i]["graduated"] === true) {
+                //if student graduated, proceed
                 for (var key1 of Object.keys(this.student["coursePlan"])) {
-                    jsonT["data"][i]["coursePlan"][key1].forEach(element => {
-                        if(map[element[1]] !== undefined){ //TODO check over
+                    jsonT["data"][i]["coursePlan"][key1].forEach((element) => {
+                        if (map[element[1]] !== undefined) {
+                            //TODO check over
                             score += 1;
                         } else {
                         }
@@ -209,7 +213,7 @@ class coursePlan extends Component {
         if(this.maxCoursesAllowed <= this.coursesAdded){//so we've reached max courses in a sem, move to next
             console.log("moved to next sem");
             var star = this.nextSemester();
-            if(star === " "){
+            if (star === " ") {
                 return " ";
             }
             this.cycled = 0;
@@ -309,7 +313,7 @@ class coursePlan extends Component {
         var flag = 0; //flag to see if course is in required courses
         //if not, check elective courses
         var reqC = this.degReqs["Required Courses"];
-        for(var i = 0; i < reqC.length; i++){
+        for (var i = 0; i < reqC.length; i++) {
             //check if course name + number matches
             for(var j = 1; j < reqC[i].length; j++){ //[1, "MCB 520", "CHE 541"],
                 if(reqC[i][j].substring(0,3) !== courseInfoMap["department"]){
@@ -468,7 +472,7 @@ class coursePlan extends Component {
     //looks at degReqs, which is a copy of the student's deg requirements
     degreeReqsSatisfied(){
         //check the degReqs object and see if the req and elective coures is empty
-        if(this.degReqs["Required Courses"] === [] && this.degReqs["Elective Courses"] === []){
+        if (this.degReqs["Required Courses"] === [] && this.degReqs["Elective Courses"] === []) {
             return true;
         }
         return false;
@@ -574,8 +578,8 @@ class coursePlan extends Component {
     }
 
     //moves globals sem and year to next semester
-    nextSemester(){
-        if(this.sem === "Spring"){
+    nextSemester() {
+        if (this.sem === "Spring") {
             this.sem = "SummerI";
             
         }

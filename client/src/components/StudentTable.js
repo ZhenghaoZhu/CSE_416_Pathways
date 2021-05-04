@@ -81,7 +81,7 @@ class StudentTable extends Component {
                         pageSize={15}
                         disableSelectionOnClick={true}
                         autoPageSize={true}
-                        loading={this.state.studentFilter.length === 0}
+                        loading={this.state.dataGridLoading}
                         onRowClick={(e) => this.props.changeFocusStudent(e)}
                     />
                 </Box>
