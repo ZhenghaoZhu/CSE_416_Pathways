@@ -36,7 +36,7 @@ class GPDHeader extends Component {
                         <img src="https://i.ibb.co/9H09g8M/Pathways-Logo-Bordered.png" width="38px" alt="" />
                         <Typography variant="h6" style={{ marginLeft: "45px" }}>
                             <Link
-                                to="/"
+                                to="/gpd"
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
@@ -47,7 +47,7 @@ class GPDHeader extends Component {
                         </Typography>
                         <Typography variant="h6" style={{ marginLeft: "35px" }}>
                             <Link
-                                to="/login"
+                                to="/"
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
@@ -65,17 +65,6 @@ class GPDHeader extends Component {
                                 }}
                             >
                                 Enrollment Trends
-                            </Link>
-                        </Typography>
-                        <Typography variant="h6" style={{ marginLeft: "35px" }}>
-                            <Link
-                                to="/suggestCoursePlanView"
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                            >
-                                Suggest Course Plan View
                             </Link>
                         </Typography>
                         <Typography variant="h5" style={{ marginLeft: "auto" }}>

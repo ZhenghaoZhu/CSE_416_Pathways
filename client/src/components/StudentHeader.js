@@ -24,7 +24,7 @@ class StudentHeader extends Component {
                     </Typography>
                     <Typography variant="h6" style={{ marginLeft: "35px" }}>
                         <Link
-                            to="/login"
+                            to="/"
                             style={{
                                 textDecoration: "none",
                                 color: "inherit",
